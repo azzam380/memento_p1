@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memento Game Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body class="home-page">
+    <div class="game-container" id="game-container">
+        <!-- Background is handled by BG.png in .game-container -->
+        <div class="sparkles-container">
+            <div class="sparkle left" id="sparkle-left"></div>
+            <div class="sparkle right" id="sparkle-right"></div>
+        </div>
+        
+        <header class="logo-header">
+            <div class="logo-badge">
+                <img src="/Logo5.png" alt="Memento Logo" class="main-logo-img">
+            </div>
+        </header>
+
+        <div class="hand-presentation">
+            <img src="/Tangan_tengah.png" alt="Presenting Hand" class="central-hand">
+        </div>
+
+        <div class="cards-container">
+            <div class="card" id="card-info">
+                <div class="card-inner">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <span class="card-title">Info</span>
+                </div>
+            </div>
+            <div class="card" id="card-work">
+                <div class="card-inner">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    </div>
+                    <span class="card-title">Work</span>
+                </div>
+            </div>
+            <div class="card" id="card-play">
+                <div class="card-inner">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M6 12h4m-2-2v4m7-2h.01m2.99-2h.01"></path></svg>
+                    </div>
+                    <span class="card-title">Play</span>
+                </div>
+            </div>
+            <div class="card" id="card-solution">
+                <div class="card-inner">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6m-4 4h2m-5-16a5 5 0 1 1 10 0c0 2.5-2.5 4.5-2.5 6h-5c0-1.5-2.5-3.5-2.5-6z"></path></svg>
+                    </div>
+                    <span class="card-title">Solution</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+</body>
+</html>

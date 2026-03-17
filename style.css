@@ -1,0 +1,748 @@
+:root {
+  --bg-color: #0d0216;
+  --primary-purple: #1a0b2e;
+  --accent-gold: #d4af37;
+  --gold-gradient: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+  --frame-width: 15px;
+  --card-width: 180px;
+  --card-height: 260px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #05010a; /* Deep black for outside the frame */
+  color: white;
+  font-family: 'Inter', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.game-container {
+  position: relative;
+  width: 95vw;
+  height: 90vh;
+  max-width: 1400px;
+  max-height: 800px;
+  background: radial-gradient(circle at 50% 40%, #2e1052 0%, #150626 50%, #0a0212 100%);
+  border: 10px solid rgba(212, 175, 55, 0.9); /* Slightly thicker pollised gold border */
+  border-radius: 20px;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.5);
+  overflow: visible; /* Important: allow logo to pass through border */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 1. Pastikan Header Logo ada di paling depan */
+.logo-header {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 300; /* Paling depan biar tangan ketutup */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-badge {
+  background: #0d0216;
+  border-radius: 12px;
+  width: 300px; 
+  height: 190px;
+  box-shadow: 0 15px 60px rgba(0,0,0,0.9);
+  border: 10px solid #130028;
+  padding: 0 !important;
+  position: relative;
+  overflow: hidden; /* Motong gambar logo biar rapi */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Biar gambar full di kotak */
+  display: block;
+}
+
+/* Obsolete CSS Logo styles can be removed or kept for reference */
+/* Removed old .css-logo, .logo-icon, .diamond-outer etc. to clean up */
+
+/* Container untuk Tangan */
+.hand-presentation {
+  position: absolute;
+  top: 0; /* Poros mulai dari atas sejajar logo */
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  pointer-events: none;
+  z-index: 200; /* Di belakang logo-header */
+  overflow: visible;
+}
+
+.central-hand {
+  width: 200px;
+  height: auto;
+  margin-top: 30px; /* Masuk ke dalam logo */
+  
+  /* KUNCI: Engsel tetap di atas tengah */
+  transform-origin: top center; 
+  
+  /* Transisi biar gerakannya smooth/nggak kaku saat ngikutin mouse */
+  transition: transform 0.1s ease-out;
+  
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.8));
+  pointer-events: none;
+  z-index: 200;
+}
+/* @keyframes gentle-flow removed - will be handled by GSAP for smoother transitions */
+@keyframes ayun-tangan {
+  0% {
+    transform: rotate(-6deg);
+  }
+  50% {
+    transform: rotate(8deg);
+  }
+  100% {
+    transform: rotate(-10deg);
+  }
+}
+
+/* Kartu tetap di bawah tangan */
+.cards-container {
+  z-index: 100;
+}
+
+/* Work Page Styles */
+.work-page .logo-header { display: none !important; }
+
+.work-content-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60px;
+}
+
+.work-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: #fcf6ba;
+  letter-spacing: 15px;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+  text-transform: uppercase;
+  z-index: 100;
+  margin-bottom: 30px;
+}
+
+/* Container utama galeri kartu */
+.work-gallery {
+  position: relative;
+  width: 100%;
+  min-height: 600px; /* Gunakan min-height agar tidak 0 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  /* border: 1px solid red; /* Debug saja */
+}
+
+/* Style umum kartu work */
+.work-card {
+  background: #0d0216;
+  border: 4px solid #d4af37 !important; /* Paksa border muncul */
+  border-radius: 12px;
+  position: absolute;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+  transition: all 0.3s ease;
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* KARTU TENGAH (UTAMA) */
+.work-card.central {
+  width: 280px;
+  height: 190px;
+  position: relative; /* Karena dia di dalam flex hands-structure */
+  z-index: 100;
+  transform: rotate(10deg);
+}
+
+.hands-structure {
+  position: absolute;
+  top: 21%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.work-hands-combined {
+  position: absolute;
+  top: -290px;
+  left: 50%;
+  transform: translateX(-51%);
+  width: 900px; /* Large enough to show both hands properly */
+  height: auto;
+  pointer-events: none;
+  z-index: 50;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+}
+
+
+/* KARTU BERANTAKAN */
+.work-card.extra {
+  width: 280px;
+  height: 190px;
+  z-index: 10;
+  filter: brightness(0.6);
+}
+
+/* Posisi kartu sesuai gambar */
+.card-pos-1 { top: 25%; left: 5%; transform: rotate(40deg); }
+.card-pos-2 { top: 65%; left: 28%; transform: rotate(-8deg); }
+.card-pos-3 { top: 20%; right: 5%; transform: rotate(-30deg); }
+.card-pos-4 { top: 60%; right: 20%; transform: rotate(35deg); }
+
+.work-card:hover {
+  filter: brightness(1);
+  border-color: #fcf6ba;
+  z-index: 200 !important;
+  /* Transform removed to keep card static as requested */
+}
+
+/* Back Button */
+.back-button {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  color: #d4af37;
+  width: 45px;
+  z-index: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .work-title { font-size: 3rem; }
+  .work-card.central { width: 320px; height: 220px; }
+  .work-card.extra { width: 180px; height: 130px; }
+}
+
+/* .info-container removed */
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #d4af37;
+  width: 50px;
+  height: 50px;
+  transition: transform 0.3s ease;
+  z-index: 10;
+}
+
+.back-button:hover {
+  transform: scale(1.2);
+}
+
+.info-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 50px;
+  padding: 40px;
+}
+
+.info-card-side {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.memento-card-large {
+  width: 350px;
+  height: 500px;
+  background: #1E0638;
+  border: 4px solid #d4af37;
+  border-radius: 15px;
+  box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: rotate(-10deg);
+}
+
+.card-logo-large {
+  width: 80%;
+  height: auto;
+}
+
+.info-actions-side {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.info-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  color: #fcf6ba;
+  margin: 0;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.info-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.info-btn {
+  background: #a855f7; /* Vibrant purple from image */
+  border: none;
+  border-radius: 20px;
+  padding: 15px 40px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: #fcf6ba;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.info-btn:hover {
+  background: #ba77ff;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+}
+
+@media (max-width: 768px) {
+  .info-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .memento-card-large {
+    width: 200px;
+    height: 300px;
+  }
+  
+  .info-title {
+    font-size: 3rem;
+  }
+}
+
+/* Sparkles */
+.sparkles-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.sparkle {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.sparkle.left {
+  top: 10%;
+  left: 10%;
+  background-image: url('/Sparkle_kiri_1.png');
+}
+
+.sparkle.right {
+  top: 10%;
+  right: 10%;
+  background-image: url('/Sparkle_kanan_1.png');
+}
+
+.sparkle.active {
+  opacity: 0.8;
+}
+
+/* Card Click Sparkle Effect */
+.card-sparkle-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130%;
+  height: 130%;
+  pointer-events: none;
+  z-index: -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sparkle-particle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, #fff 10%, #fcf6ba 30%, #d4af37 60%, transparent 80%);
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(2px);
+  box-shadow: 0 0 15px #d4af37;
+}
+
+.sparkle-particle.animate {
+  animation: sparkle-burst 0.8s ease-out forwards;
+}
+
+@keyframes sparkle-burst {
+  0% {
+    transform: translate(0, 0) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Hidden old hands structure halaman utama */
+.hands-composition { display: none; }
+
+.cards-container {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: 480px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 100;
+  padding-bottom: 40px;
+  perspective: 1000px;
+}
+
+.card {
+  width: 220px;
+  height: 320px;
+  background: #1F073A; /* Dark, elegant cards */
+  border: 5px solid #d4af37; /* Polished gold frame */
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 35px; /* Increased space between cards */
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.card-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.card-icon {
+  width: 80px;
+  height: 80px;
+  color: #d4af37; /* Gold icons */
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+}
+
+.card-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 1;
+}
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: #d4af37; /* Gold serif font */
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Sharp V-Shape (Valley) Arrangement */
+/* Fan-shaped arc arrangement (Convergent Valley) */
+/* Fan-shaped arc arrangement (Convergent Valley) */
+/* Convergent Valley Arrangement (Leaning Toward Center) */
+.card { transform-origin: bottom center; }
+
+.card:nth-child(1) { transform: rotate(22deg) translateY(-70px) translateX(-60px); z-index: 10; }
+.card:nth-child(2) { transform: rotate(10deg) translateY(-1px) translateX(-20px); z-index: 15; }
+.card:nth-child(3) { transform: rotate(-10deg) translateY(-1px) translateX(20px); z-index: 15; }
+.card:nth-child(4) { transform: rotate(-22deg) translateY(-70px) translateX(60px); z-index: 10; }
+
+.card:hover {
+  z-index: 1000 !important;
+  transform: translateY(-130px) scale(1.1) rotate(0deg) !important;
+  box-shadow: 0 50px 100px rgba(0,0,0,1);
+  border-color: #fcf6ba;
+}
+
+.card:hover .card-icon {
+  filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.8));
+}
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: #ffffff; /* Gold serif font */
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.card-icon {
+  width: 80px;
+  height: 80px;
+  color: #ffffff; /* Gold icons */
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .logo-badge {
+    width: 140px;
+    height: 90px;
+    padding: 10px 20px;
+  }
+  .central-hand {
+    width: 320px;
+    top: 90px;
+  }
+  .card {
+    width: 160px;
+    height: 240px;
+    margin: 0 -20px;
+  }
+  .card-title {
+    font-size: 1.2rem;
+  }
+}
+
+/* Play Page Styles */
+.play-page .logo-header { display: none !important; }
+
+.play-content-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 50px;
+}
+
+.play-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  color: #fcf6ba;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+  margin-bottom: 60px;
+  z-index: 100;
+}
+
+.play-carousel {
+  position: relative;
+  width: 100%;
+  height: 500px; /* Explicit height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0; /* Remove gap for overlap */
+  perspective: 1000px;
+  z-index: 50; /* Ensure carousel is above background */
+}
+
+.play-card {
+  background: #0d0216;
+  border: 4px solid #d4af37 !important; /* Force border */
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+  transition: all 0.4s ease;
+  visibility: visible !important;
+  opacity: 1 !important; /* Overrule GSAP if it stuck */
+  margin: 0 -15px; /* Negative margin for overlap */
+}
+
+.play-card.central-focus {
+  width: 320px;
+  height: 450px;
+  z-index: 50;
+  border-width: 6px;
+  box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+}
+
+.play-card.side-inner {
+  width: 260px;
+  height: 380px;
+  z-index: 40;
+  filter: brightness(0.7);
+}
+
+.play-card.side-outer {
+  width: 200px;
+  height: 300px;
+  z-index: 30;
+  filter: brightness(0.4);
+}
+
+/* Service Page Styles */
+.service-page .logo-header { display: none !important; }
+
+.service-content-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
+}
+
+.service-page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  color: #fcf6ba;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+  margin-bottom: 20px;
+  z-index: 100;
+}
+
+.service-composition {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 50px;
+}
+
+.service-hand {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  width: 950px;
+  height: auto;
+  pointer-events: none;
+  z-index: 50;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+}
+
+.service-fanned-cards {
+  position: absolute;
+  width: 700px;
+  height: 450px;
+  bottom: 150px;
+  left: 60%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.service-sub-card {
+  width: 130px;
+  height: 180px;
+  background: #1F073A;
+  border: 2px solid #d4af37;
+  border-radius: 8px;
+  padding: 15px;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: absolute;
+  transform-origin: bottom center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  /* transition removed */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.service-sub-card span {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: #fcf6ba;
+  line-height: 1.2;
+}
+
+.service-sub-card:hover {
+  filter: brightness(1.2);
+  /* transform removed */
+  z-index: 50 !important;
+  border-color: #fcf6ba;
+}
+
+.card-1 { left: 4%; bottom: 100px; transform: rotate(-55deg); }
+.card-2 { left: 18%; bottom: 180px; transform: rotate(-30deg); }
+.card-3 { left: 35%; bottom: 230px; transform: rotate(-10deg); }
+.card-4 { left: 53%; bottom: 230px; transform: rotate(15deg); }
+
+/* Play Page Styles Fix (ensuring no conflict) */
+.play-page .logo-header { display: none !important; }
+
+/* Home Page Layout Shift to make room for character in bottom right */
+@media (min-width: 769px) {
+  .home-page .game-container {
+    transform: translateX(-8%); /* Shift the entire gold frame left */
+  }
+
+  /* Keep internal items centered to the frame now that the frame itself moved */
+  .home-page .logo-header {
+    left: 50%;
+  }
+
+  .home-page .hand-presentation,
+  .home-page .cards-container {
+    left: 0;
+  }
+
+  /* Just nudging the gradient slightly to keep the "light" focus centered on the shifted stage */
+  .home-page .game-container {
+    background: radial-gradient(circle at 50% 40%, #2e1052 0%, #150626 50%, #0a0212 100%);
+  }
+
+  .home-page .sparkle.right {
+    right: 15%; /* Nudge sparkle slightly so it's not too far right outside frame area */
+  }
+}
+
+

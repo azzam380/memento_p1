@@ -761,3 +761,323 @@ body {
 }
 
 
+
+/* Work Detail Page Styles */
+.detail-view {
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 40px;
+}
+
+.detail-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  position: relative;
+}
+
+.detail-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 4.5rem;
+  color: #fcf6ba;
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+  margin-bottom: 20px;
+  z-index: 10;
+}
+
+.detail-main {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 350px;
+}
+
+.content-placeholder {
+  width: 60%;
+  aspect-ratio: 16 / 9;
+  background: #cccccc; /* Gray box like in image */
+  border-radius: 8px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+}
+
+.detail-description {
+  width: 80%;
+  margin-top: 30px;
+  text-align: center;
+  z-index: 10;
+}
+
+.detail-description p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .detail-title { font-size: 2.5rem; }
+  .content-placeholder { width: 90%; }
+  .detail-description p { font-size: 1rem; }
+}
+
+/* Card Pointer */
+.work-card {
+  cursor: pointer;
+}
+
+.info-panel-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: 20px; /* Match game-container radius to clip exactly at the border */
+  z-index: 900;
+}
+
+.info-sliding-panel {
+  pointer-events: auto; /* Re-enable pointer events for the panel */
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 48%; /* Adjust width to match image ratio better */
+  height: 85%;
+  background: #3c0993; /* Slightly lighter purple/blue from the image */
+  border-top-left-radius: 80px;
+  box-shadow: -20px -20px 60px rgba(0,0,0,0.6);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: 80px 40px 40px 40px;
+  overflow: visible;
+}
+
+.panel-close-handle {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background: #3c0993;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #fcf6ba;
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+  z-index: 1010;
+  transition: all 0.3s ease;
+}
+
+.panel-close-handle:hover {
+  transform: translateX(-50%) scale(1.1);
+  color: #ffffff;
+}
+
+.panel-close-handle svg {
+  width: 25px;
+  height: 25px;
+}
+
+.panel-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: #fcf6ba;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Map Style */
+.map-placeholder {
+  width: 100%;
+  background: #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 25px;
+  aspect-ratio: 4 / 3;
+}
+
+.info-map-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.address-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  color: #fcf6ba; /* light gold like labels */
+  text-align: center;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* Contact Form Style */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #fcf6ba;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+}
+
+.form-group input, 
+.form-group textarea {
+  background: white;
+  border: none;
+  border-radius: 12px;
+  padding: 15px 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #333;
+}
+
+.form-group textarea {
+  height: 140px;
+  resize: none;
+}
+
+.submit-contact-btn {
+  margin-top: 15px;
+  background: #2e1052;
+  color: #fcf6ba;
+  border: none;
+  border-radius: 15px;
+  padding: 18px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.submit-contact-btn:hover {
+  background: #4a1d82;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+/* Transitions */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+@media (max-width: 768px) {
+  .info-sliding-panel {
+    width: 90%;
+    height: 90%;
+    right: 5%;
+    border-top-right-radius: 80px;
+  }
+}
+
+/* Service Sliding Panel Styles */
+.service-panel-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: 20px;
+  z-index: 1000;
+}
+
+.service-sliding-panel {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 80%;
+  background: #3c0993;
+  border-top-left-radius: 60px;
+  border-top-right-radius: 60px;
+  box-shadow: 0 -10px 50px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  padding: 60px 40px 30px 40px;
+  z-index: 1000;
+}
+
+.service-panel-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.service-detail-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  color: #fcf6ba;
+  text-align: center;
+  margin-bottom: 25px;
+  text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+.service-description-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 15px;
+  padding-bottom: 20px;
+}
+
+.service-description-scrollable p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-align: justify;
+}
+
+/* Custom Scrollbar for Service Panel */
+.service-description-scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.service-description-scrollable::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+}
+
+.service-description-scrollable::-webkit-scrollbar-thumb {
+  background: #fcf6ba;
+  border-radius: 10px;
+}
+
+.service-sub-card {
+  cursor: pointer;
+}

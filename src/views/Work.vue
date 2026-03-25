@@ -19,13 +19,13 @@
         <div class="work-gallery">
           <div class="hands-structure">
             <img src="/tangan_work.png" alt="Working Hands" class="work-hands-combined">
-            <div class="work-card central"></div>
+            <div @click="goToDetail(1)" class="work-card central"></div>
           </div>
 
-          <div class="work-card extra card-pos-1"></div>
-          <div class="work-card extra card-pos-2"></div>
-          <div class="work-card extra card-pos-3"></div>
-          <div class="work-card extra card-pos-4"></div>
+          <div @click="goToDetail(2)" class="work-card extra card-pos-1"></div>
+          <div @click="goToDetail(3)" class="work-card extra card-pos-2"></div>
+          <div @click="goToDetail(4)" class="work-card extra card-pos-3"></div>
+          <div @click="goToDetail(5)" class="work-card extra card-pos-4"></div>
         </div>
       </div>
     </div>
@@ -34,6 +34,13 @@
 
 <script setup>
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const goToDetail = (id) => {
+  router.push(`/work/${id}`);
+};
 
 onMounted(() => {
   console.log("Work page mounted!");

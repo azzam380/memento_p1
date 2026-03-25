@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import Play from '../views/Play.vue'
 import Info from '../views/Info.vue'
 import Work from '../views/Work.vue'
+import WorkDetail from '../views/WorkDetail.vue'
 import Service from '../views/Service.vue'
 
 const routes = [
@@ -20,6 +21,11 @@ const routes = [
     path: '/work',
     name: 'Work',
     component: Work
+  },
+  {
+    path: '/work/:id',
+    name: 'WorkDetail',
+    component: WorkDetail
   },
   {
     path: '/play',

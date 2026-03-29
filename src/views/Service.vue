@@ -1,80 +1,94 @@
 <template>
   <div class="service-page">
     <div class="game-container">
-      <router-link to="/" class="back-button">
+      <router-link to="/" class="back-button" v-if="!activeCard">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
       </router-link>
 
-      <div class="service-content-wrapper">
-        <h1 class="service-page-title">{{ pageTitle }}</h1>
+      <div class="service-content-wrapper" :class="{ 'has-active-card': activeCard }">
+        <h1 class="service-page-title" v-if="!activeCard">{{ pageTitle }}</h1>
 
         <div class="service-composition">
-          <img src="/Tanngan_service.png" alt="Hand Support" class="service-hand">
+          <!-- Hand Asset -->
+          <img src="/Tanngan_service.png" alt="Hand Support" class="service-hand" ref="handRef">
           
           <div class="service-fanned-cards">
-            <div @click="openServicePanel('Games For Marketing')" class="service-sub-card card-1">
-              <span>Games For Marketing</span>
-            </div>
-            <div @click="openServicePanel('Games For Education')" class="service-sub-card card-2">
-              <span>Games For Education</span>
-            </div>
-            <div @click="openServicePanel('Games For Training')" class="service-sub-card card-3">
-              <span>Games For Training</span>
-            </div>
-            <div @click="openServicePanel('Interactive Brand Experience')" class="service-sub-card card-4">
-              <span>Interactive Brand Experience</span>
-            </div>
-          </div>
-        </div>
-      </div>
+            <div 
+              v-for="(card, index) in cards" 
+              :key="index"
+              class="service-sub-card"
+              :class="['card-' + (index + 1), { 'is-expanded': activeCard?.title === card.title, 'is-hidden': activeCard && activeCard.title !== card.title }]"
+              @click="expandCard(card)"
+            >
+              <!-- Back arrow inside expanded card -->
+              <div v-if="activeCard?.title === card.title" class="card-back-arrow" @click.stop="activeCard = null">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </div>
 
-      <!-- Sliding Panel Viewport -->
-      <div class="service-panel-viewport">
-        <transition name="slide-up">
-          <div v-if="isPanelOpen" class="service-sliding-panel">
-            <div class="panel-close-handle" @click="closePanel">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </div>
-
-            <div class="service-panel-content">
-              <h2 class="service-detail-title">{{ activeService }}</h2>
-              <div class="service-description-scrollable">
-                <p v-for="i in 5" :key="i">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-                  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-                  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
+              <div class="service-card-inner">
+                <span v-if="!activeCard">{{ card.title }}</span>
+                
+                <div v-if="activeCard?.title === card.title" class="service-expanded-content">
+                  <h2 class="expanded-service-title">{{ card.title }}</h2>
+                  <div class="expanded-service-desc">
+                    <p>{{ card.description }}</p>
+                    <p>Experience the future of interactive solutions with Memento Game Studio. We combine cutting-edge technology with world-class design to deliver experiences that leave a lasting impression.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </transition>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
+import gsap from 'gsap';
 
 const route = useRoute();
 const pageTitle = computed(() => route.query.title || 'Service');
+const handRef = ref(null);
+const activeCard = ref(null);
 
-const isPanelOpen = ref(false);
-const activeService = ref('');
+const cards = ref([
+  { title: 'Games For Marketing', description: 'Gamification is the most effective way to engage your audience. We create bespoke marketing games that increase brand loyalty and conversion rates.' },
+  { title: 'Games For Education', description: 'Transform learning into an adventure. Our educational games are designed to make complex topics easy to understand and fun to explore.' },
+  { title: 'Games For Training', description: 'Enhance professional skills with realistic simulations. Our training games provide a safe and immersive environment for employees to practice and excel.' },
+  { title: 'Interactive Brand Experience', description: 'Create a memorable connection with your audience through immersive digital installations and interactive storytelling.' }
+]);
 
-const openServicePanel = (title) => {
-  activeService.value = title;
-  isPanelOpen.value = true;
+const expandCard = (card) => {
+  if (!activeCard.value) activeCard.value = card;
 };
 
-const closePanel = () => {
-  isPanelOpen.value = false;
+const handleMouseMove = (e) => {
+  if (!handRef.value || activeCard.value) return;
+
+  const { innerWidth, innerHeight } = window;
+  const x = (e.clientX / innerWidth - 0.5) * 30; 
+  const y = (e.clientY / innerHeight - 0.5) * 30;
+
+  gsap.to(handRef.value, {
+    x: x,
+    y: y,
+    duration: 1.2,
+    ease: "power2.out"
+  });
 };
+
+onMounted(() => {
+  window.addEventListener('mousemove', handleMouseMove);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', handleMouseMove);
+});
 </script>

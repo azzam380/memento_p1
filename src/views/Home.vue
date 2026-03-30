@@ -5,7 +5,6 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const handBackRef = ref(null);
-const handFrontRef = ref(null);
 const sparkleLeftRef = ref(null);
 const sparkleRightRef = ref(null);
 
@@ -13,14 +12,16 @@ let handAnimation;
 let idleAnimation;
 
 function startIdleAnimation() {
-  if (handBackRef.value && handFrontRef.value) {
-    gsap.set([handBackRef.value, handFrontRef.value], { 
+  if (handBackRef.value) {
+    const asset = handBackRef.value.querySelector('.hand-asset');
+    gsap.set(asset, { 
       rotation: 0,
       x: 0,
-      y: 0
+      y: 0,
+      scale: 1
     });
     
-    idleAnimation = gsap.to([handBackRef.value, handFrontRef.value], {
+    idleAnimation = gsap.to(asset, {
       y: 8,
       rotation: 2,
       duration: 4,
@@ -33,18 +34,17 @@ function startIdleAnimation() {
 
 function pointHandAt(element) {
   if (idleAnimation) idleAnimation.pause();
-  if (!handBackRef.value || !handFrontRef.value) return;
+  if (!handBackRef.value) return;
 
-  // 1. Ambil posisi kartu yang sedang di-hover
   const cardRect = element.getBoundingClientRect();
   const cardCenterX = cardRect.left + cardRect.width / 2;
   const cardCenterY = cardRect.top + cardRect.height / 2;
 
-  // 2. Ambil posisi tangan (sebagai pivot)
-  // Kita gunakan handBackRef sebagai referensi posisi asal
-  const handRect = handBackRef.value.getBoundingClientRect();
-  const handPivotX = handRect.left + handRect.width / 2;
-  const handPivotY = handRect.top; // Karena transform-origin kita di 50% 0%
+  // Stable pivot: Top center of the game container
+  const container = document.querySelector('.game-container');
+  const containerRect = container.getBoundingClientRect();
+  const handPivotX = containerRect.left + containerRect.width / 2;
+  const handPivotY = containerRect.top + 20; // Slight offset from top border
 
   // 3. Hitung selisih jarak
   const dx = cardCenterX - handPivotX;
@@ -55,14 +55,12 @@ function pointHandAt(element) {
   // Kita gunakan -Math.atan2(dx, dy) karena arah koordinat layar Y ke bawah.
   let angleDeg = -(Math.atan2(dx, dy) * (180 / Math.PI));
 
-  // Matikan animasi yang sedang berjalan agar tidak tabrakan
   if (handAnimation) handAnimation.kill();
 
-  handAnimation = gsap.to([handBackRef.value, handFrontRef.value], {
+  handAnimation = gsap.to(handBackRef.value.querySelector('.hand-asset'), {
     rotation: angleDeg,
-    x: dx * 0.15, // Memberikan sedikit efek translasi agar lebih dinamis
-    y: 0,
-    duration: 0.6,
+    x: dx * 0.1, 
+    duration: 0.5,
     ease: "power2.out",
     overwrite: true
   });
@@ -70,14 +68,13 @@ function pointHandAt(element) {
 
 function resetHand() {
   if (handAnimation) handAnimation.kill();
+  if (!handBackRef.value) return;
   
-  if (!handBackRef.value || !handFrontRef.value) return;
-  
-  handAnimation = gsap.to([handBackRef.value, handFrontRef.value], {
+  handAnimation = gsap.to(handBackRef.value.querySelector('.hand-asset'), {
     rotation: 0,
     x: 0,
     y: 0,
-    duration: 0.8,
+    duration: 0.6,
     ease: "power2.inOut",
     onComplete: () => {
       if (idleAnimation) idleAnimation.play();
@@ -133,65 +130,61 @@ const handleCardClick = (event, id) => {
   const card = event.currentTarget;
   if (!card) return;
 
-  // 1. Matikan semua animasi yang berjalan
+  // 1. Bersihkan sisa-sisa animasi sebelumnya
   if (handAnimation) handAnimation.kill();
   if (idleAnimation) idleAnimation.pause();
-  gsap.killTweensOf([handBackRef.value, handFrontRef.value, card]);
+  gsap.killTweensOf([handBackRef.value, card]);
   
+  // 2. Matikan interaksi dan paksa hentikan transition CSS agar tidak beradu dengan GSAP
   card.style.pointerEvents = 'none';
+  card.style.transition = 'none'; // Matikan transition paksa agar sinkron dengan GSAP
+  
   const title = card.querySelector('.card-title')?.textContent || "";
   
-  // 2. Kalkulasi posisi
-  const handRect = handBackRef.value.getBoundingClientRect();
+  // 3. Kalkulasi jarak absolut untuk perpindahan
   const cardRect = card.getBoundingClientRect();
   const cardCenterX = cardRect.left + cardRect.width / 2;
   const cardCenterY = cardRect.top + cardRect.height / 2;
 
-  const tl = gsap.timeline();
-
-  // 3. ANIMASI: Kartu ke tengah Logo (Targeting Top Center Logo)
-  const logoHeader = document.querySelector('.logo-header');
-  const logoRect = logoHeader ? logoHeader.getBoundingClientRect() : handRect;
-  const targetX = logoRect.left + logoRect.width / 2;
-  const targetY = logoRect.top + logoRect.height / 2;
+  const handRect = handBackRef.value.getBoundingClientRect();
+  const targetX = handRect.left + handRect.width / 2;
+  const targetY = handRect.top + handRect.height * 0.45; // Titik genggam tangan
   
   const diffX = cardCenterX - targetX;
   const diffY = cardCenterY - targetY;
 
+  const tl = gsap.timeline();
+
+  // 4. ANIMASI: Tarik kartu ke arah tangan dalam bentuk penuh
   tl.to(card, {
     x: `-=${diffX}`,
-    y: `-=${diffY}`, // Terbang ke tengah logo
-    rotation: 0, // Melurus saat ditangkap logo/tangan
-    scale: 1.1,
+    y: `-=${diffY}`,
+    rotation: 0,
+    scale: 1.05, // Sedikit membesar agar terlihat "diangkat" mendekat
     duration: 0.5,
-    ease: "power2.inOut",
+    ease: "power3.out", // Pergerakan yang mantap ke arah tangan
     onStart: () => {
-      card.classList.add('is-grasped');
+      // Atur z-index agar kartu terlihat terbang di depan sebelum masuk ke sela tangan
+      gsap.set(card, { zIndex: 1000 });
     },
     onComplete: () => {
       createSparkleBurst(card);
+      // Masukkan kartu ke sela-sela tangan (di bawah layer tangan depan)
+      card.classList.add('is-grasped'); // z-index 150
     }
   });
 
-  // 4. ANIMASI: Kartu masuk lebih jauh ke belakang logo
-  tl.to(card, {
-    y: "-=200", 
-    scale: 0.3, 
-    opacity: 0,
-    duration: 0.3,
-    ease: "power2.in"
-  }, "+=0.05");
-
-  // Tangan tetap sinkron, beri getaran kecil saat "menelan" kartu
-  tl.to([handBackRef.value, handFrontRef.value], {
-    scale: 1.05,
-    duration: 0.1,
-    repeat: 1,
+  // Reaksi Tangan saat menangkap kartu (seperti gerakan menyambar)
+  tl.to(handBackRef.value.querySelector('.hand-asset'), {
+    scale: 1.1,
+    y: -10,
+    duration: 0.2,
     yoyo: true,
-    ease: "power2.inOut"
-  }, "-=0.4");
+    repeat: 1,
+    ease: "back.out(2)"
+  }, "-=0.3");
 
-  // 5. Pindah Halaman
+  // 5. Navigasi setelah jeda singkat saat kartu tertahan di tangan
   setTimeout(() => {
     const routes = { play: '/play', work: '/work', info: '/info', solution: '/service' };
     if (id === 'solution') {
@@ -199,7 +192,7 @@ const handleCardClick = (event, id) => {
     } else {
       router.push(routes[id] || '/');
     }
-  }, 800);
+  }, 1000); // Jeda sedikit lebih lama agar user bisa melihat kartu dipegang
 };
 
 onMounted(() => {
@@ -226,9 +219,9 @@ onUnmounted(() => {
         </div>
       </header>
 
-      <!-- Back Layer Hand -->
-      <div class="hand-layer back">
-        <img src="/tangan belakang.png" alt="Hand Back" class="hand-asset" ref="handBackRef">
+      <!-- Hand Layer Container -->
+      <div class="hand-layer back" ref="handBackRef">
+        <img src="/Tangan_tengah.png" alt="Hand Asset" class="hand-asset">
       </div>
 
       <div class="cards-container">
@@ -265,11 +258,7 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-
-      <!-- Front Layer Hand -->
-      <div class="hand-layer front">
-        <img src="/tangan depan.png" alt="Hand Front" class="hand-asset" ref="handFrontRef">
-      </div>
     </div>
   </div>
 </template>
+ 

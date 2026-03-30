@@ -1,10 +1,17 @@
 <template>
-  <router-view />
+  <div class="app-root">
+    <SocialIcons />
+    <router-view />
+    <footer class="site-footer">
+      © 2024. All rights reserved.
+    </footer>
+  </div>
 </template>
 
 <script setup>
-import { watch } from 'vue';
+import { watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import SocialIcons from './components/SocialIcons.vue';
 
 const route = useRoute();
 

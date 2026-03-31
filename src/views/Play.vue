@@ -2,6 +2,121 @@
 import { onMounted, ref } from 'vue';
 import gsap from 'gsap';
 
+const activeGame = ref(null);
+const randomizedCards = ref([]);
+const showScore = ref(false);
+const timerSeconds = ref(0);
+const gameScore = ref(0);
+let timerInterval = null;
+
+const startTimer = () => {
+  timerSeconds.value = 0;
+  timerInterval = setInterval(() => {
+    timerSeconds.value++;
+  }, 1000);
+};
+
+const stopTimer = () => {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+};
+
+const formatTime = (seconds) => {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+};
+
+const calculateScore = () => {
+  let totalCells = 0;
+  let correctCells = 0;
+  
+  activeGame.value.grid.forEach(row => {
+    row.forEach(cell => {
+      if (cell) {
+        totalCells++;
+        if (cell.value.toUpperCase() === cell.answer) {
+          correctCells++;
+        }
+      }
+    });
+  });
+  
+  gameScore.value = Math.round((correctCells / totalCells) * 100);
+  showScore.value = true;
+};
+
+const finishGame = () => {
+  stopTimer();
+  calculateScore();
+};
+
+const resetToArena = () => {
+  activeGame.value = null;
+  showScore.value = false;
+  randomizedCards.value = shuffleArray(ttsData);
+};
+
+const ttsData = [
+  {
+    id: 1, title: 'Quest 1', difficulty: 'Beginner', 
+    gridSize: 10,
+    words: [
+      { id: 1, number: 1, clue: 'Silent protagonist of Metal Gear', answer: 'SNAKE', x: 1, y: 1, dir: 'across' },
+      { id: 1, number: 1, clue: 'The fastest blue hedgehog', answer: 'SONIC', x: 1, y: 1, dir: 'down' },
+      { id: 4, number: 4, clue: 'Automata game series', answer: 'NIER', x: 1, y: 3, dir: 'across' },
+      { id: 3, number: 3, clue: 'The Ring of the _____ Lord', answer: 'ELDEN', x: 5, y: 1, dir: 'down' },
+      { id: 5, number: 5, clue: 'Path of _____, popular ARPG', answer: 'EXILE', x: 5, y: 4, dir: 'across' }
+    ]
+  },
+  {
+    id: 2, title: 'Quest 2', difficulty: 'Mage',
+    gridSize: 10,
+    words: [
+      { id: 1, number: 1, clue: 'Half-Life protagonist Mr. Freeman', answer: 'GORDON', x: 1, y: 1, dir: 'across' },
+      { id: 1, number: 1, clue: 'The White Wolf from Witcher', answer: 'GERALT', x: 1, y: 1, dir: 'down' },
+      { id: 2, number: 2, clue: 'Lord of Terror from Blizzard', answer: 'DIABLO', x: 4, y: 1, dir: 'down' },
+      { id: 4, number: 4, clue: 'Aloy from Horizon series', answer: 'ALOY', x: 1, y: 4, dir: 'down' },
+      { id: 3, number: 3, clue: 'Common group combat in RPGs', answer: 'BATTLE', x: 4, y: 4, dir: 'across' }
+    ]
+  },
+  {
+    id: 3, title: 'Quest 3', difficulty: 'Legendary',
+    gridSize: 10,
+    words: [
+      { id: 1, number: 1, clue: 'Steam platform creator company', answer: 'VALVE', x: 2, y: 1, dir: 'across' },
+      { id: 1, number: 1, clue: 'Darksiders protagonist group', answer: 'VIGIL', x: 2, y: 1, dir: 'down' },
+      { id: 2, number: 2, clue: 'Assassin from Auditore family', answer: 'EZIO', x: 6, y: 1, dir: 'down' },
+      { id: 3, number: 3, clue: 'EA\'s game distribution platform', answer: 'ORIGIN', x: 0, y: 4, dir: 'across' },
+      { id: 4, number: 4, clue: 'Hero of Hyrule Princess', answer: 'ZELDA', x: 5, y: 2, dir: 'across' }
+    ]
+  },
+  {
+    id: 4, title: 'Quest 4', difficulty: 'Mythic',
+    gridSize: 10,
+    words: [
+      { id: 1, number: 1, clue: 'Popular multi-platform engine', answer: 'UNITY', x: 1, y: 1, dir: 'across' },
+      { id: 1, number: 1, clue: 'Epic Games\' flagship engine', answer: 'UNREAL', x: 1, y: 1, dir: 'down' },
+      { id: 2, number: 2, clue: 'The Fall of _____ FPS game', answer: 'TITAN', x: 4, y: 1, dir: 'down' },
+      { id: 3, number: 3, clue: 'Zone or location in game worlds', answer: 'AREA', x: 0, y: 3, dir: 'across' },
+      { id: 4, number: 4, clue: 'Iron Fist tournament fighter', answer: 'TEKKEN', x: 4, y: 3, dir: 'down' }
+    ]
+  },
+  {
+    id: 5, title: 'Quest 5', difficulty: 'Ultimate',
+    gridSize: 10,
+    words: [
+      { id: 1, number: 1, clue: 'Retro video game hall', answer: 'ARCADE', x: 1, y: 1, dir: 'across' },
+      { id: 1, number: 1, clue: 'User\'s virtual representative', answer: 'AVATAR', x: 1, y: 1, dir: 'down' },
+      { id: 2, number: 2, clue: 'Valve\'s competitive MOBA', answer: 'DOTA', x: 5, y: 1, dir: 'down' },
+      { id: 3, number: 3, clue: 'Vintage or classic style gaming', answer: 'RETRO', x: 0, y: 3, dir: 'across' },
+      { id: 4, number: 4, clue: 'Street Fighter brute hero', answer: 'AKUMA', x: 5, y: 4, dir: 'across' }
+    ]
+  }
+];
+
 const cardsRef = ref([]);
 
 const createSparkleBurst = (card) => {
@@ -10,14 +125,8 @@ const createSparkleBurst = (card) => {
   card.appendChild(container);
 
   const directions = [
-    { x: 0, y: -180 },   // Top
-    { x: 0, y: 180 },    // Bottom
-    { x: 180, y: 0 },    // Right
-    { x: -180, y: 0 },   // Left
-    { x: 140, y: -140 }, // Top-Right
-    { x: -140, y: -140 },// Top-Left
-    { x: 140, y: 140 },  // Bottom-Right
-    { x: -140, y: 140 }  // Bottom-Left
+    { x: 0, y: -180 }, { x: 0, y: 180 }, { x: 180, y: 0 }, { x: -180, y: 0 },
+    { x: 140, y: -140 }, { x: -140, y: -140 }, { x: 140, y: 140 }, { x: -140, y: 140 }
   ];
 
   directions.forEach(dir => {
@@ -28,29 +137,50 @@ const createSparkleBurst = (card) => {
     container.appendChild(particle);
   });
 
-  setTimeout(() => {
-    container.remove();
-  }, 1000);
+  setTimeout(() => { container.remove(); }, 1000);
 };
 
-const handleCardClick = (event, index) => {
+const handleCardClick = (event, game) => {
   const card = event.currentTarget;
   createSparkleBurst(card);
-  
-  // Pressed effect
-  gsap.to(card, {
+    gsap.to(card, {
     scale: 0.95,
     duration: 0.1,
     yoyo: true,
     repeat: 1,
-    ease: "power2.inOut"
+    ease: "power2.inOut",
+    onComplete: () => {
+      const grid = Array(game.gridSize).fill().map(() => Array(game.gridSize).fill(null));
+      
+      game.words.forEach(word => {
+        for (let i = 0; i < word.answer.length; i++) {
+          const r = word.dir === 'down' ? word.y + i : word.y;
+          const c = word.dir === 'across' ? word.x + i : word.x;
+          if (!grid[r][c]) {
+            grid[r][c] = { value: '', answer: word.answer[i], number: i === 0 ? word.number : null };
+          } else if (i === 0) {
+            grid[r][c].number = word.number;
+          }
+        }
+      });
+
+      activeGame.value = { ...game, grid };
+      startTimer();
+    }
   });
-  
-  console.log(`Card ${index} clicked`);
+};
+
+const shuffleArray = (array) => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
 };
 
 onMounted(() => {
-  console.log("Play page mounted!");
+  randomizedCards.value = shuffleArray(ttsData);
 });
 </script>
 
@@ -68,38 +198,429 @@ onMounted(() => {
       </div>
     </header>
 
-    <div class="play-content-wrapper">
+    <div class="play-content-wrapper" v-if="!activeGame">
       <h1 class="play-title">Play</h1>
 
       <div class="play-carousel">
         <div 
-          class="play-card side-outer left" 
-          @click="(e) => handleCardClick(e, 0)"
-        ></div>
-        <div 
-          class="play-card side-inner left" 
-          @click="(e) => handleCardClick(e, 1)"
-        ></div>
-        <div 
-          class="play-card central-focus" 
-          @click="(e) => handleCardClick(e, 2)"
-        ></div>
-        <div 
-          class="play-card side-inner right" 
-          @click="(e) => handleCardClick(e, 3)"
-        ></div>
-        <div 
-          class="play-card side-outer right" 
-          @click="(e) => handleCardClick(e, 4)"
-        ></div>
+          v-for="(game, index) in randomizedCards" 
+          :key="game.id"
+          class="play-card" 
+          :class="[
+            index === 0 ? 'side-outer left' : '',
+            index === 1 ? 'side-inner left' : '',
+            index === 2 ? 'central-focus' : '',
+            index === 3 ? 'side-inner right' : '',
+            index === 4 ? 'side-outer right' : ''
+          ]"
+          @click="(e) => handleCardClick(e, game)"
+        >
+          <div class="play-card-inner">
+            <span class="difficulty-label">{{ game.difficulty }}</span>
+            <span class="game-title">{{ game.title }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TTS GAME UI (REAL GRID) -->
+    <div class="tts-game-container" v-else-if="!showScore">
+      <div class="tts-back-header">
+        <div class="header-left">
+          <button class="tts-back-btn" @click="activeGame = null; stopTimer()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Back To Arena
+          </button>
+          <div class="game-timer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            {{ formatTime(timerSeconds) }}
+          </div>
+        </div>
+        <h2 class="tts-level-title">{{ activeGame.title }} - {{ activeGame.difficulty }}</h2>
+        <button class="finish-game-btn" @click="finishGame">
+          Finish Game
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </button>
+      </div>
+
+      <div class="tts-layout">
+        <div class="tts-grid-wrapper">
+          <div 
+            class="tts-real-grid" 
+            :style="{ 
+              gridTemplateColumns: `repeat(${activeGame.gridSize}, 1fr)`,
+              gridTemplateRows: `repeat(${activeGame.gridSize}, 1fr)`
+            }"
+          >
+            <template v-for="(row, r) in activeGame.grid" :key="r">
+              <div 
+                v-for="(cell, c) in row" 
+                :key="c" 
+                class="grid-cell"
+                :class="{ 'empty': !cell }"
+              >
+                <template v-if="cell">
+                  <span class="cell-num" v-if="cell.number">{{ cell.number }}</span>
+                  <input 
+                    type="text" 
+                    maxlength="1" 
+                    v-model="cell.value"
+                    class="cell-input"
+                    :class="{ 'correct': cell.value.toUpperCase() === cell.answer }"
+                  >
+                </template>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="tts-clues-side">
+          <div class="clues-section">
+            <h3 class="clues-header">Across</h3>
+            <div class="clues-list">
+              <div v-for="word in activeGame.words.filter(w => w.dir === 'across')" :key="word.id" class="clue-item">
+                <span class="clue-number">{{ word.number }}</span>
+                <span class="clue-text">{{ word.clue }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="clues-section">
+            <h3 class="clues-header">Down</h3>
+            <div class="clues-list">
+              <div v-for="word in activeGame.words.filter(w => w.dir === 'down')" :key="word.id" class="clue-item">
+                <span class="clue-number">{{ word.number }}</span>
+                <span class="clue-text">{{ word.clue }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCORE SUMMARY VIEW -->
+    <div class="score-summary-container" v-else>
+      <div class="score-card">
+        <h2 class="score-title" :class="gameScore === 100 ? 'success' : 'fail'">
+          {{ gameScore === 100 ? 'Quest Complete!' : 'Quest Failed' }}
+        </h2>
+        
+        <div class="score-circle">
+          <span class="score-value">{{ gameScore }}%</span>
+          <span class="score-label">Accuracy</span>
+        </div>
+
+        <div class="score-details">
+          <div class="score-detail-item">
+            <span class="detail-label">Time Taken</span>
+            <span class="detail-value">{{ formatTime(timerSeconds) }}</span>
+          </div>
+          <div class="score-detail-item">
+            <span class="detail-label">Difficulty</span>
+            <span class="detail-value">{{ activeGame.difficulty }}</span>
+          </div>
+        </div>
+
+        <button class="arena-btn" @click="resetToArena">
+          Return To Arena
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Scoped style if needed, but the main CSS covers most of it.
-   Note: scoped CSS will add attributes, but the user wants to keep the same classes.
-   So I'll just import style.css globally in main.js.
-*/
+.play-card-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  pointer-events: none;
+}
+
+.difficulty-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #bf953f;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.game-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+.tts-game-container {
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  padding: 40px;
+}
+
+.tts-back-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.tts-back-btn {
+  background: rgba(26, 11, 46, 0.6);
+  border: 1px solid var(--accent-gold);
+  border-radius: 30px;
+  padding: 10px 25px;
+  color: var(--accent-gold);
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tts-back-btn:hover {
+  background: var(--accent-gold);
+  color: #1a0b2e;
+}
+
+.tts-back-btn svg { width: 20px; }
+
+.tts-level-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: #fcf6ba;
+  margin: 0;
+}
+
+.tts-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 60px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tts-grid-wrapper {
+  background: rgba(13, 2, 22, 0.4);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tts-real-grid {
+  display: grid;
+  gap: 2px;
+  background: var(--accent-gold); /* Grid line color */
+  border: 4px solid var(--accent-gold);
+  width: 500px;
+  height: 500px;
+}
+
+.grid-cell {
+  background: #0d0216; /* Black/Dark cells */
+  position: relative;
+}
+
+.grid-cell.empty {
+  background: #0d0216;
+}
+
+.cell-num {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 0.65rem;
+  color: var(--accent-gold);
+  z-index: 10;
+  font-weight: bold;
+}
+
+.cell-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #1a0b2e; /* Playable cells in purple */
+  color: white;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.cell-input:focus {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.cell-input.correct {
+  color: var(--accent-gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.clues-section {
+  margin-bottom: 30px;
+}
+
+.clues-header {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--accent-gold);
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.clue-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.game-timer {
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  padding: 8px 15px;
+  border-radius: 20px;
+  color: var(--accent-gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+}
+
+.game-timer svg { width: 18px; }
+
+.finish-game-btn {
+  background: var(--accent-gold);
+  color: #1a0b2e;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 30px;
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.finish-game-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+.finish-game-btn svg { width: 18px; }
+
+/* SCORE SUMMARY STYLES */
+.score-summary-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.score-card {
+  background: rgba(26, 11, 46, 0.9);
+  border: 2px solid var(--accent-gold);
+  border-radius: 24px;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+}
+
+.score-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+.score-title.success { color: #4ade80; }
+.score-title.fail { color: #f87171; }
+
+.score-circle {
+  width: 180px;
+  height: 180px;
+  border: 5px solid var(--accent-gold);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+}
+
+.score-value {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+}
+
+.score-label {
+  font-size: 0.9rem;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.score-details {
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+.score-detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.detail-label { color: rgba(255, 255, 255, 0.6); }
+.detail-value { color: white; font-weight: bold; }
+
+.arena-btn {
+  background: transparent;
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  padding: 15px 40px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.arena-btn:hover {
+  background: var(--accent-gold);
+  color: #1a0b2e;
+}
 </style>

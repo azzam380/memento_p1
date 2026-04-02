@@ -215,13 +215,13 @@ onUnmounted(() => {
       
       <header class="logo-header">
         <div class="logo-badge">
-          <img src="/Logo5.png" alt="Memento Logo" class="main-logo-img">
+          <img src="/img-logo.png" alt="Memento Logo" class="main-logo-img">
         </div>
       </header>
 
       <!-- Hand Layer Container -->
       <div class="hand-layer back" ref="handBackRef">
-        <img src="/Tangan_tengah.png" alt="Hand Asset" class="hand-asset">
+        <img src="/img-hand-center.png" alt="Hand Asset" class="hand-asset">
       </div>
 
       <div class="cards-container">

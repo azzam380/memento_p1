@@ -12,7 +12,7 @@
 
         <div class="service-composition">
           <!-- Hand Asset -->
-          <img src="/Tanngan_service.png" alt="Hand Support" class="service-hand" ref="handRef">
+          <img src="/img-hand-service.png" alt="Hand Support" class="service-hand" ref="handRef">
           
           <div class="service-fanned-cards">
             <div 

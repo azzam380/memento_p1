@@ -19,7 +19,7 @@
 
             <div class="card-inner-layout">
               <div class="card-logo-section" :class="{ 'minimized': activePanel }">
-                <img src="/Memento.png" alt="Memento Logo" class="card-logo-large">
+                <img src="/img-memento.png" alt="Memento Logo" class="card-logo-large">
               </div>
 
               <transition name="fade-delayed">
@@ -41,7 +41,7 @@
                   <div v-if="activePanel === 'location'" class="detail-view-inner">
                     <h2 class="panel-title">Our location</h2>
                     <div class="map-placeholder">
-                      <img src="/Map_placeholder.png" alt="Map" class="info-map-img">
+                      <img src="/img-map-placeholder.png" alt="Map" class="info-map-img">
                     </div>
                     <p class="address-text">
                       Jalan Anggrek Cakra RW 09, Desa Kelurahan Kebon Jeruk, 

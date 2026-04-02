@@ -194,7 +194,7 @@ onMounted(() => {
 
     <header class="logo-header">
       <div class="logo-badge">
-        <img src="/Logo5.png" alt="Memento Logo" class="main-logo-img">
+        <img src="/img-logo.png" alt="Memento Logo" class="main-logo-img">
       </div>
     </header>
 

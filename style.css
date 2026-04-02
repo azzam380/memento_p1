@@ -4,9 +4,9 @@
   --accent-gold: #d4af37;
   --gold-gradient: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
   --purple-gradient: linear-gradient(to right, #8b5cf6, #d946ef);
-  --frame-width: 15px;
-  --card-width: 180px;
-  --card-height: 260px;
+  --frame-width: clamp(8px, 2vw, 15px);
+  --card-width: clamp(140px, 15vw, 200px);
+  --card-height: clamp(200px, 22vw, 280px);
 }
 
 * {
@@ -28,12 +28,13 @@ body {
 
 .game-container {
   position: relative;
-  width: 95vw;
-  height: 90vh;
+  width: 96vw;
+  height: 92vh;
+  margin: auto;
   max-width: 1400px;
-  max-height: 800px;
+  max-height: 900px;
   background: radial-gradient(circle at 50% 40%, #1a0b2e 0%, #0d0216 100%);
-  border: 10px solid var(--accent-gold); /* Thicker solid border, no space */
+  border: var(--frame-width) solid var(--accent-gold); 
   border-radius: 20px;
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(0, 0, 0, 0.5), 0 20px 50px rgba(168, 85, 247, 0.3); 
   overflow: visible; 
@@ -41,7 +42,6 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 
 /* Bottom highlight bar like in the image circle */
@@ -72,19 +72,20 @@ body {
   top: 0;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  z-index: 500; /* Paling depan */
+  z-index: 500; 
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .logo-badge {
   background: #0d0216;
   border-radius: 12px;
-  width: 240px; 
-  height: 125px;
+  width: clamp(160px, 20vw, 240px); 
+  height: clamp(80px, 10vw, 125px);
   box-shadow: 0 15px 40px rgba(0,0,0,0.7);
-  border: 8px solid #130028;
+  border: clamp(4px, 1vw, 8px) solid #130028;
   padding: 0 !important;
   position: relative;
   overflow: hidden; 
@@ -94,9 +95,9 @@ body {
 }
 
 .main-logo-img {
-  width: 300px;
-  height: 125px;
-  object-fit: cover; /* Biar gambar full di kotak */
+  width: 120%;
+  height: 120%;
+  object-fit: contain; 
   display: block;
 }
 
@@ -109,7 +110,7 @@ body {
   top: 0; 
   left: 50%;
   transform: translateX(-50%);
-  width: 220px; /* Reduced from 160px to shrink the overall size */
+  width: clamp(140px, 25vw, 220px); 
   height: auto;
   pointer-events: none !important;
   display: flex;
@@ -161,13 +162,14 @@ body {
 /* Kartu tetap di bawah tangan */
 .cards-container {
   position: absolute;
-  bottom: 40px;
+  bottom: clamp(20px, 5vh, 40px);
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  z-index: 300; /* Naikkan lebih tinggi dari default tangan */
+  z-index: 300; 
   perspective: 1000px;
+  gap: clamp(10px, 5vw, 80px);
 }
 
 /* Work Page Styles */
@@ -226,7 +228,7 @@ body {
 }
 
 .work-hands-combined {
-  width: 900px;
+  width: min(100vw, 900px);
   height: auto;
 }
 
@@ -261,14 +263,15 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(0deg) scale(1) !important;
-  width: 1100px;
-  height: 600px;
+  width: min(90vw, 1100px);
+  height: min(80vh, 650px);
   z-index: 2000;
 }
 
 .work-card-wrapper.is-expanded .memento-card-work {
   border-radius: 15px;
   box-shadow: 0 40px 100px rgba(0,0,0,1), 0 0 50px rgba(212, 175, 55, 0.4);
+  height: 100%;
 }
 
 .work-card-wrapper.is-hidden {
@@ -314,9 +317,9 @@ body {
 
 .work-item-title {
   font-family: 'Playfair Display', serif;
-  font-size: 3.5rem;
+  font-size: clamp(2rem, 5vw, 3.5rem);
   color: #fcf6ba;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   text-transform: uppercase;
   letter-spacing: 4px;
 }
@@ -439,9 +442,9 @@ body {
 }
 
 .memento-card-large.is-expanded {
-  transform: rotate(0deg) scale(1.05); /* Slightly bigger focus */
-  width: 1100px;
-  height: 600px;
+  transform: rotate(0deg) scale(1);
+  width: min(90vw, 1100px);
+  height: min(80vh, 650px);
   z-index: 1000;
   cursor: default;
   box-shadow: 0 40px 100px rgba(0,0,0,1), 0 0 50px rgba(212, 175, 55, 0.4);
@@ -529,8 +532,8 @@ body {
 
 .info-title {
   font-family: 'Playfair Display', serif;
-  font-size: 5.5rem;
-  color: #fcf6ba; /* Ivory color like image */
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  color: #fcf6ba; 
   margin: 0 0 20px 0;
   font-weight: 300;
   text-shadow: 0 4px 15px rgba(0,0,0,0.5), 0 0 20px rgba(212, 175, 55, 0.2);
@@ -596,19 +599,71 @@ body {
     bottom: 10px;
   }
 }
+
 @media (max-width: 768px) {
+  .site-footer {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 10px;
+    width: 90%;
+    font-size: 0.75rem;
+  }
+}
+@media (max-width: 1024px) {
   .info-content {
-    grid-template-columns: 1fr;
-    text-align: center;
+    gap: 30px;
+    padding: 20px;
   }
   
   .memento-card-large {
-    width: 200px;
-    height: 300px;
+    width: 280px;
+    height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .info-content {
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+    gap: 20px;
+    padding: 20px;
   }
   
+  .info-actions-side {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .memento-card-large {
+    width: 200px;
+    height: 300px;
+    transform: rotate(0deg);
+  }
+
   .info-title {
-    font-size: 3rem;
+    font-size: 2.5rem;
+  }
+
+  .info-btn {
+    padding: 12px 40px;
+    font-size: 1.1rem;
+    width: 100%;
+  }
+
+  .card-inner-layout {
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .card-logo-section.minimized {
+    flex: 0 0 80px;
+  }
+
+  .card-logo-section.minimized .card-logo-large {
+    width: 60px;
   }
 }
 
@@ -704,25 +759,22 @@ body {
 }
 
 .card {
-  width: 200px;
-  height: 280px;
+  width: var(--card-width);
+  height: var(--card-height);
   background: #1F073A; 
-  border: 4px solid #d4af37; 
+  border: clamp(2px, 0.5vw, 4px) solid #d4af37; 
   border-radius: 12px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0 35px; /* Increased space between cards */
+  margin: 0; 
   transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
   box-shadow: 0 15px 40px rgba(0,0,0,0.8);
   position: relative;
   transform-style: preserve-3d;
-  cursor: pointer;
-  pointer-events: auto !important; /* Pastikan kartu menerima klik */
-  z-index: 100; 
-  position: relative;
+  pointer-events: auto !important;
 }
 
 .card.is-grasped {
@@ -805,24 +857,69 @@ body {
   filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
 }
 
-/* Mobile */
+/* Mobile Responsiveness for Cards */
 @media (max-width: 768px) {
   .logo-badge {
-    width: 140px;
-    height: 90px;
-    padding: 10px 20px;
-  }
-  .central-hand {
-    width: 320px;
-    top: 90px;
-  }
-  .card {
     width: 160px;
-    height: 240px;
-    margin: 0 -20px;
+    height: 80px;
   }
+  
+  .hand-layer {
+    width: 160px;
+  }
+
+  .cards-container {
+    bottom: 20px;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 20px;
+    height: auto;
+  }
+
+  .card {
+    width: 130px;
+    height: 180px;
+    margin: 5px;
+  }
+
+  .card:nth-child(1), .card:nth-child(2), .card:nth-child(3), .card:nth-child(4) {
+    transform: none;
+    translate: 0;
+  }
+
+  .card:hover {
+    transform: translateY(-20px) scale(1.05) !important;
+  }
+
+  .card-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+  }
+
   .card-title {
-    font-size: 1.2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cards-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 90%;
+    margin: 0 auto;
+    bottom: 10px;
+  }
+
+  .card {
+    width: 100%;
+    height: 150px;
+  }
+  
+  .logo-badge {
+    width: 140px;
+    height: 70px;
   }
 }
 
@@ -842,10 +939,10 @@ body {
 
 .play-title {
   font-family: 'Playfair Display', serif;
-  font-size: 5rem;
+  font-size: clamp(2.5rem, 10vw, 5rem);
   color: #fcf6ba;
   text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
-  margin-bottom: 60px;
+  margin-bottom: clamp(20px, 5vh, 60px);
   z-index: 100;
 }
 
@@ -924,7 +1021,7 @@ body {
 
 .service-page-title {
   font-family: 'Playfair Display', serif;
-  font-size: 5rem;
+  font-size: clamp(2.5rem, 10vw, 5rem);
   color: #fcf6ba;
   text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
   margin-bottom: 20px;
@@ -949,13 +1046,21 @@ body {
 
 .service-hand {
   position: absolute;
-  bottom: -15px; /* Moved further into the frame */
-  right: -15px; /* Moved further into the frame */
-  width: 960px;
+  bottom: -15px; 
+  right: -15px; 
+  width: min(100vw, 960px);
   height: auto;
   pointer-events: none;
   z-index: 50;
   filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+}
+
+@media (max-width: 768px) {
+  .service-hand {
+    width: 140%;
+    right: -20%;
+    bottom: -50px;
+  }
 }
 
 .service-fanned-cards {
@@ -1014,13 +1119,13 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(0deg) scale(1) !important;
-  width: 1100px;
-  height: 600px;
+  width: min(90vw, 1100px);
+  height: min(80vh, 650px);
   z-index: 2000;
   cursor: default;
   display: flex !important;
   flex-direction: column;
-  padding: 40px;
+  padding: clamp(20px, 4vw, 40px);
   box-shadow: 0 40px 100px rgba(0,0,0,1), 0 0 50px rgba(212, 175, 55, 0.4);
   border-radius: 15px;
   border-width: 4px;
@@ -1099,7 +1204,7 @@ body {
 .contact-form {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: clamp(15px, 3vh, 25px);
   width: 100%;
   max-width: 600px;
   margin-top: 10px;
@@ -1107,9 +1212,9 @@ body {
 
 .panel-title {
   font-family: 'Playfair Display', serif;
-  font-size: 3rem;
+  font-size: clamp(2rem, 5vw, 3rem);
   color: #fcf6ba;
-  margin-bottom: 30px;
+  margin-bottom: clamp(15px, 4vh, 30px);
   text-transform: uppercase;
   letter-spacing: 5px;
   text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);

@@ -58,8 +58,8 @@ const themeClass = computed(() => `${route.name?.toLowerCase() || 'default'}-the
 
 .social-icon {
   color: #d4af37; /* Default gold */
-  width: 24px;
-  height: 24px;
+  width: clamp(18px, 4vw, 24px);
+  height: clamp(18px, 4vw, 24px);
   transition: all 0.3s ease;
   display: flex;
   align-items: center;

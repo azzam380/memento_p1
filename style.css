@@ -82,10 +82,10 @@ body {
 .logo-badge {
   background: #0d0216;
   border-radius: 12px;
-  width: clamp(160px, 20vw, 240px); 
-  height: clamp(80px, 10vw, 125px);
+  width: clamp(140px, 20vw, 240px); 
+  height: clamp(70px, 10vw, 125px);
   box-shadow: 0 15px 40px rgba(0,0,0,0.7);
-  border: clamp(4px, 1vw, 8px) solid #130028;
+  border: clamp(3px, 1vw, 8px) solid #130028;
   padding: 0 !important;
   position: relative;
   overflow: hidden; 
@@ -110,7 +110,7 @@ body {
   top: 0; 
   left: 50%;
   transform: translateX(-50%);
-  width: clamp(140px, 25vw, 220px); 
+  width: clamp(120px, 22vw, 220px); 
   height: auto;
   pointer-events: none !important;
   display: flex;
@@ -131,18 +131,12 @@ body {
   pointer-events: none !important;
 }
 
-/* Class saat kartu dijepit */
-.card.is-grasped {
-  z-index: 150 !important; /* Di tengah-tengah */
-  pointer-events: none; /* Agar tidak bisa diklik dua kali saat animasi */
-}
-
 .hand-asset {
   width: 100%;
   height: auto;
   margin-top: -5px; 
   transform-origin: 50% 0%; 
-  transform: rotate(0deg); /* Adjusted slightly more to the left */
+  transform: rotate(0deg); 
   filter: drop-shadow(0 20px 40px rgba(0,0,0,0.8));
   pointer-events: none !important;
 }
@@ -172,6 +166,12 @@ body {
   gap: clamp(10px, 5vw, 80px);
 }
 
+@media (max-width: 1024px) {
+  .cards-container {
+    gap: 30px;
+  }
+}
+
 /* Work Page Styles */
 .work-page .logo-header { display: none !important; }
 
@@ -187,13 +187,13 @@ body {
 
 .work-title {
   font-family: 'Playfair Display', serif;
-  font-size: 3rem;
+  font-size: clamp(1.8rem, 8vw, 3.5rem);
   color: #fcf6ba;
-  letter-spacing: 15px;
+  letter-spacing: clamp(5px, 2vw, 15px);
   text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
   text-transform: uppercase;
   z-index: 100;
-  margin-bottom: 30px;
+  margin-bottom: clamp(10px, 3vh, 30px);
 }
 
 /* Container utama galeri kartu */
@@ -228,7 +228,7 @@ body {
 }
 
 .work-hands-combined {
-  width: min(100vw, 900px);
+  width: min(80vw, 900px);
   height: auto;
 }
 
@@ -246,6 +246,39 @@ body {
 .work-card-wrapper.center { transform: rotate(8deg) translate(0, -50px); z-index: 20; }
 .work-card-wrapper.right { transform: rotate(22deg) translate(360px, 20px); }
 
+@media (max-width: 1024px) {
+  .work-gallery { height: 500px; }
+  .work-card-wrapper { width: 240px; height: 160px; }
+  .work-card-wrapper.left { transform: rotate(-15deg) translate(-320px, 60px); }
+  .work-card-wrapper.center { transform: rotate(5deg) translate(0, -40px); }
+  .work-card-wrapper.right { transform: rotate(18deg) translate(320px, 30px); }
+  .work-hands-combined { width: 900px; }
+}
+
+@media (max-width: 768px) {
+  .work-gallery { height: 400px; }
+  .work-card-wrapper {
+    width: 200px;
+    height: 140px;
+  }
+  .work-card-wrapper.left { transform: rotate(-12deg) translate(-150px, 40px); }
+  .work-card-wrapper.center { transform: rotate(0deg) translate(0, -60px); }
+  .work-card-wrapper.right { transform: rotate(12deg) translate(150px, 30px); }
+  .work-title { font-size: clamp(1.5rem, 5vw, 2.5rem); letter-spacing: 5px; margin-bottom: 10px; }
+  .work-hands-combined { width: 700px; }
+}
+
+@media (max-width: 480px) {
+  .work-card-wrapper {
+    width: 180px;
+    height: 140px;
+  }
+  .work-card-wrapper.left { transform: rotate(-15deg) translate(-90px, 30px); }
+  .work-card-wrapper.center { transform: rotate(5deg) translate(0, -45px); }
+  .work-card-wrapper.right { transform: rotate(15deg) translate(90px, 15px); }
+  .work-hands-combined { width:450px; }
+}
+
 .memento-card-work {
   width: 100%;
   height: 100%;
@@ -256,6 +289,10 @@ body {
   overflow: hidden;
   position: relative;
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.memento-card-work::-webkit-scrollbar {
+  display: none;
 }
 
 .work-card-wrapper.is-expanded {
@@ -287,6 +324,13 @@ body {
   height: 100%;
 }
 
+@media (max-width: 768px) {
+  .card-content-layout {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+}
+
 .card-image-section {
   flex: 1.2;
   background: #1F073A;
@@ -296,11 +340,19 @@ body {
   border-right: 2px solid rgba(212, 175, 55, 0.2);
 }
 
+@media (max-width: 768px) {
+  .card-image-section {
+    flex: none;
+    height: 120px; /* Reduced height on tab */
+    border-right: none;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.1);
+  }
+}
+
 .work-item-img {
-  width: 75%;
+  width: min(75%, 300px);
   height: auto;
   border-radius: 10px;
-  /* box-shadow: 0 0 40px rgba(0,0,0,0.6); */
   transition: transform 0.5s ease;
 }
 
@@ -380,7 +432,16 @@ body {
   width: 50px;
   height: 50px;
   transition: transform 0.3s ease;
-  z-index: 10;
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .back-button {
+    top: 10px;
+    left: 10px;
+    width: 35px;
+    height: 35px;
+  }
 }
 
 .back-button:hover {
@@ -604,9 +665,10 @@ body {
   .site-footer {
     left: 50%;
     transform: translateX(-50%);
-    bottom: 10px;
-    width: 90%;
-    font-size: 0.75rem;
+    bottom: 5px;
+    width: fit-content;
+    padding: 8px 15px;
+    font-size: 0.65rem;
   }
 }
 @media (max-width: 1024px) {
@@ -816,16 +878,18 @@ body {
   text-transform: uppercase;
 }
 
+
+
 /* Sharp V-Shape (Valley) Arrangement */
 /* Fan-shaped arc arrangement (Convergent Valley) */
 /* Fan-shaped arc arrangement (Convergent Valley) */
 /* Convergent Valley Arrangement (Leaning Toward Center) */
 .card { transform-origin: bottom center; }
 
-.card:nth-child(1) { transform: rotate(25deg) translateY(-80px) translateX(-40px); }
-.card:nth-child(2) { transform: rotate(10deg) translateY(-5px) translateX(-15px); }
-.card:nth-child(3) { transform: rotate(-10deg) translateY(-5px) translateX(15px); }
-.card:nth-child(4) { transform: rotate(-25deg) translateY(-80px) translateX(40px); }
+.card:nth-child(1) { transform: rotate(25deg) translateY(-95px) translateX(-40px); }
+.card:nth-child(2) { transform: rotate(10deg) translateY(-20px) translateX(-15px); }
+.card:nth-child(3) { transform: rotate(-10deg) translateY(-20px) translateX(15px); }
+.card:nth-child(4) { transform: rotate(-25deg) translateY(-95px) translateX(40px); }
 
 .card:hover {
   transform: translateY(-70px) scale(1.05) rotate(0deg) !important;
@@ -858,7 +922,17 @@ body {
 }
 
 /* Mobile Responsiveness for Cards */
+@media (max-width: 1024px) {
+  .card:nth-child(1) { transform: rotate(25deg) translateY(-80px) translateX(-80px); }
+  .card:nth-child(2) { transform: rotate(10deg) translateY(-30px) translateX(-30px); }
+  .card:nth-child(3) { transform: rotate(-10deg) translateY(-30px) translateX(30px); }
+  .card:nth-child(4) { transform: rotate(-25deg) translateY(-80px) translateX(80px); }
+}
+
 @media (max-width: 768px) {
+  .logo-header {
+    top: -5px; /* Lowering logo header on mobile/tab */
+  }
   .logo-badge {
     width: 160px;
     height: 80px;
@@ -899,7 +973,7 @@ body {
   }
 
   .card-title {
-    font-size: 1rem;
+    font-size: clamp(0.75rem, 3vw, 1.1rem);
   }
 }
 
@@ -914,12 +988,16 @@ body {
 
   .card {
     width: 100%;
-    height: 150px;
+    height: 120px;
   }
   
   .logo-badge {
-    width: 140px;
-    height: 70px;
+    width: 110px;
+    height: 60px;
+  }
+  
+  .hand-layer {
+    width: 100px;
   }
 }
 
@@ -939,10 +1017,10 @@ body {
 
 .play-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(2.5rem, 10vw, 5rem);
+  font-size: clamp(2rem, 8vw, 4.5rem);
   color: #fcf6ba;
   text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
-  margin-bottom: clamp(20px, 5vh, 60px);
+  margin-bottom: clamp(15px, 4vh, 50px);
   z-index: 100;
 }
 
@@ -966,7 +1044,7 @@ body {
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   visibility: visible !important;
   opacity: 1 !important; /* Overrule GSAP if it stuck */
-  margin: 0 -15px; /* Negative margin for overlap */
+  margin: 0 -5px; /* Reduced base overlap */
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -1006,6 +1084,45 @@ body {
   filter: brightness(0.4);
 }
 
+@media (max-width: 1024px) {
+  .play-carousel { height: 450px; }
+  .play-card.central-focus { width: 240px; height: 350px; margin: 0 -10px; }
+  .play-card.side-inner { width: 200px; height: 300px; margin: 0 -10px; }
+  .play-card.side-outer { width: 160px; height: 240px; margin: 0 -10px; }
+  .game-title { font-size: clamp(1rem, 3vw, 1.5rem); }
+  .difficulty-label { font-size: 0.7rem; }
+}
+
+@media (max-width: 768px) {
+  .play-carousel { height: 350px; }
+  .play-card.central-focus { width: 180px; height: 280px; margin: 0 -5px; }
+  .play-card.side-inner { width: 150px; height: 230px; margin: 0 -5px; }
+  .play-card.side-outer { width: 120px; height: 190px; margin: 0 -5px; }
+  .game-title { font-size: clamp(0.85rem, 4vw, 1.1rem); letter-spacing: 2px; }
+  .difficulty-label { font-size: 0.55rem; }
+}
+
+@media (max-width: 480px) {
+  .play-carousel { 
+    height: auto; 
+    flex-wrap: wrap; 
+    gap: 15px; 
+    padding: 20px;
+    perspective: none;
+  }
+  .play-card.central-focus, 
+  .play-card.side-inner, 
+  .play-card.side-outer { 
+    width: 100px; 
+    height: 140px; 
+    margin: 0; 
+    filter: none !important;
+    transform: none !important;
+  }
+  .game-title { font-size: 1.5rem; letter-spacing: 1px; }
+  .difficulty-label { font-size: 0.5rem; margin-bottom: 5px; }
+}
+
 /* Service Page Styles */
 .service-page .logo-header { display: none !important; }
 
@@ -1021,7 +1138,7 @@ body {
 
 .service-page-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(2.5rem, 10vw, 5rem);
+  font-size: clamp(2rem, 8vw, 4.5rem);
   color: #fcf6ba;
   text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
   margin-bottom: 20px;
@@ -1057,25 +1174,33 @@ body {
 
 @media (max-width: 768px) {
   .service-hand {
-    width: 140%;
-    right: -20%;
-    bottom: -50px;
+    width: 100%;
+    right: -5%;
+    bottom: -15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .service-hand {
+    width: 100%;
+    right: -15%;
+    bottom: -10px;
   }
 }
 
 .service-fanned-cards {
   position: absolute;
-  width: 700px;
+  width: min(90vw, 700px);
   height: 450px;
   bottom: 150px;
-  left: 60%;
+  left: 50%;
   transform: translateX(-50%);
   z-index: 100;
 }
 
 .service-sub-card {
-  width: 130px;
-  height: 180px;
+  width: 140px;
+  height: 200px;
   background: #1F073A;
   border: 2px solid #d4af37;
   border-radius: 10px;
@@ -1096,9 +1221,9 @@ body {
 
 .service-sub-card span {
   font-family: 'Playfair Display', serif;
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #fcf6ba;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .service-sub-card:hover:not(.is-expanded) {
@@ -1108,27 +1233,95 @@ body {
   border-color: #fcf6ba;
 }
 
-.card-1 { left: 5%; bottom: 80px; transform: rotate(-45deg); }
-.card-2 { left: 20%; bottom: 150px; transform: rotate(-25deg); }
-.card-3 { left: 38%; bottom: 200px; transform: rotate(-10deg); }
-.card-4 { left: 56%; bottom: 200px; transform: rotate(15deg); }
+.card-1 { left: 2%; bottom: 60px; transform: rotate(-35deg); }
+.card-2 { left: 22%; bottom: 130px; transform: rotate(-15deg); }
+.card-3 { left: 45%; bottom: 150px; transform: rotate(5deg); }
+.card-4 { left: 68%; bottom: 130px; transform: rotate(18deg); }
+
+@media (max-width: 1024px) {
+  .service-fanned-cards { height: 350px; bottom: 80px; width: 85vw; }
+  .service-hand { width: 700px; bottom: -10px; }
+  .service-sub-card { width: 120px; height: 170px; }
+  .service-sub-card span { font-size: 0.95rem; }
+  .card-1 { left: 18%; bottom: 55px; }
+  .card-2 { left: 31%; bottom: 110px; }
+  .card-3 { left: 45%; bottom: 120px; }
+  .card-4 { left: 59%; bottom: 97px; }
+}
+
+@media (max-width: 768px) {
+  .service-fanned-cards { height: 300px; bottom: 60px; width: 90vw; }
+  .service-hand { width: 550px; bottom: -5px; }
+  .service-sub-card { width: 100px; height: 140px; padding: 8px; }
+  .service-sub-card span { font-size: 0.8rem; }
+  .card-1 { left: 15%; bottom: 40px; }
+  .card-2 { left: 30%; bottom: 90px; }
+  .card-3 { left: 45%; bottom: 100px; }
+  .card-4 { left: 60%; bottom: 80px; }
+}
+
+@media (max-width: 480px) {
+  .service-fanned-cards { 
+    height: auto; 
+    bottom: 80px; 
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .service-hand { width: 320px; bottom: -10px; right: -50px; }
+  .service-sub-card { 
+    width: 130px; 
+    height: 100px; 
+    position: relative;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    padding: 10px;
+  }
+  .service-sub-card span { font-size: 0.8rem; line-height: 1.2; }
+}
 
 /* Expansion state */
 .service-sub-card.is-expanded {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(0deg) scale(1) !important;
-  width: min(90vw, 1100px);
-  height: min(80vh, 650px);
+  transform: translate(-50%, -55%) rotate(0deg) scale(1) !important;
+  width: min(92vw, 1100px);
+  height: min(85vh, 650px);
   z-index: 2000;
   cursor: default;
   display: flex !important;
   flex-direction: column;
-  padding: clamp(20px, 4vw, 40px);
+  padding: clamp(15px, 4vw, 40px);
   box-shadow: 0 40px 100px rgba(0,0,0,1), 0 0 50px rgba(212, 175, 55, 0.4);
   border-radius: 15px;
   border-width: 4px;
+}
+
+@media (max-width: 480px) {
+  .service-sub-card.is-expanded {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 94vw !important;
+    height: 85vh !important;
+    z-index: 9999 !important;
+    padding: 20px;
+    background: #1F073A;
+    border: 4px solid #d4af37;
+    border-radius: 15px;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto;
+  }
 }
 
 .service-sub-card.is-hidden {
@@ -1141,14 +1334,35 @@ body {
 .service-expanded-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   height: 100%;
   width: 100%;
   animation: fadeIn 0.8s ease forwards 0.4s;
   opacity: 0;
-  padding: 0 60px;
+  padding: 40px 40px 20px 40px; /* Increased top padding to lower logo */
+}
+
+@media (max-width: 768px) {
+  .service-expanded-content, .card-content-layout, .card-inner-layout {
+    padding-top: 80px !important; /* Dikecilkan lagi jarak atasnya agar logo turun */
+  }
+}
+
+.expanded-logo-header {
+  margin-bottom: 20px;
+  width: 100%;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+  padding-bottom: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.expanded-card-logo {
+  width: 150px;
+  height: auto;
+  filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.3));
 }
 
 .expanded-service-title {
@@ -1161,13 +1375,18 @@ body {
   text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
 }
 
-.expanded-service-desc {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.25rem;
-  line-height: 1.8;
-  color: white;
-  max-width: 900px;
-  opacity: 0.95;
+@media (max-width: 768px) {
+  .expanded-service-title {
+    font-size: 2rem;
+    letter-spacing: 3px;
+  }
+  .expanded-service-desc {
+    font-size: 0.95rem;
+    padding: 0 10px;
+  }
+  .service-expanded-content {
+    padding: 0 20px;
+  }
 }
 
 /* Service Detail Viewport clean up */

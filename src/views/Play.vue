@@ -61,7 +61,7 @@ const resetToArena = () => {
 
 const ttsData = [
   {
-    id: 1, title: 'Quest 1', difficulty: 'Beginner', 
+    id: 1, title: '1', difficulty: '', 
     gridSize: 10,
     words: [
       { id: 1, number: 1, clue: 'Silent protagonist of Metal Gear', answer: 'SNAKE', x: 1, y: 1, dir: 'across' },
@@ -72,7 +72,7 @@ const ttsData = [
     ]
   },
   {
-    id: 2, title: 'Quest 2', difficulty: 'Mage',
+    id: 2, title: '2', difficulty: '',
     gridSize: 10,
     words: [
       { id: 1, number: 1, clue: 'Half-Life protagonist Mr. Freeman', answer: 'GORDON', x: 1, y: 1, dir: 'across' },
@@ -83,7 +83,7 @@ const ttsData = [
     ]
   },
   {
-    id: 3, title: 'Quest 3', difficulty: 'Legendary',
+    id: 3, title: '3', difficulty: '',
     gridSize: 10,
     words: [
       { id: 1, number: 1, clue: 'Steam platform creator company', answer: 'VALVE', x: 2, y: 1, dir: 'across' },
@@ -94,7 +94,7 @@ const ttsData = [
     ]
   },
   {
-    id: 4, title: 'Quest 4', difficulty: 'Mythic',
+    id: 4, title: '4', difficulty: '',
     gridSize: 10,
     words: [
       { id: 1, number: 1, clue: 'Popular multi-platform engine', answer: 'UNITY', x: 1, y: 1, dir: 'across' },
@@ -105,7 +105,7 @@ const ttsData = [
     ]
   },
   {
-    id: 5, title: 'Quest 5', difficulty: 'Ultimate',
+    id: 5, title: '5', difficulty: '',
     gridSize: 10,
     words: [
       { id: 1, number: 1, clue: 'Retro video game hall', answer: 'ARCADE', x: 1, y: 1, dir: 'across' },
@@ -229,7 +229,7 @@ onMounted(() => {
         <div class="header-left">
           <button class="tts-back-btn" @click="activeGame = null; stopTimer()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            Back To Arena
+            Back
           </button>
           <div class="game-timer">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
@@ -349,10 +349,18 @@ onMounted(() => {
 
 .game-title {
   font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
+  font-size: 3.5rem; /* Bigger since it's just a number now */
   color: #fff;
   text-transform: uppercase;
-  letter-spacing: 4px;
+  letter-spacing: 0;
+  text-align: center;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .game-title {
+    font-size: 2.5rem;
+  }
 }
 
 .tts-game-container {
@@ -408,6 +416,23 @@ onMounted(() => {
   overflow-y: auto;
 }
 
+@media (max-width: 1024px) {
+  .tts-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .tts-game-container {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tts-level-title { font-size: 1.5rem; }
+  .tts-back-btn, .finish-game-btn { padding: 8px 15px; font-size: 0.8rem; }
+  .header-left { gap: 15px; }
+  .game-timer { padding: 6px 12px; font-size: 0.8rem; }
+}
+
 .tts-grid-wrapper {
   background: rgba(13, 2, 22, 0.4);
   padding: 20px;
@@ -423,8 +448,25 @@ onMounted(() => {
   gap: 2px;
   background: var(--accent-gold); /* Grid line color */
   border: 4px solid var(--accent-gold);
-  width: 500px;
-  height: 500px;
+  width: min(500px, 90vw);
+  height: min(500px, 90vw);
+}
+@media (max-width: 768px) {
+  .tts-real-grid {
+    width: min(350px, 85vw);
+    height: min(350px, 85vw);
+    border: 2px solid var(--accent-gold);
+    gap: 1px;
+  }
+  .cell-input { font-size: 0.9rem; }
+  .cell-num { font-size: 0.5rem; }
+}
+
+@media (max-width: 480px) {
+  .tts-real-grid {
+    width: min(280px, 80vw);
+    height: min(280px, 80vw);
+  }
 }
 
 .grid-cell {

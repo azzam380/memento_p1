@@ -56,6 +56,25 @@ const themeClass = computed(() => `${route.name?.toLowerCase() || 'default'}-the
   }
 }
 
+@media (max-width: 768px) {
+  .social-icons {
+    top: 8px; /* Slightly higher */
+    right: 8px; /* More to the edge */
+    gap: 12px; /* Less gap */
+    padding: 6px 12px;
+  }
+  .social-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .social-icons {
+    padding: 4px 10px;
+  }
+}
+
 .social-icon {
   color: #d4af37; /* Default gold */
   width: clamp(18px, 4vw, 24px);

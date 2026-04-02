@@ -33,6 +33,9 @@
                 <span v-if="!activeCard">{{ card.title }}</span>
                 
                 <div v-if="activeCard?.title === card.title" class="service-expanded-content">
+                  <div class="expanded-logo-header">
+                    <img src="/img-memento.png" alt="Memento Logo" class="expanded-card-logo">
+                  </div>
                   <h2 class="expanded-service-title">{{ card.title }}</h2>
                   <div class="expanded-service-desc">
                     <p>{{ card.description }}</p>

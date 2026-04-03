@@ -131,70 +131,26 @@ const handleMouseLeave = (event) => {
 const handleCardClick = (event, id) => {
   const card = event.currentTarget;
   if (!card) return;
-
-  // 1. Bersihkan sisa-sisa animasi sebelumnya
+  
+  // Hentikan animasi tangan sebentar untuk fokus
   if (handAnimation) handAnimation.kill();
   if (idleAnimation) idleAnimation.pause();
-  gsap.killTweensOf([handBackRef.value, card]);
   
-  // 2. Matikan interaksi dan paksa hentikan transition CSS agar tidak beradu dengan GSAP
-  card.style.pointerEvents = 'none';
-  card.style.transition = 'none'; // Matikan transition paksa agar sinkron dengan GSAP
+  // Efek klik menekan dan memunculkan bintik
+  gsap.to(card, { scale: 0.95, duration: 0.15, yoyo: true, repeat: 1 });
+  createSparkleBurst(card);
   
   const title = card.querySelector('.card-title')?.textContent || "";
+  const routes = { play: '/play', work: '/work', info: '/info', solution: '/service' };
   
-  // 3. Kalkulasi jarak absolut untuk perpindahan
-  const cardRect = card.getBoundingClientRect();
-  const cardCenterX = cardRect.left + cardRect.width / 2;
-  const cardCenterY = cardRect.top + cardRect.height / 2;
-
-  const handRect = handBackRef.value.getBoundingClientRect();
-  const targetX = handRect.left + handRect.width / 2;
-  const targetY = handRect.top + handRect.height * 0.45; // Titik genggam tangan
-  
-  const diffX = cardCenterX - targetX;
-  const diffY = cardCenterY - targetY;
-
-  const tl = gsap.timeline();
-
-  // 4. ANIMASI: Tarik kartu ke arah tangan dalam bentuk penuh
-  tl.to(card, {
-    x: `-=${diffX}`,
-    y: `-=${diffY}`,
-    rotation: 0,
-    scale: 1.05, // Sedikit membesar agar terlihat "diangkat" mendekat
-    duration: 0.5,
-    ease: "power3.out", // Pergerakan yang mantap ke arah tangan
-    onStart: () => {
-      // Atur z-index agar kartu terlihat terbang di depan sebelum masuk ke sela tangan
-      gsap.set(card, { zIndex: 1000 });
-    },
-    onComplete: () => {
-      createSparkleBurst(card);
-      // Masukkan kartu ke sela-sela tangan (di bawah layer tangan depan)
-      card.classList.add('is-grasped'); // z-index 150
-    }
-  });
-
-  // Reaksi Tangan saat menangkap kartu (seperti gerakan menyambar)
-  tl.to(handBackRef.value.querySelector('.hand-asset'), {
-    scale: 1.1,
-    y: -10,
-    duration: 0.2,
-    yoyo: true,
-    repeat: 1,
-    ease: "back.out(2)"
-  }, "-=0.3");
-
-  // 5. Navigasi setelah jeda singkat saat kartu tertahan di tangan
+  // Tunggu setengah detik agar bintik terlihat mekar sebelum pindah
   setTimeout(() => {
-    const routes = { play: '/play', work: '/work', info: '/info', solution: '/service' };
     if (id === 'solution') {
       router.push({ path: '/service', query: { title: title } });
     } else {
       router.push(routes[id] || '/');
     }
-  }, 1000); // Jeda sedikit lebih lama agar user bisa melihat kartu dipegang
+  }, 500);
 };
 
 onMounted(() => {

@@ -284,8 +284,8 @@ body {
   .work-hands-combined { width: 100vw; max-width: 450px; }
   
   .work-title {
-    font-size: 2.4rem;
-    letter-spacing: 12px;
+    font-size: 1.4rem;
+    letter-spacing: 8px;
     margin-bottom: 25px;
   }
 }
@@ -452,7 +452,6 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .work-title { font-size: 3rem; }
   .work-card.central { width: 320px; height: 220px; }
   .work-card.extra { width: 180px; height: 130px; }
 }
@@ -1059,7 +1058,7 @@ body {
     grid-template-columns: 1fr 1fr;
     width: 90%;
     margin: 0 auto;
-    bottom: 10px;
+    bottom: 80px;
   }
 
   .card {
@@ -1314,6 +1313,17 @@ body {
 .card-3 { left: 45%; bottom: 150px; transform: rotate(5deg); }
 .card-4 { left: 65%; bottom: 120px; transform: rotate(18deg); }
 
+@media (max-width: 1440px) and (max-height: 800px) {
+  .service-fanned-cards { height: 380px; bottom: 90px; width: 650px; }
+  .service-hand { width: 780px; bottom: -15px; }
+  .service-sub-card { width: 125px; height: 180px; }
+  .service-sub-card span { font-size: 1rem; }
+  .card-1 { left: 21%; bottom: 65px; }
+  .card-2 { left: 40%; bottom: 120px; }
+  .card-3 { left: 60%; bottom: 135px; }
+  .card-4 { left: 80%; bottom: 105px; }
+}
+
 @media (max-width: 1024px) {
   .service-fanned-cards { height: 350px; bottom: 80px; width: 85vw; }
   .service-hand { width: 700px; bottom: -10px; }
@@ -1494,6 +1504,12 @@ body {
   .home-page .hand-layer {
     left: 50%;
     transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1440px) {
+  .home-page .game-container {
+    transform: translateX(0%);
   }
 }
 

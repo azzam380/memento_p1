@@ -12,7 +12,7 @@
 
         <div class="service-composition">
           <!-- Hand Asset -->
-          <img src="/img-hand-service.png" alt="Hand Support" class="service-hand" ref="handRef">
+          <img :src="handServiceImg" alt="Hand Support" class="service-hand" ref="handRef">
           
           <div class="service-fanned-cards">
             <div 
@@ -34,7 +34,7 @@
                 
                 <div v-if="activeCard?.title === card.title" class="service-expanded-content">
                   <div class="expanded-logo-header">
-                    <img src="/img-memento.png" alt="Memento Logo" class="expanded-card-logo">
+                    <img :src="mementoImg" alt="Memento Logo" class="expanded-card-logo">
                   </div>
                   <h2 class="expanded-service-title">{{ card.title }}</h2>
                   <div class="expanded-service-desc">
@@ -55,6 +55,8 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import gsap from 'gsap';
+import handServiceImg from '@/assets/img-hand-service.png';
+import mementoImg from '@/assets/img-memento.png';
 
 const route = useRoute();
 const pageTitle = computed(() => route.query.title || 'Service');

@@ -8,7 +8,7 @@
       </router-link>
 
       <div class="hands-container" ref="handsRef">
-         <img src="/img-hand-work.png" alt="Working Hands" class="work-hands-combined">
+         <img :src="handWorkImg" alt="Working Hands" class="work-hands-combined">
       </div>
 
       <div class="work-content-wrapper" :class="{ 'has-active-work': activeWork }">
@@ -54,15 +54,17 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import gsap from 'gsap';
+import handWorkImg from '@/assets/img-hand-work.png';
+import mementoImg from '@/assets/img-memento.png';
 
 const containerRef = ref(null);
 const handsRef = ref(null);
 const activeWork = ref(null);
 
 const items = ref([
-  { id: 1, title: 'Project One', description: 'A mystical journey through forgotten realms, blending puzzles and deep narrative. Experience the premium gameplay and stunning visuals that redefine interactive storytelling.', image: '/img-memento.png', pos: 'left' },
-  { id: 2, title: 'Project Two', description: 'Our flagship title featuring innovative card-based mechanics and a rich, atmospheric world. Every move matters in this high-stakes game of strategy and luck.', image: '/img-memento.png', pos: 'center' },
-  { id: 3, title: 'Project Three', description: 'An experimental adventure focusing on abstract visuals and emotive soundscapes. A unique portfolio piece that showcases our creative diversity.', image: '/img-memento.png', pos: 'right' },
+  { id: 1, title: 'Project One', description: 'A mystical journey through forgotten realms, blending puzzles and deep narrative. Experience the premium gameplay and stunning visuals that redefine interactive storytelling.', image: mementoImg, pos: 'left' },
+  { id: 2, title: 'Project Two', description: 'Our flagship title featuring innovative card-based mechanics and a rich, atmospheric world. Every move matters in this high-stakes game of strategy and luck.', image: mementoImg, pos: 'center' },
+  { id: 3, title: 'Project Three', description: 'An experimental adventure focusing on abstract visuals and emotive soundscapes. A unique portfolio piece that showcases our creative diversity.', image: mementoImg, pos: 'right' },
 ]);
 
 const selectWork = (item) => {

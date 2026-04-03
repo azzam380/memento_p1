@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import gsap from 'gsap';
+import logoImg from '@/assets/img-logo.png';
 
 const activeGame = ref(null);
 const randomizedCards = ref([]);
@@ -194,7 +195,7 @@ onMounted(() => {
 
     <header class="logo-header">
       <div class="logo-badge">
-        <img src="/img-logo.png" alt="Memento Logo" class="main-logo-img">
+        <img :src="logoImg" alt="Memento Logo" class="main-logo-img">
       </div>
     </header>
 

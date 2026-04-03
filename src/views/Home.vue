@@ -2,6 +2,8 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import gsap from 'gsap';
 import { useRouter } from 'vue-router';
+import logoImg from '@/assets/img-logo.png';
+import handCenterImg from '@/assets/img-hand-center.png';
 
 const router = useRouter();
 const handBackRef = ref(null);
@@ -215,13 +217,13 @@ onUnmounted(() => {
       
       <header class="logo-header">
         <div class="logo-badge">
-          <img src="/img-logo.png" alt="Memento Logo" class="main-logo-img">
+          <img :src="logoImg" alt="Memento Logo" class="main-logo-img">
         </div>
       </header>
 
       <!-- Hand Layer Container -->
       <div class="hand-layer back" ref="handBackRef">
-        <img src="/img-hand-center.png" alt="Hand Asset" class="hand-asset">
+        <img :src="handCenterImg" alt="Hand Asset" class="hand-asset">
       </div>
 
       <div class="cards-container">

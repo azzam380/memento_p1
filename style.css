@@ -232,26 +232,26 @@ body {
   height: auto;
 }
 
-/* Portfolio Card Wrappers - Using Portrait for premium card feel */
+/* Portfolio Card Wrappers - Landscape on Desktop, Portrait on Mobile */
 .work-card-wrapper {
   position: absolute;
-  width: 210px;
-  height: 290px;
+  width: 280px;
+  height: 190px;
   z-index: 10;
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
-.work-card-wrapper.left { transform: rotate(-12deg) translate(-280px, 50px); }
+.work-card-wrapper.left { transform: rotate(-12deg) translate(-320px, 10px); }
 .work-card-wrapper.center { transform: rotate(0deg) translate(0, -50px); z-index: 20; }
-.work-card-wrapper.right { transform: rotate(12deg) translate(280px, 50px); }
+.work-card-wrapper.right { transform: rotate(12deg) translate(320px, 10px); }
 
 @media (max-width: 1024px) {
   .work-gallery { height: 500px; }
-  .work-card-wrapper { width: 190px; height: 265px; }
-  .work-card-wrapper.left { transform: rotate(-10deg) translate(-245px, 40px); }
+  .work-card-wrapper { width: 240px; height: 160px; }
+  .work-card-wrapper.left { transform: rotate(-10deg) translate(-280px, 40px); }
   .work-card-wrapper.center { transform: rotate(0deg) translate(0, -45px); z-index: 25; }
-  .work-card-wrapper.right { transform: rotate(10deg) translate(245px, 40px); }
+  .work-card-wrapper.right { transform: rotate(10deg) translate(280px, 40px); }
   .work-hands-combined { width: 850px; }
 }
 
@@ -1377,6 +1377,12 @@ body {
   box-shadow: 0 40px 100px rgba(0,0,0,1), 0 0 50px rgba(212, 175, 55, 0.4);
   border-radius: 15px;
   border-width: 4px;
+}
+
+@media (min-width: 1440px) {
+  .service-sub-card.is-expanded {
+    transform: translate(-50%, -45%) rotate(0deg) scale(1) !important;
+  }
 }
 
 @media (max-width: 480px) {

@@ -232,51 +232,62 @@ body {
   height: auto;
 }
 
-/* Portfolio Card Wrappers */
+/* Portfolio Card Wrappers - Using Portrait for premium card feel */
 .work-card-wrapper {
   position: absolute;
-  width: 280px;
-  height: 190px;
+  width: 210px;
+  height: 290px;
   z-index: 10;
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
-.work-card-wrapper.left { transform: rotate(-15deg) translate(-360px, 70px); }
-.work-card-wrapper.center { transform: rotate(8deg) translate(0, -50px); z-index: 20; }
-.work-card-wrapper.right { transform: rotate(22deg) translate(360px, 20px); }
+.work-card-wrapper.left { transform: rotate(-12deg) translate(-280px, 50px); }
+.work-card-wrapper.center { transform: rotate(0deg) translate(0, -50px); z-index: 20; }
+.work-card-wrapper.right { transform: rotate(12deg) translate(280px, 50px); }
 
 @media (max-width: 1024px) {
   .work-gallery { height: 500px; }
-  .work-card-wrapper { width: 240px; height: 160px; }
-  .work-card-wrapper.left { transform: rotate(-15deg) translate(-320px, 60px); }
-  .work-card-wrapper.center { transform: rotate(5deg) translate(0, -40px); }
-  .work-card-wrapper.right { transform: rotate(18deg) translate(320px, 30px); }
-  .work-hands-combined { width: 900px; }
+  .work-card-wrapper { width: 190px; height: 265px; }
+  .work-card-wrapper.left { transform: rotate(-10deg) translate(-245px, 40px); }
+  .work-card-wrapper.center { transform: rotate(0deg) translate(0, -45px); z-index: 25; }
+  .work-card-wrapper.right { transform: rotate(10deg) translate(245px, 40px); }
+  .work-hands-combined { width: 850px; }
 }
 
 @media (max-width: 768px) {
-  .work-gallery { height: 400px; }
+  .work-gallery { height: 450px; }
   .work-card-wrapper {
-    width: 200px;
-    height: 140px;
+    width: 175px;
+    height: 275px;
   }
-  .work-card-wrapper.left { transform: rotate(-12deg) translate(-150px, 40px); }
-  .work-card-wrapper.center { transform: rotate(0deg) translate(0, -60px); }
-  .work-card-wrapper.right { transform: rotate(12deg) translate(150px, 30px); }
-  .work-title { font-size: clamp(1.5rem, 5vw, 2.5rem); letter-spacing: 5px; margin-bottom: 10px; }
-  .work-hands-combined { width: 700px; }
+  .work-card-wrapper.left { transform: rotate(-8deg) translate(-170px, 35px); }
+  .work-card-wrapper.center { transform: rotate(0deg) translate(0, -55px); z-index: 25; }
+  .work-card-wrapper.right { transform: rotate(8deg) translate(170px, 35px); }
+  .work-title { font-size: 2.8rem; letter-spacing: 5px; margin-bottom: 20px; }
+  .work-hands-combined { width: 650px; }
 }
 
 @media (max-width: 480px) {
-  .work-card-wrapper {
-    width: 180px;
-    height: 140px;
+  .work-gallery { 
+    height: 400px; 
+    margin-top: -10px;
   }
-  .work-card-wrapper.left { transform: rotate(-15deg) translate(-90px, 30px); }
-  .work-card-wrapper.center { transform: rotate(5deg) translate(0, -45px); }
-  .work-card-wrapper.right { transform: rotate(15deg) translate(90px, 15px); }
-  .work-hands-combined { width:450px; }
+  .work-card-wrapper {
+    width: 145px;
+    height: 245px;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .work-card-wrapper.left { transform: rotate(-6deg) translate(-105px, 25px); }
+  .work-card-wrapper.center { transform: rotate(0deg) translate(0, -50px); z-index: 25; }
+  .work-card-wrapper.right { transform: rotate(6deg) translate(105px, 25px); }
+  .work-hands-combined { width: 100vw; max-width: 450px; }
+  
+  .work-title {
+    font-size: 2.4rem;
+    letter-spacing: 12px;
+    margin-bottom: 25px;
+  }
 }
 
 .memento-card-work {
@@ -343,9 +354,33 @@ body {
 @media (max-width: 768px) {
   .card-image-section {
     flex: none;
-    height: 120px; /* Reduced height on tab */
+    height: 180px; /* Increased from 120px for better visibility */
     border-right: none;
     border-bottom: 2px solid rgba(212, 175, 55, 0.1);
+  }
+}
+
+@media (max-width: 480px) {
+  .card-image-section {
+    height: 150px;
+  }
+  .card-info-section {
+    padding: 30px 20px;
+  }
+  .work-item-title {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .work-item-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+  }
+  .play-now-btn {
+    padding: 14px 35px;
+    font-size: 1rem;
+    width: 100%; /* Full width button on mobile */
   }
 }
 

@@ -1233,10 +1233,10 @@ body {
   border-color: #fcf6ba;
 }
 
-.card-1 { left: 2%; bottom: 60px; transform: rotate(-35deg); }
-.card-2 { left: 22%; bottom: 130px; transform: rotate(-15deg); }
+.card-1 { left: 7%; bottom: 75px; transform: rotate(-35deg); }
+.card-2 { left: 25%; bottom: 135px; transform: rotate(-15deg); }
 .card-3 { left: 45%; bottom: 150px; transform: rotate(5deg); }
-.card-4 { left: 68%; bottom: 130px; transform: rotate(18deg); }
+.card-4 { left: 65%; bottom: 120px; transform: rotate(18deg); }
 
 @media (max-width: 1024px) {
   .service-fanned-cards { height: 350px; bottom: 80px; width: 85vw; }
@@ -1246,7 +1246,7 @@ body {
   .card-1 { left: 18%; bottom: 55px; }
   .card-2 { left: 31%; bottom: 110px; }
   .card-3 { left: 45%; bottom: 120px; }
-  .card-4 { left: 59%; bottom: 97px; }
+  .card-4 { left: 59%; bottom: 95px; }
 }
 
 @media (max-width: 768px) {
@@ -1254,10 +1254,10 @@ body {
   .service-hand { width: 550px; bottom: -5px; }
   .service-sub-card { width: 100px; height: 140px; padding: 8px; }
   .service-sub-card span { font-size: 0.8rem; }
-  .card-1 { left: 15%; bottom: 40px; }
-  .card-2 { left: 30%; bottom: 90px; }
+  .card-1 { left: 18%; bottom: 45px; }
+  .card-2 { left: 31%; bottom: 90px; }
   .card-3 { left: 45%; bottom: 100px; }
-  .card-4 { left: 60%; bottom: 80px; }
+  .card-4 { left: 59%; bottom: 80px; }
 }
 
 @media (max-width: 480px) {

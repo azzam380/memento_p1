@@ -62,58 +62,54 @@ const resetToArena = () => {
 
 const ttsData = [
   {
-    id: 1, title: '1', difficulty: '', 
-    gridSize: 10,
+    id: 1, title: '1', difficulty: 'MUDAH', 
+    gridSize: 6,
     words: [
-      { id: 1, number: 1, clue: 'Silent protagonist of Metal Gear', answer: 'SNAKE', x: 1, y: 1, dir: 'across' },
-      { id: 1, number: 1, clue: 'The fastest blue hedgehog', answer: 'SONIC', x: 1, y: 1, dir: 'down' },
-      { id: 4, number: 4, clue: 'Automata game series', answer: 'NIER', x: 1, y: 3, dir: 'across' },
-      { id: 3, number: 3, clue: 'The Ring of the _____ Lord', answer: 'ELDEN', x: 5, y: 1, dir: 'down' },
-      { id: 5, number: 5, clue: 'Path of _____, popular ARPG', answer: 'EXILE', x: 5, y: 4, dir: 'across' }
+      { id: 1, number: 1, clue: 'Pemain video game profesional', answer: 'GAMER', x: 1, y: 1, dir: 'across' },
+      { id: 2, number: 1, clue: 'Pantulan suara dalam ruangan', answer: 'GEMA', x: 1, y: 1, dir: 'down' },
+      { id: 3, number: 2, clue: 'Logam mulia berwarna kuning', answer: 'EMAS', x: 4, y: 1, dir: 'down' },
+      { id: 4, number: 3, clue: 'Alat untuk melihat', answer: 'MATA', x: 1, y: 3, dir: 'across' }
     ]
   },
   {
-    id: 2, title: '2', difficulty: '',
-    gridSize: 10,
+    id: 2, title: '2', difficulty: 'MENENGAH',
+    gridSize: 6,
     words: [
-      { id: 1, number: 1, clue: 'Half-Life protagonist Mr. Freeman', answer: 'GORDON', x: 1, y: 1, dir: 'across' },
-      { id: 1, number: 1, clue: 'The White Wolf from Witcher', answer: 'GERALT', x: 1, y: 1, dir: 'down' },
-      { id: 2, number: 2, clue: 'Lord of Terror from Blizzard', answer: 'DIABLO', x: 4, y: 1, dir: 'down' },
-      { id: 4, number: 4, clue: 'Aloy from Horizon series', answer: 'ALOY', x: 1, y: 4, dir: 'down' },
-      { id: 3, number: 3, clue: 'Common group combat in RPGs', answer: 'BATTLE', x: 4, y: 4, dir: 'across' }
+      { id: 1, number: 1, clue: 'Sangat mengasyikkan', answer: 'SERU', x: 1, y: 1, dir: 'across' },
+      { id: 2, number: 1, clue: 'Angka setelah nol', answer: 'SATU', x: 1, y: 1, dir: 'down' },
+      { id: 3, number: 4, clue: 'Dilakukan berulang kali', answer: 'ULANG', x: 4, y: 1, dir: 'down' },
+      { id: 4, number: 3, clue: 'Suara saat merasa lucu', answer: 'TAWA', x: 1, y: 3, dir: 'across' }
     ]
   },
   {
-    id: 3, title: '3', difficulty: '',
-    gridSize: 10,
+    id: 3, title: '3', difficulty: 'MENENGAH',
+    gridSize: 7,
     words: [
-      { id: 1, number: 1, clue: 'Steam platform creator company', answer: 'VALVE', x: 2, y: 1, dir: 'across' },
-      { id: 1, number: 1, clue: 'Darksiders protagonist group', answer: 'VIGIL', x: 2, y: 1, dir: 'down' },
-      { id: 2, number: 2, clue: 'Assassin from Auditore family', answer: 'EZIO', x: 6, y: 1, dir: 'down' },
-      { id: 3, number: 3, clue: 'EA\'s game distribution platform', answer: 'ORIGIN', x: 0, y: 4, dir: 'across' },
-      { id: 4, number: 4, clue: 'Hero of Hyrule Princess', answer: 'ZELDA', x: 5, y: 2, dir: 'across' }
+      { id: 1, number: 1, clue: 'Game buatan anak bangsa', answer: 'LOKAL', x: 1, y: 1, dir: 'across' },
+      { id: 2, number: 1, clue: 'Tahapan dalam sebuah game', answer: 'LEVEL', x: 1, y: 1, dir: 'down' },
+      { id: 3, number: 2, clue: 'Musuh besar kancil', answer: 'BUAYA', x: 5, y: 1, dir: 'down' },
+      { id: 4, number: 3, clue: 'Tidak mahal', answer: 'MURAH', x: 1, y: 5, dir: 'across' },
+      { id: 5, number: 4, clue: 'Hasil akhir atau capaian', answer: 'HASIL', x: 5, y: 5, dir: 'across' }
     ]
   },
   {
-    id: 4, title: '4', difficulty: '',
-    gridSize: 10,
+    id: 4, title: '4', difficulty: 'SULIT',
+    gridSize: 7,
     words: [
-      { id: 1, number: 1, clue: 'Popular multi-platform engine', answer: 'UNITY', x: 1, y: 1, dir: 'across' },
-      { id: 1, number: 1, clue: 'Epic Games\' flagship engine', answer: 'UNREAL', x: 1, y: 1, dir: 'down' },
-      { id: 2, number: 2, clue: 'The Fall of _____ FPS game', answer: 'TITAN', x: 4, y: 1, dir: 'down' },
-      { id: 3, number: 3, clue: 'Zone or location in game worlds', answer: 'AREA', x: 0, y: 3, dir: 'across' },
-      { id: 4, number: 4, clue: 'Iron Fist tournament fighter', answer: 'TEKKEN', x: 4, y: 3, dir: 'down' }
+      { id: 1, number: 1, clue: 'Cerita dalam sebuah game', answer: 'NARASI', x: 1, y: 1, dir: 'across' },
+      { id: 2, number: 1, clue: 'Dibutuhkan untuk online', answer: 'NETWORK', x: 1, y: 1, dir: 'down' },
+      { id: 3, number: 2, clue: 'Tokoh dalam permainan', answer: 'KARAKTER', x: 4, y: 0, dir: 'down' },
+      { id: 4, number: 3, clue: 'Tugas yang harus selesai', answer: 'MISI', x: 1, y: 5, dir: 'across' }
     ]
   },
   {
-    id: 5, title: '5', difficulty: '',
-    gridSize: 10,
+    id: 5, title: '5', difficulty: 'MEMENTO',
+    gridSize: 7,
     words: [
-      { id: 1, number: 1, clue: 'Retro video game hall', answer: 'ARCADE', x: 1, y: 1, dir: 'across' },
-      { id: 1, number: 1, clue: 'User\'s virtual representative', answer: 'AVATAR', x: 1, y: 1, dir: 'down' },
-      { id: 2, number: 2, clue: 'Valve\'s competitive MOBA', answer: 'DOTA', x: 5, y: 1, dir: 'down' },
-      { id: 3, number: 3, clue: 'Vintage or classic style gaming', answer: 'RETRO', x: 0, y: 3, dir: 'across' },
-      { id: 4, number: 4, clue: 'Street Fighter brute hero', answer: 'AKUMA', x: 5, y: 4, dir: 'across' }
+      { id: 1, number: 1, clue: 'Studio game pengembang ini', answer: 'MEMENTO', x: 0, y: 1, dir: 'across' },
+      { id: 2, number: 1, clue: 'Ayo segera ... game ini!', answer: 'MAINKAN', x: 0, y: 1, dir: 'down' },
+      { id: 3, number: 2, clue: 'Hal berharga untuk disimpan', answer: 'MEMORI', x: 2, y: 0, dir: 'down' },
+      { id: 4, number: 3, clue: 'Lawan dari offline', answer: 'ONLINE', x: 0, y: 5, dir: 'across' }
     ]
   }
 ];
@@ -217,7 +213,6 @@ onMounted(() => {
           @click="(e) => handleCardClick(e, game)"
         >
           <div class="play-card-inner">
-            <span class="difficulty-label">{{ game.difficulty }}</span>
             <span class="game-title">{{ game.title }}</span>
           </div>
         </div>
@@ -291,8 +286,8 @@ onMounted(() => {
             </div>
           </div>
           
-          <div class="mobile-finish-wrapper">
-            <button class="finish-game-btn mobile-finish-btn" @click="finishGame">
+          <div class="finish-game-wrapper">
+            <button class="finish-game-btn" @click="finishGame">
               Finish Game
             </button>
           </div>
@@ -429,25 +424,26 @@ onMounted(() => {
   }
 }
 
-.mobile-finish-wrapper {
-  display: none;
-}
-.mobile-finish-btn {
+
+.finish-game-wrapper {
+  display: flex;
   width: 100%;
-  justify-content: center;
+  justify-content: flex-end;
+  margin-top: 40px;
+}
+
+@media (max-width: 1024px) {
+  .finish-game-wrapper {
+    justify-content: center;
+    margin-bottom: 60px;
+  }
+  .finish-game-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 768px) {
-  .desktop-finish-btn {
-    display: none;
-  }
-  .mobile-finish-wrapper {
-    display: flex;
-    width: 100%;
-    margin-top: 40px;
-    margin-bottom: 80px; /* Provides extra scroll room */
-    justify-content: center;
-  }
   .tts-game-container {
     padding-top: 40px; /* Space for absolute social icons */
     position: relative;

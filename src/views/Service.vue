@@ -19,34 +19,41 @@
               v-for="(card, index) in cards" 
               :key="index"
               class="service-sub-card"
-              :class="['card-' + (index + 1), { 'is-expanded': activeCard?.title === card.title, 'is-hidden': activeCard && activeCard.title !== card.title }]"
+              :class="['card-' + (index + 1), { 'is-hidden': activeCard }]"
               @click="expandCard(card)"
             >
-              <!-- Back arrow inside expanded card -->
-              <div v-if="activeCard?.title === card.title" class="card-back-arrow" @click.stop="activeCard = null">
-                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-              </div>
-
               <div class="service-card-inner">
-                <span v-if="!activeCard">{{ card.title }}</span>
-                
-                <div v-if="activeCard?.title === card.title" class="service-expanded-content">
-                  <div class="expanded-logo-header">
-                    <img :src="mementoImg" alt="Memento Logo" class="expanded-card-logo">
-                  </div>
-                  <h2 class="expanded-service-title">{{ card.title }}</h2>
-                  <div class="expanded-service-desc">
-                    <p>{{ card.description }}</p>
-                    <p>Experience the future of interactive solutions with Memento Game Studio. We combine cutting-edge technology with world-class design to deliver experiences that leave a lasting impression.</p>
-                  </div>
-                </div>
+                <span>{{ card.title }}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Dedicated Expanded Modal Overlay -->
+      <transition name="fade-modal">
+        <div v-if="activeCard" class="service-modal-overlay">
+          <div class="modal-card-container">
+            <!-- Back arrow inside expanded card -->
+            <div class="card-back-arrow" @click="activeCard = null">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </div>
+
+            <div class="modal-scroll-content">
+              <div class="expanded-logo-header">
+                <img :src="mementoImg" alt="Memento Logo" class="expanded-card-logo">
+              </div>
+              <h2 class="expanded-service-title">{{ activeCard.title }}</h2>
+              <div class="expanded-service-desc">
+                <p>{{ activeCard.description }}</p>
+                <p>Experience the future of interactive solutions with Memento Game Studio. We combine cutting-edge technology with world-class design to deliver experiences that leave a lasting impression.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -64,10 +71,22 @@ const handRef = ref(null);
 const activeCard = ref(null);
 
 const cards = ref([
-  { title: 'Games For Marketing', description: 'Gamification is the most effective way to engage your audience. We create bespoke marketing games that increase brand loyalty and conversion rates.' },
-  { title: 'Games For Education', description: 'Transform learning into an adventure. Our educational games are designed to make complex topics easy to understand and fun to explore.' },
-  { title: 'Games For Training', description: 'Enhance professional skills with realistic simulations. Our training games provide a safe and immersive environment for employees to practice and excel.' },
-  { title: 'Interactive Brand Experience', description: 'Create a memorable connection with your audience through immersive digital installations and interactive storytelling.' }
+  { 
+    title: 'Games For Marketing', 
+    description: 'Gamification is the most powerful tool in modern marketing, transforming passive observers into active participants. We specialize in creating bespoke marketing games that leverage core psychological triggers to drive high-impact engagement. Our solutions are meticulously crafted to increase brand awareness, foster long-term loyalty, and significantly boost conversion rates by turning every brand interaction into a rewarding and memorable experience.' 
+  },
+  { 
+    title: 'Games For Education', 
+    description: 'We believe that the future of learning is interactive. Our educational games are engineered to transform traditional curricula into captivating digital adventures that motivate students to explore and master new domains. By simplifying complex concepts through intuitive gameplay and immersive storytelling, we ensure that knowledge is not just delivered, but internalized and retained, making education an accessible and joy-filled journey for learners of all ages.' 
+  },
+  { 
+    title: 'Games For Training', 
+    description: 'Empower your workforce with high-fidelity simulations that bridge the gap between theory and practice. Our professional training games provide a risk-free, immersive environment where employees can safely hone their skills and navigate complex corporate scenarios. These data-driven experiences are designed to improve decision-making, enhance operational efficiency, and provide clear performance metrics, ensuring your team is fully prepared to excel in the real world.' 
+  },
+  { 
+    title: 'Interactive Brand Experience', 
+    description: 'Go beyond the screen and create an emotional bridge between your brand and your audience. We design immersive digital installations and hybrid experiences that combine cutting-edge technology with the timeless art of storytelling. Whether through augmented reality, motion sensing, or large-scale physical-digital integrations, our interactive experiences are designed to leave a lasting impression and build a deep, meaningful connection with your customers.' 
+  }
 ]);
 
 const expandCard = (card) => {

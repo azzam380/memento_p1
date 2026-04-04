@@ -355,45 +355,65 @@ body {
 /* Expanded Layout */
 .card-content-layout {
   display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
-}
-
-@media (max-width: 768px) {
-  .card-content-layout {
-    flex-direction: column;
-    overflow-y: auto;
-  }
+  overflow-y: auto;
 }
 
 .card-image-section {
-  flex: 1.2;
+  flex: 1;
   background: #1F073A;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-right: 2px solid rgba(212, 175, 55, 0.2);
+  height: 100%;
+}
+
+.work-card-wrapper.is-expanded .card-image-section {
+  flex: none;
+  min-height: 250px;
+  border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+  padding: 20px 0;
 }
 
 @media (max-width: 768px) {
-  .card-image-section {
-    flex: none;
-    height: 180px; /* Increased from 120px for better visibility */
-    border-right: none;
-    border-bottom: 2px solid rgba(212, 175, 55, 0.1);
+  .work-card-wrapper.is-expanded .card-image-section {
+    min-height: 180px;
+  }
+  .card-front-title {
+    font-size: 1.1rem;
+    letter-spacing: 1px;
   }
 }
 
+.card-front-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: #fcf6ba;
+  text-align: center;
+  padding: 10px;
+  line-height: 1.3;
+  letter-spacing: 2px;
+}
+
 @media (max-width: 480px) {
-  .card-image-section {
-    height: 150px;
+  .work-card-wrapper.is-expanded .card-image-section {
+    height: auto;
+    min-height: 180px;
+    padding: 60px 15px 20px 15px; /* Extra top padding so it doesn't overlap with back arrow */
+  }
+  .card-front-title {
+    font-size: 0.95rem;
+    padding: 5px;
+    letter-spacing: 1px;
   }
   .card-info-section {
     padding: 30px 20px;
   }
   .work-item-title {
-    font-size: 1.8rem;
-    letter-spacing: 2px;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
     margin-bottom: 12px;
   }
   .work-item-desc {
@@ -409,18 +429,21 @@ body {
 }
 
 .work-item-img {
-  width: min(75%, 300px);
+  width: 90%;
+  max-width: 100%;
+  max-height: 350px;
   height: auto;
+  object-fit: contain;
   border-radius: 10px;
   transition: transform 0.5s ease;
 }
 
 .card-info-section {
   flex: 1;
-  padding: 60px 50px;
+  padding: 40px 50px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   background: radial-gradient(circle at center, #1e0638 0%, #0d0216 100%);
   animation: fadeIn 0.8s ease forwards 0.4s;
   opacity: 0;
@@ -442,6 +465,7 @@ body {
   color: white;
   margin-bottom: 40px;
   opacity: 0.9;
+  white-space: pre-line;
 }
 
 .play-now-btn {

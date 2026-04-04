@@ -33,8 +33,8 @@
 
               <div class="card-content-layout">
                 <div class="card-image-section">
-                  <img :src="item.image" :alt="item.title" class="work-item-img">
-                  <div class="card-placeholder-text" v-if="!item.image">{{ item.title }}</div>
+                  <img v-if="activeWork?.id === item.id" :src="item.image" :alt="item.title" class="work-item-img">
+                  <div class="card-front-title" v-else>{{ item.title }}</div>
                 </div>
 
                 <div v-if="activeWork?.id === item.id" class="card-info-section">
@@ -55,16 +55,36 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import gsap from 'gsap';
 import handWorkImg from '@/assets/img-hand-work.png';
-import mementoImg from '@/assets/img-memento.png';
+import imgBatik from '@/assets/img-batik-gameplay.png';
+import imgRtManager from '@/assets/img-rt-manager.png';
+import imgTehRasa from '@/assets/img-teh-rasa.png';
 
 const containerRef = ref(null);
 const handsRef = ref(null);
 const activeWork = ref(null);
 
 const items = ref([
-  { id: 1, title: 'Project One', description: 'A mystical journey through forgotten realms, blending puzzles and deep narrative. Experience the premium gameplay and stunning visuals that redefine interactive storytelling.', image: mementoImg, pos: 'left' },
-  { id: 2, title: 'Project Two', description: 'Our flagship title featuring innovative card-based mechanics and a rich, atmospheric world. Every move matters in this high-stakes game of strategy and luck.', image: mementoImg, pos: 'center' },
-  { id: 3, title: 'Project Three', description: 'An experimental adventure focusing on abstract visuals and emotive soundscapes. A unique portfolio piece that showcases our creative diversity.', image: mementoImg, pos: 'right' },
+  { 
+    id: 1, 
+    title: 'Batik Simulator', 
+    description: "Genre: Simulation / Casual\nSetting: Traditional Batik Workshop\n\nPlayers take on the role of a batik artisan who must carefully apply malam (hot wax) using a canting, a traditional small-spouted tool, onto a white cloth stretched across a gawangan (wooden frame). In the top-right corner, a reference motif featuring a classic brown kawung batik pattern is displayed for the player to replicate. A progress bar at the top tracks how much of the work has been completed.\n\nThe main challenge is tracing the pattern with precision, avoiding excessive wax drips, and finishing the motif before time runs out. This game introduces players to Indonesia's cultural heritage through a hands-on digital batik-making experience.", 
+    image: imgBatik, 
+    pos: 'left' 
+  },
+  { 
+    id: 2, 
+    title: 'Human Rights Interactive Experience', 
+    description: "Genre: Role-playing\nDescription: An interactive experience for understanding differences of opinion and tolerance.\n\nThe Human Rights Interactive Experience is a social experiment in the form of a game. Players write an opinion on one of 10 human rights issues, then read real opinions from other players. Using a swipe mechanic, players mark opinions they agree with or disagree with. At the end, the game displays all rejected opinions and gives them a choice: drag them to the trash to delete them forever, or throw them away to respect diversity.\n\nThis isn't a game about winning or losing. It's a mirror that forces introspection: do we truly believe in freedom of speech when faced with voices that contradict our values? With a countdown timer and a darkening screen, the game creates psychological pressure that simulates the temptation to \"silence\" in real digital life.", 
+    image: imgRtManager, 
+    pos: 'center' 
+  },
+  { 
+    id: 3, 
+    title: 'Teh Rasa', 
+    description: "Genre: Simulation\nSetting: Outdoor Tea Stall in a City Park\n\nPlayers manage a tea beverage kiosk called \"Teh Rasa\", run by a girl wearing a brown apron. The counter is stocked with various supplies: flavored syrup bottles, stacked cups, Hot Water, green tea leaf, black tea leaf, chamomile, jasmine, mint and else.\n\nThe gameplay revolves around serving customers quickly and accurately, selecting the right tea flavor per order, brewing it, and serving it before customers lose patience. The busier the park gets, the higher the difficulty. This game brings the cultural charm of Indonesian tea culture to life through vibrant and cheerful visuals.", 
+    image: imgTehRasa, 
+    pos: 'right' 
+  },
 ]);
 
 const selectWork = (item) => {

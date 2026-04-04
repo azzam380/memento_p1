@@ -187,7 +187,7 @@ onMounted(() => {
 
 <template>
   <div class="game-container">
-    <router-link to="/" class="back-button">
+    <router-link to="/" class="back-button" v-if="!activeGame">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="15 18 9 12 15 6"></polyline>
       </svg>
@@ -238,9 +238,6 @@ onMounted(() => {
           </div>
         </div>
         <h2 class="tts-level-title">{{ activeGame.title }} - {{ activeGame.difficulty }}</h2>
-        <button class="finish-game-btn" @click="finishGame">
-          Finish Game
-        </button>
       </div>
 
       <div class="tts-layout">
@@ -292,6 +289,12 @@ onMounted(() => {
                 <span class="clue-text">{{ word.clue }}</span>
               </div>
             </div>
+          </div>
+          
+          <div class="mobile-finish-wrapper">
+            <button class="finish-game-btn mobile-finish-btn" @click="finishGame">
+              Finish Game
+            </button>
           </div>
         </div>
       </div>
@@ -426,11 +429,82 @@ onMounted(() => {
   }
 }
 
+.mobile-finish-wrapper {
+  display: none;
+}
+.mobile-finish-btn {
+  width: 100%;
+  justify-content: center;
+}
+
 @media (max-width: 768px) {
-  .tts-level-title { font-size: 1.5rem; }
-  .tts-back-btn, .finish-game-btn { padding: 8px 15px; font-size: 0.8rem; }
-  .header-left { gap: 15px; }
-  .game-timer { padding: 6px 12px; font-size: 0.8rem; }
+  .desktop-finish-btn {
+    display: none;
+  }
+  .mobile-finish-wrapper {
+    display: flex;
+    width: 100%;
+    margin-top: 40px;
+    margin-bottom: 80px; /* Provides extra scroll room */
+    justify-content: center;
+  }
+  .tts-game-container {
+    padding-top: 40px; /* Space for absolute social icons */
+    position: relative;
+  }
+  .tts-back-header {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 25px;
+    position: relative;
+  }
+  .tts-level-title {
+    width: 100%;
+    order: -1; 
+    text-align: center;
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+  }
+  .header-left {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start; /* Anchor back button to left */
+    position: relative;
+  }
+  .game-timer {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+  .tts-back-btn {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tts-game-container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .tts-level-title {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+  .game-timer {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+  }
+  .tts-back-btn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+  .mobile-finish-btn {
+    padding: 12px 15px;
+    font-size: 1rem;
+  }
 }
 
 .tts-grid-wrapper {
@@ -464,9 +538,10 @@ onMounted(() => {
 
 @media (max-width: 480px) {
   .tts-real-grid {
-    width: min(280px, 80vw);
-    height: min(280px, 80vw);
+    width: min(280px, 85vw);
+    height: min(280px, 85vw);
   }
+  .cell-input { font-size: 0.8rem; }
 }
 
 .grid-cell {
@@ -664,5 +739,34 @@ onMounted(() => {
 .arena-btn:hover {
   background: var(--accent-gold);
   color: #1a0b2e;
+}
+
+@media (max-width: 480px) {
+  .score-card {
+    padding: 30px 20px;
+  }
+  .score-title {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  .score-circle {
+    width: 130px;
+    height: 130px;
+    margin-bottom: 30px;
+  }
+  .score-value {
+    font-size: 2rem;
+  }
+  .score-details {
+    margin-bottom: 30px;
+  }
+  .score-detail-item {
+    font-size: 0.9rem;
+  }
+  .arena-btn {
+    padding: 12px 25px;
+    width: 100%;
+  }
 }
 </style>

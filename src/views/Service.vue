@@ -29,44 +29,52 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- Dedicated Expanded Modal Overlay -->
-      <transition name="fade-modal">
-        <div v-if="activeCard" class="service-modal-overlay">
-          <div class="modal-card-container">
-            <!-- Back arrow inside expanded card -->
-            <div class="card-back-arrow" @click="activeCard = null">
-               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
+  <!-- Dedicated Expanded Modal Overlay - Teleported to Body -->
+  <teleport to="body">
+    <transition name="fade-modal">
+      <div v-if="activeCard" class="service-modal-overlay">
+        <div class="modal-card-container">
+          <!-- Back arrow inside expanded card -->
+          <div class="card-back-arrow" @click="activeCard = null">
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </div>
+
+          <div class="modal-scroll-content">
+            <div class="expanded-logo-header">
+              <img :src="mementoImg" alt="Memento Logo" class="expanded-card-logo">
             </div>
-
-            <div class="modal-scroll-content">
-              <div class="expanded-logo-header">
-                <img :src="mementoImg" alt="Memento Logo" class="expanded-card-logo">
-              </div>
-              <h2 class="expanded-service-title">{{ activeCard.title }}</h2>
-              <div class="expanded-service-desc">
-                <p>{{ activeCard.description }}</p>
-                <p>Experience the future of interactive solutions with Memento Game Studio. We combine cutting-edge technology with world-class design to deliver experiences that leave a lasting impression.</p>
-              </div>
+            <h2 class="expanded-service-title" v-if="activeCard">{{ activeCard.title }}</h2>
+            <div class="expanded-service-desc" v-if="activeCard">
+              <p>{{ activeCard.description }}</p>
+              <p>Experience the future of interactive solutions with Memento Game Studio. We combine cutting-edge technology with world-class design to deliver experiences that leave a lasting impression.</p>
             </div>
           </div>
         </div>
-      </transition>
-    </div>
-  </div>
+      </div>
+    </transition>
+  </teleport>
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import gsap from 'gsap';
 import handServiceImg from '@/assets/img-hand-service.png';
 import mementoImg from '@/assets/img-memento.png';
 
 const route = useRoute();
-const pageTitle = computed(() => route.query.title || 'Service');
+const pageTitle = computed(() => {
+  try {
+    return route?.query?.title || 'Service';
+  } catch (e) {
+    return 'Service';
+  }
+});
 const handRef = ref(null);
 const activeCard = ref(null);
 
@@ -77,7 +85,7 @@ const cards = ref([
   },
   { 
     title: 'Games For Education', 
-    description: 'We believe that the future of learning is interactive. Our educational games are engineered to transform traditional curricula into captivating digital adventures that motivate students to explore and master new domains. By simplifying complex concepts through intuitive gameplay and immersive storytelling, we ensure that knowledge is not just delivered, but internalized and retained, making education an accessible and joy-filled journey for learners of all ages.' 
+    description: 'We believe that the future of learning is interactive. Our educational games are engineered to transform traditional curricula into captivating digital adventures that motivate students to explore and master new domains. By simplifying complex concepts through intuitive gameplay and immersive storytelling, we ensure that knowledge is not just delivered, but internalized and retained, making education an accessible and joy-filled journey for learners of age-less potentials.' 
   },
   { 
     title: 'Games For Training', 
@@ -92,6 +100,15 @@ const cards = ref([
 const expandCard = (card) => {
   if (!activeCard.value) activeCard.value = card;
 };
+
+// Body scroll lock logic
+watch(activeCard, (newVal) => {
+  if (newVal) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+});
 
 const handleMouseMove = (e) => {
   if (!handRef.value || activeCard.value) return;
@@ -110,9 +127,12 @@ const handleMouseMove = (e) => {
 
 onMounted(() => {
   window.addEventListener('mousemove', handleMouseMove);
+  console.log("Service Page Mounted with Title:", pageTitle.value);
 });
 
 onUnmounted(() => {
   window.removeEventListener('mousemove', handleMouseMove);
+  // Ensure we cleanup everything
+  document.body.style.overflow = '';
 });
 </script>

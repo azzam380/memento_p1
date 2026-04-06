@@ -57,7 +57,7 @@ import handWorkImg from '@/assets/img-hand-work.png';
 import imgBatik from '@/assets/img-batik-gameplay.png';
 import imgRtManager from '@/assets/img-rt-manager.png';
 import imgTehRasa from '@/assets/img-teh-rasa.png';
-import logoBatik from '@/assets/img-logobatik.jpg';
+import logoBatik from '@/assets/img-logobatik.png';
 import logoHam from '@/assets/img-logoham.png';
 import logoTehRasa from '@/assets/img-logotehrasa.png';
 

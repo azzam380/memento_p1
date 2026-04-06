@@ -94,7 +94,7 @@ const ttsData = [
   },
   {
     id: 4, title: '4', difficulty: 'SULIT',
-    gridSize: 7,
+    gridSize: 8,
     words: [
       { id: 1, number: 1, clue: 'Cerita dalam sebuah game', answer: 'NARASI', x: 1, y: 1, dir: 'across' },
       { id: 2, number: 1, clue: 'Dibutuhkan untuk online', answer: 'NETWORK', x: 1, y: 1, dir: 'down' },
@@ -104,7 +104,7 @@ const ttsData = [
   },
   {
     id: 5, title: '5', difficulty: 'MEMENTO',
-    gridSize: 7,
+    gridSize: 8,
     words: [
       { id: 1, number: 1, clue: 'Studio game pengembang ini', answer: 'MEMENTO', x: 0, y: 1, dir: 'across' },
       { id: 2, number: 1, clue: 'Ayo segera ... game ini!', answer: 'MAINKAN', x: 0, y: 1, dir: 'down' },

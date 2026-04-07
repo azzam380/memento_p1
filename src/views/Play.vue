@@ -405,18 +405,12 @@ onMounted(() => {
 
 .game-title {
   font-family: 'Playfair Display', serif;
-  font-size: 3.5rem; /* Bigger since it's just a number now */
+  font-size: clamp(2.5rem, 5vw, 3.5rem); /* Fluid size */
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 0;
   text-align: center;
   width: 100%;
-}
-
-@media (max-width: 768px) {
-  .game-title {
-    font-size: 2.5rem;
-  }
 }
 
 .tts-game-container {

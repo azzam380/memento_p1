@@ -3,8 +3,14 @@ import { onMounted, ref } from 'vue';
 import gsap from 'gsap';
 import logoImg from '@/assets/img-logo.png';
 
+const displayCards = ref([
+  { id: 'c1', title: '02', isComingSoon: true, label: 'UNDER CONSTRUCTION' },
+  { id: 'c2', title: '03', isComingSoon: true, label: 'COMING SOON' },
+  { id: 'tts', title: 'TTS', isComingSoon: false, label: 'PLAY NOW' },
+  { id: 'c3', title: '04', isComingSoon: true, label: 'COMING SOON' },
+  { id: 'c4', title: '05', isComingSoon: true, label: 'UNDER CONSTRUCTION' }
+]);
 const activeGame = ref(null);
-const randomizedCards = ref([]);
 const showScore = ref(false);
 const timerSeconds = ref(0);
 const gameScore = ref(0);
@@ -57,7 +63,6 @@ const finishGame = () => {
 const resetToArena = () => {
   activeGame.value = null;
   showScore.value = false;
-  randomizedCards.value = shuffleArray(ttsData);
 };
 
 const ttsData = [
@@ -85,21 +90,20 @@ const ttsData = [
     id: 3, title: '3', difficulty: 'MENENGAH',
     gridSize: 7,
     words: [
-      { id: 1, number: 1, clue: 'Game buatan anak bangsa', answer: 'LOKAL', x: 1, y: 1, dir: 'across' },
-      { id: 2, number: 1, clue: 'Tahapan dalam sebuah game', answer: 'LEVEL', x: 1, y: 1, dir: 'down' },
-      { id: 3, number: 2, clue: 'Musuh besar kancil', answer: 'BUAYA', x: 5, y: 1, dir: 'down' },
-      { id: 4, number: 3, clue: 'Tidak mahal', answer: 'MURAH', x: 1, y: 5, dir: 'across' },
-      { id: 5, number: 4, clue: 'Hasil akhir atau capaian', answer: 'HASIL', x: 5, y: 5, dir: 'across' }
+      { id: 1, number: 1, clue: 'Proses menuntut ilmu', answer: 'BELAJAR', x: 0, y: 1, dir: 'across' },
+      { id: 2, number: 2, clue: 'Keadaan yang dialami manusia', answer: 'NASIB', x: 0, y: 3, dir: 'across' },
+      { id: 3, number: 1, clue: 'Tanaman yang indah', answer: 'BUNGA', x: 0, y: 1, dir: 'down' },
+      { id: 4, number: 3, clue: 'Tempat tinggal keluarga', answer: 'RUMAH', x: 6, y: 1, dir: 'down' }
     ]
   },
   {
     id: 4, title: '4', difficulty: 'SULIT',
     gridSize: 8,
     words: [
-      { id: 1, number: 1, clue: 'Cerita dalam sebuah game', answer: 'NARASI', x: 1, y: 1, dir: 'across' },
-      { id: 2, number: 1, clue: 'Dibutuhkan untuk online', answer: 'NETWORK', x: 1, y: 1, dir: 'down' },
-      { id: 3, number: 2, clue: 'Tokoh dalam permainan', answer: 'KARAKTER', x: 4, y: 0, dir: 'down' },
-      { id: 4, number: 3, clue: 'Tugas yang harus selesai', answer: 'MISI', x: 1, y: 5, dir: 'across' }
+      { id: 1, number: 1, clue: 'Rangkaian instruksi komputer', answer: 'PROGRAM', x: 0, y: 1, dir: 'across' },
+      { id: 2, number: 1, clue: 'Tepi laut berpasir', answer: 'PANTAI', x: 0, y: 1, dir: 'down' },
+      { id: 3, number: 2, clue: 'Seni suara dan nada', answer: 'MUSIK', x: 6, y: 1, dir: 'down' },
+      { id: 4, number: 3, clue: 'Bersifat teknis atau ahli', answer: 'TEKNIS', x: 0, y: 4, dir: 'across' }
     ]
   },
   {
@@ -107,9 +111,9 @@ const ttsData = [
     gridSize: 8,
     words: [
       { id: 1, number: 1, clue: 'Studio game pengembang ini', answer: 'MEMENTO', x: 0, y: 1, dir: 'across' },
-      { id: 2, number: 1, clue: 'Ayo segera ... game ini!', answer: 'MAINKAN', x: 0, y: 1, dir: 'down' },
-      { id: 3, number: 2, clue: 'Hal berharga untuk disimpan', answer: 'MEMORI', x: 2, y: 0, dir: 'down' },
-      { id: 4, number: 3, clue: 'Lawan dari offline', answer: 'ONLINE', x: 0, y: 5, dir: 'across' }
+      { id: 2, number: 1, clue: 'Sesuatu yang diingat', answer: 'MEMORI', x: 0, y: 1, dir: 'down' },
+      { id: 3, number: 2, clue: 'Tersambung ke internet', answer: 'ONLINE', x: 0, y: 4, dir: 'across' },
+      { id: 4, number: 3, clue: 'Berhubungan dengan penglihatan', answer: 'OPTIK', x: 6, y: 1, dir: 'down' }
     ]
   }
 ];
@@ -137,10 +141,28 @@ const createSparkleBurst = (card) => {
   setTimeout(() => { container.remove(); }, 1000);
 };
 
-const handleCardClick = (event, game) => {
+const handleCardClick = (event, cardData, index) => {
   const card = event.currentTarget;
   createSparkleBurst(card);
+  
+  if (index !== 2) {
     gsap.to(card, {
+      x: '+=10',
+      duration: 0.05,
+      repeat: 3,
+      yoyo: true,
+      ease: "power2.inOut",
+      onComplete: () => {
+        gsap.to(card, { x: 0, duration: 0.1 });
+      }
+    });
+    return;
+  }
+
+  // Picking a random level from ttsData
+  const game = ttsData[Math.floor(Math.random() * ttsData.length)];
+
+  gsap.to(card, {
     scale: 0.95,
     duration: 0.1,
     yoyo: true,
@@ -177,7 +199,7 @@ const shuffleArray = (array) => {
 };
 
 onMounted(() => {
-  randomizedCards.value = shuffleArray(ttsData);
+  // No need to shuffle ttsData here anymore
 });
 </script>
 
@@ -200,20 +222,23 @@ onMounted(() => {
 
       <div class="play-carousel">
         <div 
-          v-for="(game, index) in randomizedCards" 
-          :key="game.id"
+          v-for="(card, index) in displayCards" 
+          :key="card.id"
           class="play-card" 
           :class="[
             index === 0 ? 'side-outer left' : '',
             index === 1 ? 'side-inner left' : '',
             index === 2 ? 'central-focus' : '',
             index === 3 ? 'side-inner right' : '',
-            index === 4 ? 'side-outer right' : ''
+            index === 4 ? 'side-outer right' : '',
+            card.isComingSoon ? 'in-development' : ''
           ]"
-          @click="(e) => handleCardClick(e, game)"
+          @click="(e) => handleCardClick(e, card, index)"
         >
           <div class="play-card-inner">
-            <span class="game-title">{{ game.title }}</span>
+            <span class="game-title">{{ card.title }}</span>
+            <span v-if="card.isComingSoon" class="dev-label">{{ card.label }}</span>
+            <span v-else class="play-label">START ADVENTURE</span>
           </div>
         </div>
       </div>
@@ -334,6 +359,39 @@ onMounted(() => {
   justify-content: center;
   height: 100%;
   pointer-events: none;
+}
+
+.dev-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: #bf953f;
+  background: rgba(191, 149, 63, 0.1);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.play-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #fff;
+  background: rgba(212, 175, 55, 0.3);
+  padding: 6px 15px;
+  border-radius: 20px;
+  margin-top: 15px;
+  letter-spacing: 1px;
+  font-weight: bold;
+  border: 1px solid var(--accent-gold);
+}
+
+.in-development {
+  filter: grayscale(0.6) opacity(0.8);
+}
+
+.in-development:hover {
+  filter: grayscale(0.2) opacity(1);
 }
 
 .difficulty-label {

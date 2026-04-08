@@ -2,13 +2,18 @@
 import { onMounted, ref } from 'vue';
 import gsap from 'gsap';
 import logoImg from '@/assets/img-logo.png';
+import evanImg from '@/assets/img-evan.png';
+import linaImg from '@/assets/img-lina.png';
+import melissaImg from '@/assets/img-melissa.png';
+import sarahImg from '@/assets/img-sarah.png';
+
 
 const displayCards = ref([
-  { id: 'c1', title: '02', isComingSoon: true, label: 'UNDER CONSTRUCTION' },
-  { id: 'c2', title: '03', isComingSoon: true, label: 'COMING SOON' },
+  { id: 'c1', title: '02', isComingSoon: true, label: 'COMING SOON', image: evanImg },
+  { id: 'c2', title: '03', isComingSoon: true, label: 'COMING SOON', image: linaImg },
   { id: 'tts', title: 'TTS', isComingSoon: false, label: 'PLAY NOW' },
-  { id: 'c3', title: '04', isComingSoon: true, label: 'COMING SOON' },
-  { id: 'c4', title: '05', isComingSoon: true, label: 'UNDER CONSTRUCTION' }
+  { id: 'c3', title: '04', isComingSoon: true, label: 'COMING SOON', image: melissaImg },
+  { id: 'c4', title: '05', isComingSoon: true, label: 'COMING SOON', image: sarahImg }
 ]);
 const activeGame = ref(null);
 const showScore = ref(false);
@@ -238,7 +243,8 @@ onMounted(() => {
           <div class="play-card-inner">
             <span class="game-title">{{ card.title }}</span>
             <span v-if="card.isComingSoon" class="dev-label">{{ card.label }}</span>
-            <span v-else class="play-label">START ADVENTURE</span>
+            <img v-if="card.image" :src="card.image" class="card-thumbnail" alt="Game Thumbnail">
+            <span v-if="!card.isComingSoon" class="play-label">PLAY NOW</span>
           </div>
         </div>
       </div>
@@ -371,6 +377,20 @@ onMounted(() => {
   margin-top: 10px;
   letter-spacing: 1px;
   font-weight: bold;
+}
+
+.card-thumbnail {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  margin-top: 15px;
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+  transition: transform 0.3s ease;
+}
+
+.play-card:hover .card-thumbnail {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.6));
 }
 
 .play-label {

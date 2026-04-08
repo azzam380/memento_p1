@@ -72,53 +72,53 @@ const resetToArena = () => {
 
 const ttsData = [
   {
-    id: 1, title: '1', difficulty: 'MUDAH', 
+    id: 1, title: '1', difficulty: 'EASY', 
     gridSize: 6,
     words: [
-      { id: 1, number: 1, clue: 'Pemain video game profesional', answer: 'GAMER', x: 1, y: 1, dir: 'across' },
-      { id: 2, number: 1, clue: 'Pantulan suara dalam ruangan', answer: 'GEMA', x: 1, y: 1, dir: 'down' },
-      { id: 3, number: 2, clue: 'Logam mulia berwarna kuning', answer: 'EMAS', x: 4, y: 1, dir: 'down' },
-      { id: 4, number: 3, clue: 'Alat untuk melihat', answer: 'MATA', x: 1, y: 3, dir: 'across' }
+      { id: 1, number: 1, clue: 'The area above Earth', answer: 'SPACE', x: 1, y: 1, dir: 'across' },
+      { id: 2, number: 1, clue: 'Opposite of big', answer: 'SMALL', x: 1, y: 1, dir: 'down' },
+      { id: 3, number: 2, clue: 'Free from dirt', answer: 'CLEAN', x: 4, y: 1, dir: 'down' },
+      { id: 4, number: 3, clue: 'Having the power to do', answer: 'ABLE', x: 1, y: 3, dir: 'across' }
     ]
   },
   {
-    id: 2, title: '2', difficulty: 'MENENGAH',
+    id: 2, title: '2', difficulty: 'MEDIUM',
     gridSize: 6,
     words: [
-      { id: 1, number: 1, clue: 'Sangat mengasyikkan', answer: 'SERU', x: 1, y: 1, dir: 'across' },
-      { id: 2, number: 1, clue: 'Angka setelah nol', answer: 'SATU', x: 1, y: 1, dir: 'down' },
-      { id: 3, number: 4, clue: 'Dilakukan berulang kali', answer: 'ULANG', x: 4, y: 1, dir: 'down' },
-      { id: 4, number: 3, clue: 'Suara saat merasa lucu', answer: 'TAWA', x: 1, y: 3, dir: 'across' }
+      { id: 1, number: 1, clue: 'Cease movement', answer: 'STOP', x: 1, y: 1, dir: 'across' },
+      { id: 2, number: 1, clue: 'Celeb or celestial body', answer: 'STAR', x: 1, y: 1, dir: 'down' },
+      { id: 3, number: 4, clue: 'Engages in games', answer: 'PLAYS', x: 4, y: 1, dir: 'down' },
+      { id: 4, number: 3, clue: 'Region or space', answer: 'AREA', x: 1, y: 3, dir: 'across' }
     ]
   },
   {
-    id: 3, title: '3', difficulty: 'MENENGAH',
+    id: 3, title: '3', difficulty: 'MEDIUM',
     gridSize: 7,
     words: [
-      { id: 1, number: 1, clue: 'Proses menuntut ilmu', answer: 'BELAJAR', x: 0, y: 1, dir: 'across' },
-      { id: 2, number: 2, clue: 'Keadaan yang dialami manusia', answer: 'NASIB', x: 0, y: 3, dir: 'across' },
-      { id: 3, number: 1, clue: 'Tanaman yang indah', answer: 'BUNGA', x: 0, y: 1, dir: 'down' },
-      { id: 4, number: 3, clue: 'Tempat tinggal keluarga', answer: 'RUMAH', x: 6, y: 1, dir: 'down' }
+      { id: 1, number: 1, clue: 'Colorful plants', answer: 'FLOWERS', x: 0, y: 1, dir: 'across' },
+      { id: 2, number: 2, clue: 'Large body of salt water', answer: 'OCEAN', x: 0, y: 3, dir: 'across' },
+      { id: 3, number: 1, clue: 'Opposite of back', answer: 'FRONT', x: 0, y: 1, dir: 'down' },
+      { id: 4, number: 3, clue: 'Large sea vessels', answer: 'SHIPS', x: 6, y: 1, dir: 'down' }
     ]
   },
   {
-    id: 4, title: '4', difficulty: 'SULIT',
+    id: 4, title: '4', difficulty: 'HARD',
     gridSize: 8,
     words: [
-      { id: 1, number: 1, clue: 'Rangkaian instruksi komputer', answer: 'PROGRAM', x: 0, y: 1, dir: 'across' },
-      { id: 2, number: 1, clue: 'Tepi laut berpasir', answer: 'PANTAI', x: 0, y: 1, dir: 'down' },
-      { id: 3, number: 2, clue: 'Seni suara dan nada', answer: 'MUSIK', x: 6, y: 1, dir: 'down' },
-      { id: 4, number: 3, clue: 'Bersifat teknis atau ahli', answer: 'TEKNIS', x: 0, y: 4, dir: 'across' }
+      { id: 1, number: 1, clue: 'Taking part in a game', answer: 'PLAYING', x: 0, y: 1, dir: 'across' },
+      { id: 2, number: 1, clue: 'Literary work in rhythm', answer: 'POETRY', x: 0, y: 1, dir: 'down' },
+      { id: 3, number: 2, clue: 'Transparent material', answer: 'GLASS', x: 6, y: 1, dir: 'down' },
+      { id: 4, number: 3, clue: 'Vehicles on a track', answer: 'TRAINS', x: 0, y: 4, dir: 'across' }
     ]
   },
   {
     id: 5, title: '5', difficulty: 'MEMENTO',
     gridSize: 8,
     words: [
-      { id: 1, number: 1, clue: 'Studio game pengembang ini', answer: 'MEMENTO', x: 0, y: 1, dir: 'across' },
-      { id: 2, number: 1, clue: 'Sesuatu yang diingat', answer: 'MEMORI', x: 0, y: 1, dir: 'down' },
-      { id: 3, number: 2, clue: 'Tersambung ke internet', answer: 'ONLINE', x: 0, y: 4, dir: 'across' },
-      { id: 4, number: 3, clue: 'Berhubungan dengan penglihatan', answer: 'OPTIK', x: 6, y: 1, dir: 'down' }
+      { id: 1, number: 1, clue: 'Object kept as a reminder', answer: 'MEMENTO', x: 0, y: 1, dir: 'across' },
+      { id: 2, number: 1, clue: 'Power of remembering', answer: 'MEMORY', x: 0, y: 1, dir: 'down' },
+      { id: 3, number: 2, clue: 'Connected to the internet', answer: 'ONLINE', x: 0, y: 4, dir: 'across' },
+      { id: 4, number: 3, clue: 'Arrangement of things', answer: 'ORDER', x: 6, y: 1, dir: 'down' }
     ]
   }
 ];

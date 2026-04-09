@@ -70,6 +70,42 @@ const resetToArena = () => {
   showScore.value = false;
 };
 
+const handleKeyDown = (event, r, c) => {
+  const keys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+  if (keys.includes(event.key)) {
+    event.preventDefault();
+    const { gridSize } = activeGame.value;
+    let newR = r;
+    let newC = c;
+
+    const findNext = () => {
+      if (event.key === 'ArrowUp') newR--;
+      else if (event.key === 'ArrowDown') newR++;
+      else if (event.key === 'ArrowLeft') newC--;
+      else if (event.key === 'ArrowRight') newC++;
+    };
+
+    findNext();
+    while (newR >= 0 && newR < gridSize && newC >= 0 && newC < gridSize) {
+      if (activeGame.value.grid[newR][newC]) {
+        const nextInput = document.querySelector(`.cell-input[data-row="${newR}"][data-col="${newC}"]`);
+        if (nextInput) {
+          nextInput.focus();
+          nextInput.select();
+          break;
+        }
+      }
+      findNext();
+    }
+  }
+
+  // Handle auto-overwrite: if typing a character, clear current value first
+  const isLetter = event.key.length === 1 && /^[a-z]$/i.test(event.key) && !event.ctrlKey && !event.metaKey && !event.altKey;
+  if (isLetter) {
+    activeGame.value.grid[r][c].value = '';
+  }
+};
+
 const ttsData = [
   {
     id: 1, title: '1', difficulty: 'EASY', 
@@ -290,6 +326,11 @@ onMounted(() => {
                     v-model="cell.value"
                     class="cell-input"
                     :class="{ 'correct': cell.value.toUpperCase() === cell.answer }"
+                    :data-row="r"
+                    :data-col="c"
+                    @keydown="(e) => handleKeyDown(e, r, c)"
+                    @focus="(e) => e.target.select()"
+                    @click="(e) => e.target.select()"
                   >
                 </template>
               </div>
@@ -391,6 +432,29 @@ onMounted(() => {
 .play-card:hover .card-thumbnail {
   transform: scale(1.1);
   filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.6));
+}
+
+@media (max-width: 768px) {
+  .card-thumbnail {
+    width: 100px;
+    height: 100px;
+    margin-top: 10px;
+  }
+  .dev-label {
+    font-size: 0.6rem;
+    padding: 3px 8px;
+  }
+  .play-label {
+    padding: 4px 12px;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-thumbnail {
+    width: 80px;
+    height: 80px;
+  }
 }
 
 .play-label {
@@ -517,13 +581,14 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   .tts-game-container {
-    padding-top: 40px; /* Space for absolute social icons */
+    padding: 15px;
+    padding-top: 20px;
     position: relative;
   }
   .tts-back-header {
     flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-bottom: 25px;
+    justify-content: center;
+    margin-bottom: 15px;
     position: relative;
   }
   .tts-level-title {
@@ -583,6 +648,13 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@media (max-width: 768px) {
+  .tts-grid-wrapper {
+    padding: 10px;
+    margin-top: 0;
+  }
 }
 
 .tts-real-grid {

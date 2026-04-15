@@ -6,14 +6,15 @@ import evanImg from '@/assets/img-evan.png';
 import linaImg from '@/assets/img-lina.png';
 import melissaImg from '@/assets/img-melissa.png';
 import sarahImg from '@/assets/img-sarah.png';
+import CatTankBasketball from '@/components/CatTankBasketball.vue';
 
 
 const displayCards = ref([
-  { id: 'c1', title: '02', isComingSoon: true, label: 'COMING SOON', image: evanImg },
-  { id: 'c2', title: '03', isComingSoon: true, label: 'COMING SOON', image: linaImg },
+  { id: 'c1', title: '', isComingSoon: false, label: 'PLAY NOW', image: evanImg },
+  { id: 'c2', title: '', isComingSoon: true, label: 'COMING SOON', image: linaImg },
   { id: 'tts', title: 'TTS', isComingSoon: false, label: 'PLAY NOW' },
-  { id: 'c3', title: '04', isComingSoon: true, label: 'COMING SOON', image: melissaImg },
-  { id: 'c4', title: '05', isComingSoon: true, label: 'COMING SOON', image: sarahImg }
+  { id: 'c3', title: '', isComingSoon: true, label: 'COMING SOON', image: melissaImg },
+  { id: 'c4', title: '', isComingSoon: true, label: 'COMING SOON', image: sarahImg }
 ]);
 const activeGame = ref(null);
 const showScore = ref(false);
@@ -186,17 +187,9 @@ const handleCardClick = (event, cardData, index) => {
   const card = event.currentTarget;
   createSparkleBurst(card);
   
-  if (index !== 2) {
-    gsap.to(card, {
-      x: '+=10',
-      duration: 0.05,
-      repeat: 3,
-      yoyo: true,
-      ease: "power2.inOut",
-      onComplete: () => {
-        gsap.to(card, { x: 0, duration: 0.1 });
-      }
-    });
+  if (index === 0) {
+    activeGame.value = { id: 'cat-tank', title: 'Cat Tank Basketball' };
+    startTimer();
     return;
   }
 
@@ -284,6 +277,11 @@ onMounted(() => {
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- CAT TANK BASKETBALL GAME -->
+    <div class="cat-tank-game-container" v-else-if="activeGame.id === 'cat-tank'">
+      <CatTankBasketball @back="activeGame = null; stopTimer()" />
     </div>
 
     <!-- TTS GAME UI (REAL GRID) -->
@@ -445,8 +443,9 @@ onMounted(() => {
     padding: 3px 8px;
   }
   .play-label {
-    padding: 4px 12px;
-    font-size: 0.7rem;
+    padding: 3px 10px;
+    font-size: 0.6rem;
+    margin-top: 8px;
   }
 }
 
@@ -459,15 +458,26 @@ onMounted(() => {
 
 .play-label {
   font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
+  font-size: clamp(0.65rem, 1.8vw, 0.85rem);
   color: #fff;
-  background: rgba(212, 175, 55, 0.3);
-  padding: 6px 15px;
+  background: rgba(212, 175, 55, 0.25);
+  padding: 0.5em 1.5em;
   border-radius: 20px;
-  margin-top: 15px;
+  margin-top: clamp(10px, 3vh, 18px);
   letter-spacing: 1px;
-  font-weight: bold;
-  border: 1px solid var(--accent-gold);
+  font-weight: 800;
+  border: 1.5px solid var(--accent-gold);
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.play-card:hover .play-label {
+  background: var(--accent-gold);
+  color: #1a0b2e;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+  transform: scale(1.05);
 }
 
 .in-development {
@@ -495,6 +505,16 @@ onMounted(() => {
   letter-spacing: 0;
   text-align: center;
   width: 100%;
+}
+
+.cat-tank-game-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+  border-radius: 12px;
 }
 
 .tts-game-container {

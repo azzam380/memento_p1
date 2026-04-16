@@ -70,7 +70,7 @@ npm run server
 ```
 
 ## 👨‍💻 Kontributor
-- **Muhammad Azzam** - *Lead Developer & Designer*
+- **Muhammad Azzam and Benneth** - *Lead Developer & Designer*
 
 ---
 Dibuat dengan ❤️ oleh [Memento Game Studio](https://github.com/azzam380).

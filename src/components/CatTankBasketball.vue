@@ -8,6 +8,7 @@ import catSunglasses from '@/assets/cat-tank-sunglasses.png';
 import catBusiness from '@/assets/cat-tank-business.png';
 import catCrying from '@/assets/cat-tank-crying.png';
 import rimImgSrc from '@/assets/basketball-rim.png';
+import bgClassroomImg from '@/assets/bg-classroom.png';
 
 const emit = defineEmits(['back']);
 
@@ -26,8 +27,8 @@ const gameMessage = ref("");
 const showCTA = ref(true);
 
 // Inventory & Equipment
-const purchased = ref(new Set(['cat_default', 'bg_default', 'aud_none']));
-const equipped = ref(new Set(['cat_default', 'bg_default', 'aud_none']));
+const purchased = ref(new Set(['cat_default', 'bg_white', 'aud_none', 'music_jazz']));
+const equipped = ref(new Set(['cat_default', 'bg_white', 'aud_none', 'music_jazz']));
 
 const buffValues = ref({
   doubleScore: 1, // Will be multiplied by 10 (base initial easy mode)
@@ -50,6 +51,30 @@ tankImages.business.src = catBusiness;
 tankImages.crying.src = catCrying;
 
 const rimImg = new Image(); rimImg.src = rimImgSrc;
+const bgClassroom = new Image(); bgClassroom.src = bgClassroomImg;
+
+// Audio System
+const currentAudio = ref(null);
+const musicVolume = 0.4;
+
+const playMusic = (id) => {
+    if (currentAudio.value) {
+        currentAudio.value.pause();
+        currentAudio.value = null;
+    }
+    
+    let url = "";
+    if (id === 'music_jazz') url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+    else if (id === 'music_lofi') url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3";
+    else if (id === 'music_chaotic') url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3";
+
+    if (url) {
+        currentAudio.value = new Audio(url);
+        currentAudio.value.loop = true;
+        currentAudio.value.volume = musicVolume;
+        currentAudio.value.play().catch(e => console.log("Audio play blocked", e));
+    }
+};
 
 // Canvas & Engine
 const canvasRef = ref(null);
@@ -61,6 +86,7 @@ let gameHeight = 0;
 // Physics Objects
 let tank = { x: 100, y: 0, width: 120, height: 100, angle: -Math.PI/4, power: 12 };
 let rim = { x: 0, y: 0, width: 100, height: 120 };
+let portal = { active: false, x1: 0, y1: 0, x2: 0, y2: 0 };
 let balls = [];
 let particles = [];
 let audienceCats = [];
@@ -91,8 +117,12 @@ const resize = () => {
 
 const createAudience = () => {
     audienceCats = [];
-    if (!equipped.value.has('aud_cats') && !equipped.value.has('aud_chaotic')) return;
-    const count = equipped.value.has('aud_chaotic') ? 80 : 20;
+    if (equipped.value.has('aud_none')) return;
+    
+    let count = 20;
+    if (equipped.value.has('aud_chaotic')) count = 100;
+    else if (equipped.value.has('aud_dancing')) count = 40;
+
     for (let i = 0; i < count; i++) {
         audienceCats.push({
             x: Math.random() * gameWidth,
@@ -100,6 +130,7 @@ const createAudience = () => {
             size: 25 + Math.random() * 20,
             jump: 0,
             offset: Math.random() * Math.PI * 2,
+            type: equipped.value.has('aud_dancing') ? 'dancing' : 'cheering',
             color: `hsl(${40 + Math.random() * 20}, 100%, 60%)`
         });
     }
@@ -109,6 +140,17 @@ const resetRim = () => {
   const p = RIM_POINTS[Math.floor(Math.random() * RIM_POINTS.length)];
   rim.x = p.x * gameWidth;
   rim.y = p.y * gameHeight;
+  
+  if (purchased.value.has('portalShot')) {
+      portal.active = true;
+      portal.x1 = rim.x - 200 + Math.random() * 100;
+      portal.y1 = rim.y + 100 + Math.random() * 100;
+      portal.x2 = rim.x + 50;
+      portal.y2 = rim.y - 50;
+  } else {
+      portal.active = false;
+  }
+  
   gsap.from(rim, { opacity: 0, y: "-=50", duration: 0.5, ease: "back.out" });
 };
 
@@ -182,19 +224,25 @@ const update = () => {
     const isCatching = purchased.value.has('catchingSystem');
 
     if (isMagnet || isCatching) {
-        const pull = isCatching ? 0.6 : 0.08;
-        if (dist < (isCatching ? 400 : 200)) {
-            b.vx += dx * pull;
-            b.vy += dy * pull;
+        const range = isCatching ? 300 : 150;
+        const pullStrength = isCatching ? 0.15 : 0.04;
+        
+        // Only pull if falling and within range
+        if (dist < range && b.vy > 0) {
+            // Primarily pull horizontally to align with the hole
+            b.vx += (rimCenterX - b.x) * pullStrength;
+            
+            // ADDED: Dampen horizontal movement to prevent zig-zag/oscillation
+            b.vx *= 0.94;
+            
+            // Very slight vertical pull to help it go "down" into the rim
+            if (b.y < rimCenterY) {
+                b.vy += (rimCenterY - b.y) * (pullStrength * 0.5);
+            }
         }
     }
 
-    // SMART AIM ASSIST PULL
-    if (buffValues.value.aimAssist > 0 && dist < (150 + buffValues.value.aimAssist * 30) && b.vy > 0) {
-        const pullPower = 0.1 + (buffValues.value.aimAssist * 0.08);
-        b.vx += (rimCenterX - b.x) * pullPower;
-    }
-
+    // Goal Detection
     if (dist < 60 && b.vy > 0) {
       score.value += buffValues.value.doubleScoreVal;
       createBurst(b.x, b.y, b.color);
@@ -202,6 +250,21 @@ const update = () => {
       resetRim();
       continue;
     }
+
+    // Portal Shot logic
+    if (portal.active) {
+        const pdx = portal.x1 - b.x;
+        const pdy = portal.y1 - b.y;
+        const pdist = Math.sqrt(pdx*pdx + pdy*pdy);
+        if (pdist < 40) {
+            b.x = portal.x2;
+            b.y = portal.y2;
+            b.vx = 0; b.vy = 5; // Drop it straight in
+            createBurst(portal.x1, portal.y1, "#6366f1");
+            createBurst(portal.x2, portal.y2, "#6366f1");
+        }
+    }
+
     if (b.y > gameHeight + 100 || b.x > gameWidth + 100 || b.x < -100) balls.splice(i, 1);
   }
 
@@ -247,14 +310,21 @@ const render = () => {
 
   // Audience
   audienceCats.forEach(cat => {
-      cat.jump = Math.sin(Date.now() * 0.01 + cat.offset) * 12;
+      const time = Date.now() * 0.01;
+      if (cat.type === 'dancing') {
+          cat.jump = Math.abs(Math.sin(time + cat.offset)) * 20;
+          cat.x += Math.sin(time * 0.5 + cat.offset) * 2;
+      } else {
+          cat.jump = Math.sin(time + cat.offset) * 8;
+      }
+      
       ctx.beginPath();
-      ctx.arc(cat.x, cat.y + cat.jump, cat.size / 2, 0, Math.PI * 2);
+      ctx.arc(cat.x, cat.y - cat.jump, cat.size / 2, 0, Math.PI * 2);
       ctx.fillStyle = cat.color;
       ctx.fill();
       // Simple Ears
-      ctx.fillRect(cat.x - cat.size/3, cat.y + cat.jump - cat.size/2, cat.size/4, cat.size/4);
-      ctx.fillRect(cat.x + cat.size/3 - cat.size/4, cat.y + cat.jump - cat.size/2, cat.size/4, cat.size/4);
+      ctx.fillRect(cat.x - cat.size/3, cat.y - cat.jump - cat.size/2, cat.size/4, cat.size/4);
+      ctx.fillRect(cat.x + cat.size/3 - cat.size/4, cat.y - cat.jump - cat.size/2, cat.size/4, cat.size/4);
   });
 
   // Tank
@@ -273,10 +343,12 @@ const render = () => {
 
   // Aim Line (LENGTH BASED ON UPGRADE)
   if (isDragging) {
+      const isWhiteBg = equipped.value.has('bg_white');
       ctx.beginPath();
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+      // Contrast color: Dark purple for white bg, Gold/Yellow for others
+      ctx.strokeStyle = isWhiteBg ? "rgba(26, 11, 46, 0.6)" : "rgba(212, 175, 55, 0.8)";
       ctx.setLineDash([8, 8]);
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 4;
       ctx.moveTo(tank.x + 90, tank.y + 30);
       
       const steps = 30 + (buffValues.value.aimAssist * 25);
@@ -287,10 +359,24 @@ const render = () => {
           ctx.lineTo(px, py);
       }
       ctx.stroke();
+      
+      // Outer glow for extra visibility on chaotic backgrounds
+      ctx.strokeStyle = isWhiteBg ? "rgba(212, 175, 55, 0.2)" : "rgba(255, 255, 255, 0.3)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
       ctx.setLineDash([]);
   }
 
   // Rim & Balls
+  if (portal.active) {
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#6366f1";
+      ctx.beginPath(); ctx.ellipse(portal.x1, portal.y1, 30, 15, Math.PI/4, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = "#a855f7";
+      ctx.beginPath(); ctx.ellipse(portal.x2, portal.y2, 30, 15, -Math.PI/4, 0, Math.PI * 2); ctx.stroke();
+  }
+
   ctx.drawImage(rimImg, rim.x, rim.y, rim.width, rim.height);
   balls.forEach(b => {
     ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
@@ -312,6 +398,11 @@ const getBgColor = () => {
     if (equipped.value.has('bg_meme')) return `hsl(${Date.now() / 8 % 360}, 60%, 12%)`;
     if (equipped.value.has('bg_space')) return '#020617';
     if (equipped.value.has('bg_grass')) return '#14532d';
+    if (equipped.value.has('bg_white')) return '#ffffff';
+    if (equipped.value.has('bg_classroom')) {
+        ctx.drawImage(bgClassroom, 0, 0, gameWidth, gameHeight);
+        return 'transparent';
+    }
     return '#0d0216';
 };
 
@@ -346,10 +437,15 @@ const handleItemClick = (item, type) => {
             score.value -= cost;
             purchased.value.add(item.id);
             switch(item.id) {
-                case 'doubleScore': buffValues.value.doubleScoreVal *= 2; break;
+                case 'doubleScore': 
+                    const currentMult = buffValues.value.doubleScoreVal / 10;
+                    if (currentMult === 1) buffValues.value.doubleScoreVal = 20;
+                    else if (currentMult === 2) buffValues.value.doubleScoreVal = 30;
+                    else buffValues.value.doubleScoreVal = 50;
+                    break;
                 case 'aimAssist': buffValues.value.aimAssist++; break;
                 case 'biggerBall': buffValues.value.biggerBall += 10; break;
-                case 'multiBall': buffValues.value.multiBall += 2; break;
+                case 'multiBall': buffValues.value.multiBall += 1; break;
             }
             gsap.to(".score-val", { scale: 1.8, duration: 0.1, yoyo: true, repeat: 1 });
         }
@@ -368,9 +464,12 @@ const toggleEquip = (id, type) => {
     if (type === 'skin') {
         ['cat_default', 'cat_sunglasses', 'cat_business', 'cat_crying'].forEach(s => equipped.value.delete(s));
     } else if (type === 'bg') {
-        ['bg_default', 'bg_grass', 'bg_space', 'bg_meme'].forEach(b => equipped.value.delete(b));
+        ['bg_white', 'bg_grass', 'bg_space', 'bg_classroom', 'bg_meme'].forEach(b => equipped.value.delete(b));
     } else if (type === 'aud') {
-        ['aud_none', 'aud_cats', 'aud_chaotic'].forEach(a => equipped.value.delete(a));
+        ['aud_none', 'aud_cheering', 'aud_dancing', 'aud_chaotic'].forEach(a => equipped.value.delete(a));
+    } else if (type === 'music') {
+        ['music_jazz', 'music_lofi', 'music_chaotic'].forEach(m => equipped.value.delete(m));
+        playMusic(id);
     }
     equipped.value.add(id);
     if (type === 'aud') createAudience();
@@ -378,6 +477,7 @@ const toggleEquip = (id, type) => {
 
 onMounted(() => {
   initGame();
+  playMusic('music_jazz');
   window.addEventListener('resize', resize);
 });
 
@@ -387,34 +487,42 @@ onUnmounted(() => {
 });
 
 const buffItems = [
-    { id: 'doubleScore', name: 'Double Points', cost: 10, stackable: true },
-    { id: 'aimAssist', name: 'Smart Aim', cost: 30, stackable: true },
-    { id: 'biggerBall', name: 'Titan Ball', cost: 75, stackable: true },
-    { id: 'multiBall', name: 'Burst Fire', cost: 600, stackable: true },
-    { id: 'magnetRim', name: 'Magnet Hoop', cost: 200 },
-    { id: 'railgunMode', name: 'Railgun', cost: 2000 },
-    { id: 'catchingSystem', name: 'Black Hole', cost: 7000 },
-    { id: 'autoShooter', name: 'AFK Bot', cost: 30000 },
+    { id: 'doubleScore', name: 'Double Score', cost: 5, desc: '2x → 3x → 5x Base Points' },
+    { id: 'aimAssist', name: 'Aim Assist', cost: 10, desc: 'Nudging ball to rim' },
+    { id: 'biggerBall', name: 'Bigger Ball', cost: 25, desc: 'Easier to fit in rim' },
+    { id: 'magnetRim', name: 'Magnet Rim', cost: 50, desc: 'Pulls ball when close' },
+    { id: 'portalShot', name: 'Portal Shot', cost: 150, desc: 'Teleport to rim' },
+    { id: 'railgunMode', name: 'Railgun Mode', cost: 300, desc: 'Straight shot on click' },
+    { id: 'multiBall', name: 'Multi Ball', cost: 600, desc: '2-5 balls per shot' },
+    { id: 'catchingSystem', name: 'Catching System', cost: 1200, desc: 'Forces ball in (Absurd)' },
 ];
 
 const skins = [
-    { id: 'cat_default', name: 'Normal Cat', cost: 0 },
-    { id: 'cat_sunglasses', name: 'Cool Cat', cost: 120 },
-    { id: 'cat_business', name: 'CEO Cat', cost: 1200 },
-    { id: 'cat_crying', name: 'Sob Cat', cost: 6000 }
+    { id: 'cat_default', name: 'Default Cat', cost: 0 },
+    { id: 'cat_sunglasses', name: 'Sunglasses Cat', cost: 50 },
+    { id: 'cat_business', name: 'CEO Cat', cost: 200 },
+    { id: 'cat_crying', name: 'Sob Cat', cost: 500 }
 ];
 
 const worlds = [
-    { id: 'bg_default', name: 'Flat Dark', type: 'bg', cost: 0 },
-    { id: 'bg_grass', name: 'Meadow', type: 'bg', cost: 200 },
-    { id: 'bg_space', name: 'Deep Space', type: 'bg', cost: 1000 },
-    { id: 'bg_meme', name: 'CHAOS WORLD', type: 'bg', cost: 15000 },
+    { id: 'bg_white', name: 'White (Default)', type: 'bg', cost: 0 },
+    { id: 'bg_grass', name: 'Grass Field', type: 'bg', cost: 40 },
+    { id: 'bg_space', name: 'Space', type: 'bg', cost: 100 },
+    { id: 'bg_classroom', name: 'Classroom', type: 'bg', cost: 250 },
+    { id: 'bg_meme', name: 'Meme Chaos', type: 'bg', cost: 1000 },
 ];
 
 const audiences = [
-    { id: 'aud_none', name: 'Silence', type: 'aud', cost: 0 },
-    { id: 'aud_cats', name: 'Small Crowd', type: 'aud', cost: 500 },
-    { id: 'aud_chaotic', name: 'ULTRA FANS', type: 'aud', cost: 4000 }
+    { id: 'aud_none', name: 'No Audience', type: 'aud', cost: 0 },
+    { id: 'aud_cheering', name: 'Cheering Cats', type: 'aud', cost: 80 },
+    { id: 'aud_dancing', name: 'Dancing Cats', type: 'aud', cost: 200 },
+    { id: 'aud_chaotic', name: 'Completely Chaotic Crowd', type: 'aud', cost: 600 }
+];
+
+const musics = [
+    { id: 'music_jazz', name: 'Jazz (Default)', type: 'music', cost: 0 },
+    { id: 'music_lofi', name: 'Lo-Fi', type: 'music', cost: 50 },
+    { id: 'music_chaotic', name: 'Chaotic Meme Beat', type: 'music', cost: 300 }
 ];
 </script>
 
@@ -431,6 +539,16 @@ const audiences = [
       <button class="game-btn shop" @click="showShop = !showShop">
           {{ showShop ? 'CLOSE' : 'SHOP' }}
       </button>
+    </div>
+
+    <!-- ROTATE DEVICE OVERLAY FOR MOBILE PORTRAIT -->
+    <div class="portrait-overlay">
+        <div class="rotate-content">
+            <div class="phone-icon">📱</div>
+            <h2>WADUH!</h2>
+            <p>Puter HP kamu dulu biar bisa main seru!</p>
+            <div class="sub">Gunakan Mode Landscape</div>
+        </div>
     </div>
 
     <!-- CTA MODAL -->
@@ -468,22 +586,39 @@ const audiences = [
             </div>
             
             <div class="shop-scroll">
+                <h1 class="cosmetic-title">B. Buff System (Core Progression)</h1>
                 <section class="shop-section">
-                    <header>PERMANENT UPGRADES (STACKABLE)</header>
+                    <header>TOTAL: 8 BUFF UTAMA</header>
                     <div class="item-grid">
-                        <div v-for="b in buffItems" :key="b.id" class="shop-item" 
+                        <div v-for="b in buffItems" :key="b.id" class="shop-item buff" 
                              :class="{ 'owned': purchased.has(b.id), 'poor': score < getBuffCost(b) }" 
                              @click="handleItemClick(b, 'buff')">
                             <span class="name">{{ b.name }}</span>
+                            <span class="desc" style="font-size: 0.7rem; opacity: 0.7; margin: 4px 0;">{{ b.desc }}</span>
                             <span class="status">{{ getBuffCost(b) }} pts</span>
-                            <small v-if="purchased.has(b.id)" class="lv">LEVEL UP</small>
+                            <small v-if="purchased.has(b.id)" class="lv">UPGRADE</small>
                             <small v-else class="lv">BUY</small>
                         </div>
                     </div>
                 </section>
 
+                <h1 class="cosmetic-title">A. Cosmetic (Low Impact, High Personality)</h1>
+
                 <section class="shop-section">
-                    <header>TANK SKINS (EQUIPABLE)</header>
+                    <header>BACKGROUNDS</header>
+                    <div class="item-grid">
+                        <div v-for="w in worlds" :key="w.id" class="shop-item world" 
+                             :class="{ 'owned': purchased.has(w.id), 'active': equipped.has(w.id), 'poor': !purchased.has(w.id) && score < w.cost }" 
+                             @click="handleItemClick(w, 'bg')">
+                            <span class="name">{{ w.name }}</span>
+                            <span class="status" v-if="!purchased.has(w.id)">{{ w.cost }} pts</span>
+                            <span class="status" v-else>{{ equipped.has(w.id) ? 'AKTIF' : 'AKTIFKAN' }}</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="shop-section">
+                    <header>CAT SKINS</header>
                     <div class="item-grid">
                         <div v-for="s in skins" :key="s.id" class="shop-item skin" 
                              :class="{ 'owned': purchased.has(s.id), 'active': equipped.has(s.id), 'poor': !purchased.has(s.id) && score < s.cost }" 
@@ -496,14 +631,27 @@ const audiences = [
                 </section>
 
                 <section class="shop-section">
-                    <header>WORLD & CROWD (EQUIPABLE)</header>
+                    <header>AUDIENCE</header>
                     <div class="item-grid">
-                        <div v-for="w in [...worlds, ...audiences]" :key="w.id" class="shop-item world" 
-                             :class="{ 'owned': purchased.has(w.id), 'active': equipped.has(w.id), 'poor': !purchased.has(w.id) && score < w.cost }" 
-                             @click="handleItemClick(w, w.type || (w.id.startsWith('aud') ? 'aud' : 'bg'))">
-                            <span class="name">{{ w.name }}</span>
-                            <span class="status" v-if="!purchased.has(w.id)">{{ w.cost }} pts</span>
-                            <span class="status" v-else>{{ equipped.has(w.id) ? 'AKTIF' : 'AKTIFKAN' }}</span>
+                        <div v-for="a in audiences" :key="a.id" class="shop-item world" 
+                             :class="{ 'owned': purchased.has(a.id), 'active': equipped.has(a.id), 'poor': !purchased.has(a.id) && score < a.cost }" 
+                             @click="handleItemClick(a, 'aud')">
+                            <span class="name">{{ a.name }}</span>
+                            <span class="status" v-if="!purchased.has(a.id)">{{ a.cost }} pts</span>
+                            <span class="status" v-else>{{ equipped.has(a.id) ? 'DILIHAT' : 'LIHAT' }}</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="shop-section">
+                    <header>MUSIC</header>
+                    <div class="item-grid">
+                        <div v-for="m in musics" :key="m.id" class="shop-item world" 
+                             :class="{ 'owned': purchased.has(m.id), 'active': equipped.has(m.id), 'poor': !purchased.has(m.id) && score < m.cost }" 
+                             @click="handleItemClick(m, 'music')">
+                            <span class="name">{{ m.name }}</span>
+                            <span class="status" v-if="!purchased.has(m.id)">{{ m.cost }} pts</span>
+                            <span class="status" v-else>{{ equipped.has(m.id) ? 'DIPUTAR' : 'PUTAR' }}</span>
                         </div>
                     </div>
                 </section>
@@ -569,6 +717,7 @@ canvas { width: 100%; height: 100%; touch-action: none; display: block; }
 .shop-header { padding: 40px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); display: flex; justify-content: space-between; align-items: center; }
 .header-left { display: flex; flex-direction: column; gap: 5px; }
 .shop-header h2 { font-family: 'Playfair Display', serif; color: #d4af37; font-size: 2.2rem; letter-spacing: 5px; margin: 0; }
+.cosmetic-title { color: #fff; font-size: 1.5rem; margin-bottom: 30px; border-left: 4px solid #d4af37; padding-left: 15px; opacity: 0.9; }
 .user-pts { font-weight: 900; font-size: 1.4rem; color: #fff; opacity: 0.8; }
 
 .shop-scroll { flex: 1; overflow-y: auto; padding: 40px; }
@@ -604,10 +753,41 @@ canvas { width: 100%; height: 100%; touch-action: none; display: block; }
 .slide-shop-enter-active, .slide-shop-leave-active { transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
 .slide-shop-enter-from, .slide-shop-leave-to { transform: translateY(100%); }
 
+/* Responsive & Orientation */
+.portrait-overlay {
+    position: absolute; inset: 0; background: #0d0216; z-index: 5000;
+    display: none; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; color: #fff; padding: 20px;
+}
+
+@media (orientation: portrait) and (max-width: 900px) {
+    .portrait-overlay { display: flex; }
+    .game-hud, canvas, .shop-overlay { display: none !important; }
+}
+
+.rotate-content .phone-icon {
+    font-size: 5rem; margin-bottom: 20px;
+    animation: rotatePhone 2s infinite ease-in-out;
+}
+@keyframes rotatePhone {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(-90deg); }
+    100% { transform: rotate(0deg); }
+}
+.rotate-content h2 { font-family: 'Playfair Display', serif; color: #d4af37; font-size: 2.5rem; margin: 0; }
+.rotate-content p { font-size: 1.2rem; opacity: 0.8; margin: 10px 0; }
+.rotate-content .sub { font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: #d4af37; opacity: 0.6; }
+
 @media (max-width: 768px) {
+    .game-hud { padding: 10px; }
+    .score-card { padding: 4px 15px; }
+    .score-card .score-val { font-size: 1.2rem; }
+    .game-btn { padding: 8px 20px; font-size: 0.8rem; }
+    
     .item-grid { grid-template-columns: 1fr 1fr; }
     .shop-header h2 { font-size: 1.4rem; letter-spacing: 2px; }
     .shop-header { padding: 20px; }
     .shop-scroll { padding: 20px; }
+    .cosmetic-title { font-size: 1.1rem; }
 }
 </style>

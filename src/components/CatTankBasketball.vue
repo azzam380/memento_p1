@@ -123,14 +123,16 @@ const createAudience = () => {
     if (equipped.value.has('aud_chaotic')) count = 100;
     else if (equipped.value.has('aud_dancing')) count = 40;
 
+    const catEmojis = ['🐱', '😸', '😹', '😻', '😼', '😽', '😾', '😿', '🙀', '🐈', '🐈‍⬛'];
     for (let i = 0; i < count; i++) {
         audienceCats.push({
             x: Math.random() * gameWidth,
             y: gameHeight - 50 - Math.random() * 30,
-            size: 25 + Math.random() * 20,
+            size: 20 + Math.random() * 20,
             jump: 0,
             offset: Math.random() * Math.PI * 2,
             type: equipped.value.has('aud_dancing') ? 'dancing' : 'cheering',
+            char: catEmojis[Math.floor(Math.random() * catEmojis.length)],
             color: `hsl(${40 + Math.random() * 20}, 100%, 60%)`
         });
     }
@@ -302,13 +304,17 @@ const createBurst = (x, y, color) => {
 const render = () => {
   if (!ctx) return;
   
-  // BG
-  ctx.fillStyle = getBgColor();
-  ctx.fillRect(0, 0, gameWidth, gameHeight);
+  // 1. Background
+  if (equipped.value.has('bg_classroom')) {
+      ctx.drawImage(bgClassroom, 0, 0, gameWidth, gameHeight);
+  } else {
+      ctx.fillStyle = getBgColor();
+      ctx.fillRect(0, 0, gameWidth, gameHeight);
+  }
 
   if (absurdityLevel.value >= 2) drawChaos();
 
-  // Audience
+  // 2. Audience
   audienceCats.forEach(cat => {
       const time = Date.now() * 0.01;
       if (cat.type === 'dancing') {
@@ -318,13 +324,9 @@ const render = () => {
           cat.jump = Math.sin(time + cat.offset) * 8;
       }
       
-      ctx.beginPath();
-      ctx.arc(cat.x, cat.y - cat.jump, cat.size / 2, 0, Math.PI * 2);
-      ctx.fillStyle = cat.color;
-      ctx.fill();
-      // Simple Ears
-      ctx.fillRect(cat.x - cat.size/3, cat.y - cat.jump - cat.size/2, cat.size/4, cat.size/4);
-      ctx.fillRect(cat.x + cat.size/3 - cat.size/4, cat.y - cat.jump - cat.size/2, cat.size/4, cat.size/4);
+      ctx.font = `${cat.size}px Inter`;
+      ctx.textAlign = "center";
+      ctx.fillText(cat.char, cat.x, cat.y - cat.jump);
   });
 
   // Tank
@@ -399,10 +401,6 @@ const getBgColor = () => {
     if (equipped.value.has('bg_space')) return '#020617';
     if (equipped.value.has('bg_grass')) return '#14532d';
     if (equipped.value.has('bg_white')) return '#ffffff';
-    if (equipped.value.has('bg_classroom')) {
-        ctx.drawImage(bgClassroom, 0, 0, gameWidth, gameHeight);
-        return 'transparent';
-    }
     return '#0d0216';
 };
 

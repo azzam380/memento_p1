@@ -482,6 +482,10 @@ onMounted(() => {
 onUnmounted(() => {
   if (animationFrame) cancelAnimationFrame(animationFrame);
   window.removeEventListener('resize', resize);
+  if (currentAudio.value) {
+      currentAudio.value.pause();
+      currentAudio.value = null;
+  }
 });
 
 const buffItems = [

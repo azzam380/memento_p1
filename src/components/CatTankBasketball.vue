@@ -7,8 +7,17 @@ import catDefault from '@/assets/cat-tank.png';
 import catSunglasses from '@/assets/cat-tank-sunglasses.png';
 import catBusiness from '@/assets/cat-tank-business.png';
 import catCrying from '@/assets/cat-tank-crying.png';
-import rimImgSrc from '@/assets/basketball-rim.png';
-import bgClassroomImg from '@/assets/bg-classroom.png';
+import bgGrassImgSrc from '@/assets/bg-grass.png';
+
+// New Tank Assets
+import partUnion from '@/assets/union-1.png';
+import partR2 from '@/assets/rectangle-2.png';
+import partR4 from '@/assets/rectangle-4.png';
+import partR5 from '@/assets/rectangle-5.png';
+import partR6 from '@/assets/rectangle-6.png';
+import partR7 from '@/assets/rectangle-7.png';
+import partR8 from '@/assets/rectangle-8.png';
+import partR9 from '@/assets/rectangle-9.png';
 
 const emit = defineEmits(['back']);
 
@@ -27,8 +36,8 @@ const gameMessage = ref("");
 const showCTA = ref(true);
 
 // Inventory & Equipment
-const purchased = ref(new Set(['cat_default', 'bg_white', 'aud_none', 'music_jazz']));
-const equipped = ref(new Set(['cat_default', 'bg_white', 'aud_none', 'music_jazz']));
+const purchased = ref(new Set(['cat_default', 'bg_grass', 'aud_none', 'music_jazz']));
+const equipped = ref(new Set(['cat_default', 'bg_grass', 'aud_none', 'music_jazz']));
 
 const buffValues = ref({
   doubleScore: 1, // Will be multiplied by 10 (base initial easy mode)
@@ -50,8 +59,21 @@ tankImages.sunglasses.src = catSunglasses;
 tankImages.business.src = catBusiness;
 tankImages.crying.src = catCrying;
 
-const rimImg = new Image(); rimImg.src = rimImgSrc;
-const bgClassroom = new Image(); bgClassroom.src = bgClassroomImg;
+const tankParts = {
+    union: new Image(), r2: new Image(), r4: new Image(), r5: new Image(),
+    r6: new Image(), r7: new Image(), r8: new Image(), r9: new Image()
+};
+tankParts.union.src = partUnion;
+tankParts.r2.src = partR2;
+tankParts.r4.src = partR4;
+tankParts.r5.src = partR5;
+tankParts.r6.src = partR6;
+tankParts.r7.src = partR7;
+tankParts.r8.src = partR8;
+tankParts.r9.src = partR9;
+
+const bgGrassImg = new Image(); 
+bgGrassImg.src = bgGrassImgSrc;
 
 // Audio System
 const currentAudio = ref(null);
@@ -162,12 +184,16 @@ const fireBall = (customAngle = null, customPower = null) => {
   
   const ballCount = buffValues.value.multiBall;
   const ballRadius = buffValues.value.biggerBall;
+  
+  const pivotX = tank.x + 75;
+  const pivotY = tank.y + 45.4;
+  const barrelLength = 104;
 
   for (let i = 0; i < ballCount; i++) {
     const spread = (i - (ballCount - 1) / 2) * 0.15;
     balls.push({
-      x: tank.x + 90,
-      y: tank.y + 30,
+      x: pivotX + Math.cos(angle) * barrelLength,
+      y: pivotY + Math.sin(angle) * barrelLength,
       vx: Math.cos(angle + spread) * (power + Math.random() * 2),
       vy: Math.sin(angle + spread) * (power + Math.random() * 2),
       radius: ballRadius,
@@ -181,7 +207,14 @@ const handlePointerDown = (e) => {
   const pos = getPointerPos(e);
   
   if (purchased.value.has('railgunMode')) {
-      tank.angle = Math.atan2(pos.y - (tank.y + 30), pos.x - (tank.x + 90));
+      const pivotX = tank.x + 75;
+      const pivotY = tank.y + 45.4;
+      
+      let angle = Math.atan2(pos.y - pivotY, pos.x - pivotX);
+      if (angle > Math.PI / 2) angle = Math.PI / 2;
+      if (angle < -Math.PI / 2) angle = -Math.PI / 2;
+      tank.angle = angle;
+      
       fireBall(tank.angle, 25);
       return;
   }
@@ -193,7 +226,12 @@ const handlePointerDown = (e) => {
 const handlePointerMove = (e) => {
   if (!isDragging || purchased.value.has('railgunMode')) return;
   const pos = getPointerPos(e);
-  tank.angle = Math.atan2(pos.y - dragStartY, pos.x - dragStartX);
+  
+  let angle = Math.atan2(pos.y - dragStartY, pos.x - dragStartX);
+  if (angle > Math.PI / 2) angle = Math.PI / 2;
+  if (angle < -Math.PI / 2) angle = -Math.PI / 2;
+  tank.angle = angle;
+
   tank.power = Math.min(Math.sqrt(Math.pow(pos.x - dragStartX, 2) + Math.pow(pos.y - dragStartY, 2)) / 10, 25);
 };
 
@@ -279,8 +317,10 @@ const update = () => {
 
   // Auto Shoot
   if (purchased.value.has('autoShooter') && Math.random() < 0.04) {
-    const dx = (rim.x + rim.width/2) - (tank.x + 90);
-    const dy = (rim.y + 20) - (tank.y + 30);
+    const pivotX = tank.x + 75;
+    const pivotY = tank.y + 45.4;
+    const dx = (rim.x + rim.width/2) - pivotX;
+    const dy = (rim.y + 20) - pivotY;
     fireBall(Math.atan2(dy - 120, dx), 18);
   }
 
@@ -305,8 +345,8 @@ const render = () => {
   if (!ctx) return;
   
   // 1. Background
-  if (equipped.value.has('bg_classroom')) {
-      ctx.drawImage(bgClassroom, 0, 0, gameWidth, gameHeight);
+  if (equipped.value.has('bg_grass') && bgGrassImg.complete) {
+      ctx.drawImage(bgGrassImg, 0, 0, gameWidth, gameHeight);
   } else {
       ctx.fillStyle = getBgColor();
       ctx.fillRect(0, 0, gameWidth, gameHeight);
@@ -332,38 +372,75 @@ const render = () => {
   // Tank
   ctx.save();
   ctx.translate(tank.x + 60, tank.y + 50);
+  
+  const scale = 0.45;
+  const trackY = 32;
+  const bodyOverlapY = 26; // Sink the body even deeper
+  const unionY = trackY - tankParts.union.height * scale + bodyOverlapY;
+  
+  // 1) Draw Rotating Barrel (moncong tank) FIRST so its base is inside/behind the tank body
+  ctx.save();
+  const domeCenterX = 20; // Geser pivot maju sedikit
+  const domeCenterY = unionY + (tankParts.union.height * scale)/2 - 16; // local pivot, shifted UP by 16px
+  ctx.translate(domeCenterX, domeCenterY); 
   ctx.rotate(tank.angle);
   
+  // r4 (barrel)
+  if (tankParts.r4.complete) ctx.drawImage(tankParts.r4, 0, -tankParts.r4.height/2 * scale, tankParts.r4.width * scale, tankParts.r4.height * scale);
+  // r5 (barrel tip) - shift slightly upward visually
+  if (tankParts.r5.complete) ctx.drawImage(tankParts.r5, tankParts.r4.width * scale - 2, -tankParts.r5.height/2 * scale - 4, tankParts.r5.width * scale, tankParts.r5.height * scale);
+  ctx.restore();
+
+  // 2) Draw Body (Dome) SECOND so it covers the base of the barrel
+  if (tankParts.union.complete) ctx.drawImage(tankParts.union, -tankParts.union.width/2 * scale, unionY, tankParts.union.width * scale, tankParts.union.height * scale);
+
+  // 3) Draw Tracks (Wheels) LAST so they cover the bottom of the body, giving the 'masuk ke dalam' effect
+  if (tankParts.r2.complete) ctx.drawImage(tankParts.r2, -tankParts.r2.width/2 * scale, trackY, tankParts.r2.width * scale, tankParts.r2.height * scale);
+
+  // 4) Draw Cat (Skin) on top of the Dome
   let skinId = 'default';
   if (equipped.value.has('cat_sunglasses')) skinId = 'sunglasses';
   else if (equipped.value.has('cat_business')) skinId = 'business';
   else if (equipped.value.has('cat_crying')) skinId = 'crying';
   
-  const img = tankImages[skinId] || tankImages.default;
-  ctx.drawImage(img, -60, -50, tank.width, tank.height);
+  const catImg = tankImages[skinId] || tankImages.default;
+  if (catImg.complete) {
+      const catSize = 140; // Diperbesar dari 80
+      const catX = -(catSize/2);
+      const catY = unionY - catSize + 45; // Sitting slightly inside the dome
+      ctx.drawImage(catImg, catX, catY, catSize, catSize);
+  }
+
   ctx.restore();
 
   // Aim Line (LENGTH BASED ON UPGRADE)
   if (isDragging) {
-      const isWhiteBg = equipped.value.has('bg_white');
+      const isCustomBg = equipped.value.has('bg_meme') || equipped.value.has('bg_space');
       ctx.beginPath();
-      // Contrast color: Dark purple for white bg, Gold/Yellow for others
-      ctx.strokeStyle = isWhiteBg ? "rgba(26, 11, 46, 0.6)" : "rgba(212, 175, 55, 0.8)";
+      // Contrast color: Dark purple for light bgs (grass), Gold/Yellow for dark bgs
+      ctx.strokeStyle = !isCustomBg ? "rgba(26, 11, 46, 0.6)" : "rgba(212, 175, 55, 0.8)";
       ctx.setLineDash([8, 8]);
       ctx.lineWidth = 4;
-      ctx.moveTo(tank.x + 90, tank.y + 30);
+      
+      const pivotX = tank.x + 75;
+      const pivotY = tank.y + 45.4;
+      const barrelLength = 104;
+      const startX = pivotX + Math.cos(tank.angle) * barrelLength;
+      const startY = pivotY + Math.sin(tank.angle) * barrelLength;
+      
+      ctx.moveTo(startX, startY);
       
       const steps = 30 + (buffValues.value.aimAssist * 25);
       for (let i = 0; i < steps; i++) {
           const t = i * 1.5;
-          const px = tank.x + 90 + Math.cos(tank.angle) * tank.power * t;
-          const py = tank.y + 30 + Math.sin(tank.angle) * tank.power * t + 0.5 * GRAVITY * t * t;
+          const px = startX + Math.cos(tank.angle) * tank.power * t;
+          const py = startY + Math.sin(tank.angle) * tank.power * t + 0.5 * GRAVITY * t * t;
           ctx.lineTo(px, py);
       }
       ctx.stroke();
       
       // Outer glow for extra visibility on chaotic backgrounds
-      ctx.strokeStyle = isWhiteBg ? "rgba(212, 175, 55, 0.2)" : "rgba(255, 255, 255, 0.3)";
+      ctx.strokeStyle = !isCustomBg ? "rgba(212, 175, 55, 0.2)" : "rgba(255, 255, 255, 0.3)";
       ctx.lineWidth = 2;
       ctx.stroke();
       
@@ -379,7 +456,30 @@ const render = () => {
       ctx.beginPath(); ctx.ellipse(portal.x2, portal.y2, 30, 15, -Math.PI/4, 0, Math.PI * 2); ctx.stroke();
   }
 
-  ctx.drawImage(rimImg, rim.x, rim.y, rim.width, rim.height);
+  // Custom Rim rendering from Parts
+  ctx.save();
+  ctx.translate(rim.x, rim.y + 10);
+  const rScale = 0.45;
+  const rimCenterX = rim.width / 2;
+  
+  if (tankParts.r8.complete) ctx.drawImage(tankParts.r8, rimCenterX - tankParts.r8.width/2 * rScale, 0, tankParts.r8.width * rScale, tankParts.r8.height * rScale);
+  if (tankParts.r7.complete) ctx.drawImage(tankParts.r7, rimCenterX - tankParts.r7.width/2 * rScale, tankParts.r8.height * rScale, tankParts.r7.width * rScale, tankParts.r7.height * rScale);
+  
+  if (tankParts.r6.complete) {
+      const poleX = rimCenterX + tankParts.r8.width/2 * rScale;
+      const poleY = -tankParts.r6.height * rScale * 0.05; // Extend pole slightly upwards
+      ctx.drawImage(tankParts.r6, poleX, poleY, tankParts.r6.width * rScale, tankParts.r6.height * rScale);
+      
+      if (tankParts.r9.complete) {
+          const baseY = poleY + tankParts.r6.height * rScale;
+          const baseX = poleX + (tankParts.r6.width * rScale)/2 - (tankParts.r9.width * rScale)/2;
+          ctx.drawImage(tankParts.r9, baseX, baseY, tankParts.r9.width * rScale, tankParts.r9.height * rScale);
+      }
+  }
+  ctx.restore();
+
+  // (Optional) keep rimImg invisible or fallback. Skipping it since we draw custom rim.
+  // ctx.drawImage(rimImg, rim.x, rim.y, rim.width, rim.height);
   balls.forEach(b => {
     ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
     ctx.fillStyle = b.color; ctx.fill();
@@ -462,7 +562,7 @@ const toggleEquip = (id, type) => {
     if (type === 'skin') {
         ['cat_default', 'cat_sunglasses', 'cat_business', 'cat_crying'].forEach(s => equipped.value.delete(s));
     } else if (type === 'bg') {
-        ['bg_white', 'bg_grass', 'bg_space', 'bg_classroom', 'bg_meme'].forEach(b => equipped.value.delete(b));
+        ['bg_white', 'bg_grass', 'bg_space', 'bg_meme'].forEach(b => equipped.value.delete(b));
     } else if (type === 'aud') {
         ['aud_none', 'aud_cheering', 'aud_dancing', 'aud_chaotic'].forEach(a => equipped.value.delete(a));
     } else if (type === 'music') {
@@ -507,10 +607,8 @@ const skins = [
 ];
 
 const worlds = [
-    { id: 'bg_white', name: 'White (Default)', type: 'bg', cost: 0 },
-    { id: 'bg_grass', name: 'Grass Field', type: 'bg', cost: 40 },
+    { id: 'bg_grass', name: 'Grass Field (Default)', type: 'bg', cost: 0 },
     { id: 'bg_space', name: 'Space', type: 'bg', cost: 100 },
-    { id: 'bg_classroom', name: 'Classroom', type: 'bg', cost: 250 },
     { id: 'bg_meme', name: 'Meme Chaos', type: 'bg', cost: 1000 },
 ];
 

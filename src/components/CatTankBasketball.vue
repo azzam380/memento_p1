@@ -23,10 +23,6 @@ const emit = defineEmits(['back']);
 
 // Game Constants
 const GRAVITY = 0.25;
-const RIM_POINTS = [
-  { x: 0.7, y: 0.3 }, { x: 0.8, y: 0.5 }, { x: 0.15, y: 0.4 },
-  { x: 0.85, y: 0.2 }, { x: 0.65, y: 0.6 }, { x: 0.9, y: 0.3 }
-];
 
 // Game State
 const score = ref(50);
@@ -161,9 +157,12 @@ const createAudience = () => {
 };
 
 const resetRim = () => {
-  const p = RIM_POINTS[Math.floor(Math.random() * RIM_POINTS.length)];
-  rim.x = p.x * gameWidth;
-  rim.y = p.y * gameHeight;
+  // Ensure the ring spawns in front of the tank (tank is at x: 100)
+  // Safely place it in the right half of the screen
+  const minX = Math.max(300, gameWidth * 0.4);
+  const maxX = gameWidth * 0.85;
+  rim.x = minX + Math.random() * (maxX - minX);
+  rim.y = (0.2 + Math.random() * 0.4) * gameHeight;
   
   if (purchased.value.has('portalShot')) {
       portal.active = true;

@@ -630,8 +630,8 @@ const skins = [
 const worlds = [
     { id: 'bg_white', name: 'White (Default)', type: 'bg', cost: 0 },
     { id: 'bg_grass', name: 'Grass Field', type: 'bg', cost: 50 },
-    { id: 'bg_space', name: 'Space', type: 'bg', cost: 100 },
-    { id: 'bg_classroom', name: 'Classroom', type: 'bg', cost: 300 },
+    { id: 'bg_space', name: 'Space', type: 'bg', cost: 100, comingSoon: true },
+    { id: 'bg_classroom', name: 'Classroom', type: 'bg', cost: 300, comingSoon: true },
     { id: 'bg_meme', name: 'Meme Chaos', type: 'bg', cost: 1000 },
 ];
 
@@ -739,11 +739,14 @@ const musics = [
                     <header>BACKGROUNDS</header>
                     <div class="item-grid">
                         <div v-for="w in worlds" :key="w.id" class="shop-item world" 
-                             :class="{ 'owned': purchased.has(w.id), 'active': equipped.has(w.id), 'poor': !purchased.has(w.id) && score < w.cost }" 
-                             @click="handleItemClick(w, 'bg')">
+                             :class="{ 'owned': purchased.has(w.id), 'active': equipped.has(w.id), 'poor': (!purchased.has(w.id) && score < w.cost) || w.comingSoon }" 
+                             @click="!w.comingSoon && handleItemClick(w, 'bg')">
                             <span class="name">{{ w.name }}</span>
-                            <span class="status" v-if="!purchased.has(w.id)">{{ w.cost }} pts</span>
-                            <span class="status" v-else>{{ equipped.has(w.id) ? 'AKTIF' : 'AKTIFKAN' }}</span>
+                            <span class="status" v-if="w.comingSoon">COMING SOON</span>
+                            <template v-else>
+                                <span class="status" v-if="!purchased.has(w.id)">{{ w.cost }} pts</span>
+                                <span class="status" v-else>{{ equipped.has(w.id) ? 'AKTIF' : 'AKTIFKAN' }}</span>
+                            </template>
                         </div>
                     </div>
                 </section>

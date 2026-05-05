@@ -9,6 +9,10 @@ import catBusiness from '@/assets/cat-tank-business.png';
 import catCrying from '@/assets/cat-tank-crying.png';
 import bgGrassImgSrc from '@/assets/bg-grass.png';
 
+// Audience
+import cheeringCatImgSrc from '@/assets/cheering-cat.png';
+import dancingCatImgSrc from '@/assets/dancing-cat.png';
+
 // New Tank Assets
 import partUnion from '@/assets/union-1.png';
 import partR2 from '@/assets/rectangle-2.png';
@@ -88,6 +92,13 @@ tankParts.r9.src = partR9;
 const bgGrassImg = new Image(); 
 bgGrassImg.src = bgGrassImgSrc;
 
+const audienceImages = {
+    cheering: new Image(),
+    dancing: new Image()
+};
+audienceImages.cheering.src = cheeringCatImgSrc;
+audienceImages.dancing.src = dancingCatImgSrc;
+
 // Audio System
 const currentAudio = ref(null);
 const musicVolume = 0.4;
@@ -154,21 +165,39 @@ const createAudience = () => {
     audienceCats = [];
     if (equipped.value.has('aud_none')) return;
     
-    let count = 20;
-    if (equipped.value.has('aud_chaotic')) count = 100;
-    else if (equipped.value.has('aud_dancing')) count = 40;
+    let count = 3;
+    if (equipped.value.has('aud_chaotic')) count = 6;
+    else if (equipped.value.has('aud_dancing')) count = 3;
 
-    const catEmojis = ['🐱', '😸', '😹', '😻', '😼', '😽', '😾', '😿', '🙀', '🐈', '🐈‍⬛'];
+    const positions = [
+        { x: gameWidth * 0.25, yOffset: 10 },   // Kiri
+        { x: gameWidth * 0.75, yOffset: 10 },   // Kanan
+        { x: gameWidth * 0.5, yOffset: 60 }     // Tengah agak atas
+    ];
+
     for (let i = 0; i < count; i++) {
+        let catType = 'cheering';
+        if (equipped.value.has('aud_dancing')) catType = 'dancing';
+        else if (equipped.value.has('aud_chaotic')) catType = Math.random() > 0.5 ? 'dancing' : 'cheering';
+
+        let posX, posY;
+        if (i < 3) {
+            posX = positions[i].x;
+            posY = gameHeight - positions[i].yOffset;
+        } else {
+            // Chaotic extra crowds
+            posX = gameWidth * 0.5 + (Math.random() - 0.5) * (gameWidth * 0.6);
+            posY = gameHeight - 10 - Math.random() * 80;
+        }
+
         audienceCats.push({
-            x: Math.random() * gameWidth,
-            y: gameHeight - 50 - Math.random() * 30,
-            size: 20 + Math.random() * 20,
+            x: posX,
+            y: posY,
+            size: 280 + Math.random() * 50,
             jump: 0,
             offset: Math.random() * Math.PI * 2,
-            type: equipped.value.has('aud_dancing') ? 'dancing' : 'cheering',
-            char: catEmojis[Math.floor(Math.random() * catEmojis.length)],
-            color: `hsl(${40 + Math.random() * 20}, 100%, 60%)`
+            type: catType,
+            scaleX: 1
         });
     }
 };
@@ -380,9 +409,18 @@ const render = () => {
           cat.jump = Math.sin(time + cat.offset) * 8;
       }
       
-      ctx.font = `${cat.size}px Inter`;
-      ctx.textAlign = "center";
-      ctx.fillText(cat.char, cat.x, cat.y - cat.jump);
+      const img = audienceImages[cat.type];
+      if (img && img.complete) {
+          const aspectRatio = img.width / img.height;
+          const drawHeight = cat.size;
+          const drawWidth = cat.size * aspectRatio;
+
+          ctx.save();
+          ctx.translate(cat.x, cat.y - cat.jump);
+          ctx.scale(cat.scaleX, 1);
+          ctx.drawImage(img, -drawWidth/2, -drawHeight, drawWidth, drawHeight);
+          ctx.restore();
+      }
   });
 
   // Tank

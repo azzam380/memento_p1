@@ -32,8 +32,8 @@ const gameMessage = ref("");
 const showCTA = ref(true);
 
 // Inventory & Equipment
-const purchased = ref(new Set(['cat_default', 'bg_grass', 'aud_none', 'music_jazz']));
-const equipped = ref(new Set(['cat_default', 'bg_grass', 'aud_none', 'music_jazz']));
+const purchased = ref(new Set(['cat_default', 'bg_white', 'aud_none', 'music_jazz']));
+const equipped = ref(new Set(['cat_default', 'bg_white', 'aud_none', 'music_jazz']));
 
 const buffValues = ref({
   doubleScore: 1, // Will be multiplied by 10 (base initial easy mode)
@@ -42,6 +42,23 @@ const buffValues = ref({
   multiBall: 1,
   doubleScoreVal: 10 // Start with 10 pts per goal
 });
+
+const buffLevels = ref({
+  doubleScore: 0,
+  aimAssist: 0,
+  biggerBall: 0,
+  multiBall: 0
+});
+
+const getBuffLevel = (item) => {
+    const isOneTime = ['magnetRim', 'portalShot', 'railgunMode', 'catchingSystem'].includes(item.id);
+    return isOneTime ? (purchased.value.has(item.id) ? 1 : 0) : (buffLevels.value[item.id] || 0);
+};
+
+const getBuffMaxLevel = (item) => {
+    const isOneTime = ['magnetRim', 'portalShot', 'railgunMode', 'catchingSystem'].includes(item.id);
+    return isOneTime ? 1 : 3;
+};
 
 // Resources
 const tankImages = {
@@ -498,9 +515,10 @@ const render = () => {
 const getBgColor = () => {
     if (equipped.value.has('bg_meme')) return `hsl(${Date.now() / 8 % 360}, 60%, 12%)`;
     if (equipped.value.has('bg_space')) return '#020617';
+    if (equipped.value.has('bg_classroom')) return '#e2e8f0';
     if (equipped.value.has('bg_grass')) return '#14532d';
     if (equipped.value.has('bg_white')) return '#ffffff';
-    return '#0d0216';
+    return '#ffffff';
 };
 
 const drawChaos = () => {
@@ -520,25 +538,29 @@ const drawChaos = () => {
 };
 
 const getBuffCost = (item) => {
-    const level = item.id === 'doubleScore' ? Math.log2(buffValues.value.doubleScoreVal / 10) :
-                  item.id === 'aimAssist' ? buffValues.value.aimAssist :
-                  item.id === 'biggerBall' ? (buffValues.value.biggerBall - 20) / 10 :
-                  item.id === 'multiBall' ? (buffValues.value.multiBall - 1) / 2 : 0;
-    return Math.floor(item.cost * Math.pow(1.6, level));
+    const currentLevel = getBuffLevel(item);
+    return Math.floor(item.cost * Math.pow(1.6, currentLevel));
 };
 
 const handleItemClick = (item, type) => {
     if (type === 'buff') {
+        if (getBuffLevel(item) >= getBuffMaxLevel(item)) return;
+
         const cost = getBuffCost(item);
         if (score.value >= cost) {
             score.value -= cost;
             purchased.value.add(item.id);
+            
+            const isOneTime = ['magnetRim', 'portalShot', 'railgunMode', 'catchingSystem'].includes(item.id);
+            if (!isOneTime) {
+                buffLevels.value[item.id] = (buffLevels.value[item.id] || 0) + 1;
+            }
+
             switch(item.id) {
                 case 'doubleScore': 
-                    const currentMult = buffValues.value.doubleScoreVal / 10;
-                    if (currentMult === 1) buffValues.value.doubleScoreVal = 20;
-                    else if (currentMult === 2) buffValues.value.doubleScoreVal = 30;
-                    else buffValues.value.doubleScoreVal = 50;
+                    if (buffLevels.value.doubleScore === 1) buffValues.value.doubleScoreVal = 20;
+                    else if (buffLevels.value.doubleScore === 2) buffValues.value.doubleScoreVal = 30;
+                    else if (buffLevels.value.doubleScore === 3) buffValues.value.doubleScoreVal = 50;
                     break;
                 case 'aimAssist': buffValues.value.aimAssist++; break;
                 case 'biggerBall': buffValues.value.biggerBall += 10; break;
@@ -561,7 +583,7 @@ const toggleEquip = (id, type) => {
     if (type === 'skin') {
         ['cat_default', 'cat_sunglasses', 'cat_business', 'cat_crying'].forEach(s => equipped.value.delete(s));
     } else if (type === 'bg') {
-        ['bg_white', 'bg_grass', 'bg_space', 'bg_meme'].forEach(b => equipped.value.delete(b));
+        ['bg_white', 'bg_grass', 'bg_space', 'bg_classroom', 'bg_meme'].forEach(b => equipped.value.delete(b));
     } else if (type === 'aud') {
         ['aud_none', 'aud_cheering', 'aud_dancing', 'aud_chaotic'].forEach(a => equipped.value.delete(a));
     } else if (type === 'music') {
@@ -606,8 +628,10 @@ const skins = [
 ];
 
 const worlds = [
-    { id: 'bg_grass', name: 'Grass Field (Default)', type: 'bg', cost: 0 },
+    { id: 'bg_white', name: 'White (Default)', type: 'bg', cost: 0 },
+    { id: 'bg_grass', name: 'Grass Field', type: 'bg', cost: 50 },
     { id: 'bg_space', name: 'Space', type: 'bg', cost: 100 },
+    { id: 'bg_classroom', name: 'Classroom', type: 'bg', cost: 300 },
     { id: 'bg_meme', name: 'Meme Chaos', type: 'bg', cost: 1000 },
 ];
 
@@ -690,12 +714,20 @@ const musics = [
                     <header>TOTAL: 8 BUFF UTAMA</header>
                     <div class="item-grid">
                         <div v-for="b in buffItems" :key="b.id" class="shop-item buff" 
-                             :class="{ 'owned': purchased.has(b.id), 'poor': score < getBuffCost(b) }" 
+                             :class="{ 
+                                 'owned': purchased.has(b.id), 
+                                 'poor': score < getBuffCost(b) && getBuffLevel(b) < getBuffMaxLevel(b),
+                                 'maxed': getBuffLevel(b) >= getBuffMaxLevel(b)
+                             }" 
                              @click="handleItemClick(b, 'buff')">
                             <span class="name">{{ b.name }}</span>
                             <span class="desc" style="font-size: 0.7rem; opacity: 0.7; margin: 4px 0;">{{ b.desc }}</span>
-                            <span class="status">{{ getBuffCost(b) }} pts</span>
-                            <small v-if="purchased.has(b.id)" class="lv">UPGRADE</small>
+                            
+                            <span class="status" v-if="getBuffLevel(b) < getBuffMaxLevel(b)">{{ getBuffCost(b) }} pts</span>
+                            <span class="status" v-else>MAX</span>
+                            
+                            <small v-if="getBuffLevel(b) >= getBuffMaxLevel(b)" class="lv">MAX LEVEL</small>
+                            <small v-else-if="purchased.has(b.id)" class="lv">UPGRADE ({{ getBuffLevel(b) }}/{{ getBuffMaxLevel(b) }})</small>
                             <small v-else class="lv">BUY</small>
                         </div>
                     </div>
@@ -834,6 +866,9 @@ canvas { width: 100%; height: 100%; touch-action: none; display: block; }
 .shop-item.active { background: #d4af37; border-color: #fff; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
 .shop-item.active .name { color: #000 !important; font-weight: 900; }
 .shop-item.active .status { color: #000 !important; opacity: 0.8; font-weight: 800; }
+
+.shop-item.maxed { border-color: #d4af37; background: rgba(212, 175, 55, 0.1); cursor: default; }
+.shop-item.maxed .status { color: #d4af37; }
 
 .shop-item.poor { opacity: 0.3; cursor: default; }
 .shop-item .name { font-weight: 700; font-size: 1.1rem; color: #fff; margin-bottom: 8px; }

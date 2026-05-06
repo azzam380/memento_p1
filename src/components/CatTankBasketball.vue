@@ -707,7 +707,7 @@ const musics = [
         <div class="rotate-content">
             <div class="phone-icon">📱</div>
             <h2>WADUH!</h2>
-            <p>Puter HP kamu dulu biar bisa main seru!</p>
+            <p>Puter Perangkat kamu dulu biar bisa main seru!</p>
             <div class="sub">Gunakan Mode Landscape</div>
         </div>
     </div>

@@ -223,7 +223,7 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 50;
-  /* border: 1px solid red; /* Debug saja */
+  /* border: 1px solid red; Debug saja */
 }
 
 /* Style umum kartu work */
@@ -706,6 +706,7 @@ body {
   left: max(20px, calc(50vw - 700px + 30px));
   padding: 10px 25px;
   background: rgba(13, 2, 22, 0.6); 
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border-radius: 30px;
   border: 1px solid rgba(212, 175, 55, 0.2);
@@ -1161,6 +1162,9 @@ body {
   position: relative;
   overflow: hidden;
   pointer-events: auto !important;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   flex-shrink: 0;
   transform-origin: bottom center;
@@ -1278,6 +1282,7 @@ body {
   z-index: 600;
   color: #bf953f;
   background: rgba(26, 11, 46, 0.4);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   border: 1.5px solid #bf953f;
   width: 45px;
@@ -1437,8 +1442,10 @@ body {
   visibility: visible !important;
   cursor: pointer;
   z-index: 100;
-  user-select: none;
   -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .service-sub-card span {
@@ -1526,6 +1533,7 @@ body {
   width: 100vw;
   height: 100vh;
   background: rgba(13, 2, 22, 0.95);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   z-index: 9999;
   display: flex !important;
@@ -1762,6 +1770,7 @@ body {
   font-family: 'Inter', sans-serif;
   font-size: 1rem;
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
 

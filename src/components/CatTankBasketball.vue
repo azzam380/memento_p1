@@ -12,6 +12,7 @@ import bgGrassImgSrc from '@/assets/bg-grass.png';
 // Audience
 import cheeringCatImgSrc from '@/assets/cheering-cat.png';
 import dancingCatImgSrc from '@/assets/dancing-cat.png';
+import chaoticAudienceImgSrc from '@/assets/chaotic-audience.png';
 
 // New Tank Assets
 import partUnion from '@/assets/union-1.png';
@@ -94,10 +95,12 @@ bgGrassImg.src = bgGrassImgSrc;
 
 const audienceImages = {
     cheering: new Image(),
-    dancing: new Image()
+    dancing: new Image(),
+    chaotic: new Image()
 };
 audienceImages.cheering.src = cheeringCatImgSrc;
 audienceImages.dancing.src = dancingCatImgSrc;
+audienceImages.chaotic.src = chaoticAudienceImgSrc;
 
 // Audio System
 const currentAudio = ref(null);
@@ -165,9 +168,22 @@ const createAudience = () => {
     audienceCats = [];
     if (equipped.value.has('aud_none')) return;
     
+    // If chaotic is equipped, just spawn ONE giant chaotic crowd asset
+    if (equipped.value.has('aud_chaotic')) {
+        audienceCats.push({
+            x: gameWidth * 0.5,
+            y: gameHeight + 10,
+            size: gameHeight * 0.6, // scale to 60% of game height
+            jump: 0,
+            offset: 0,
+            type: 'chaotic',
+            scaleX: 1
+        });
+        return;
+    }
+    
     let count = 3;
-    if (equipped.value.has('aud_chaotic')) count = 6;
-    else if (equipped.value.has('aud_dancing')) count = 3;
+    if (equipped.value.has('aud_dancing')) count = 3;
 
     const positions = [
         { x: gameWidth * 0.25, yOffset: 10 },   // Kiri
@@ -178,17 +194,9 @@ const createAudience = () => {
     for (let i = 0; i < count; i++) {
         let catType = 'cheering';
         if (equipped.value.has('aud_dancing')) catType = 'dancing';
-        else if (equipped.value.has('aud_chaotic')) catType = Math.random() > 0.5 ? 'dancing' : 'cheering';
 
-        let posX, posY;
-        if (i < 3) {
-            posX = positions[i].x;
-            posY = gameHeight - positions[i].yOffset;
-        } else {
-            // Chaotic extra crowds
-            posX = gameWidth * 0.5 + (Math.random() - 0.5) * (gameWidth * 0.6);
-            posY = gameHeight - 10 - Math.random() * 80;
-        }
+        let posX = positions[i].x;
+        let posY = gameHeight - positions[i].yOffset;
 
         audienceCats.push({
             x: posX,
@@ -405,6 +413,26 @@ const render = () => {
       if (cat.type === 'dancing') {
           cat.jump = Math.abs(Math.sin(time + cat.offset)) * 20;
           cat.x += Math.sin(time * 0.5 + cat.offset) * 2;
+      } else if (cat.type === 'chaotic') {
+          // Intense vibrating and small bobbing for the large crowd asset
+          cat.jump = Math.abs(Math.sin(time * 5 + cat.offset)) * 10; 
+          // Small horizontal shake without drifting
+          const shake = Math.sin(time * 15) * 5;
+          
+          const img = audienceImages[cat.type];
+          if (img && img.complete) {
+              const aspectRatio = img.width / img.height;
+              const drawHeight = cat.size;
+              const drawWidth = cat.size * aspectRatio;
+              
+              ctx.save();
+              // Spawn from bottom center, x already initialized at gameWidth * 0.5
+              ctx.translate(cat.x + shake, cat.y - cat.jump);
+              ctx.scale(cat.scaleX, 1);
+              ctx.drawImage(img, -drawWidth/2, -drawHeight, drawWidth, drawHeight);
+              ctx.restore();
+          }
+          return; // Skip the generic drawing below to prevent double draw
       } else {
           cat.jump = Math.sin(time + cat.offset) * 8;
       }

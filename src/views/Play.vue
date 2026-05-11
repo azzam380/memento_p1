@@ -22,6 +22,17 @@ const timerSeconds = ref(0);
 const gameScore = ref(0);
 let timerInterval = null;
 
+const showDevNotif = ref(false);
+let notifTimeout = null;
+
+const showNotification = () => {
+  showDevNotif.value = true;
+  if (notifTimeout) clearTimeout(notifTimeout);
+  notifTimeout = setTimeout(() => {
+    showDevNotif.value = false;
+  }, 3000);
+};
+
 const startTimer = () => {
   timerSeconds.value = 0;
   timerInterval = setInterval(() => {
@@ -184,6 +195,11 @@ const createSparkleBurst = (card) => {
 };
 
 const handleCardClick = (event, cardData, index) => {
+  if (cardData.isComingSoon) {
+    showNotification();
+    return;
+  }
+
   const card = event.currentTarget;
   createSparkleBurst(card);
   
@@ -393,6 +409,18 @@ onMounted(() => {
         </button>
       </div>
     </div>
+
+    <!-- DEV NOTIFICATION TOAST -->
+    <transition name="toast-fade">
+      <div v-if="showDevNotif" class="dev-toast-notification">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toast-icon">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>Fitur ini masih dalam tahap pengembangan.</span>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -482,6 +510,7 @@ onMounted(() => {
 
 .in-development {
   filter: grayscale(0.6) opacity(0.8);
+  cursor: pointer;
 }
 
 .in-development:hover {
@@ -928,5 +957,43 @@ onMounted(() => {
     padding: 12px 25px;
     width: 100%;
   }
+}
+
+.dev-toast-notification {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26, 11, 46, 0.95);
+  border: 1px solid var(--accent-gold);
+  color: #fff;
+  padding: 15px 25px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 1000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.2);
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+.toast-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--accent-gold);
+}
+
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -20px);
 }
 </style>

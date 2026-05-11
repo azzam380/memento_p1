@@ -138,7 +138,7 @@ const submitForm = async () => {
   formMessage.value = 'Sending message...';
 
   try {
-    const response = await fetch("https://formsubmit.co/ajax/azzamidn24@gmail.com", {
+    const response = await fetch("https://formsubmit.co/ajax/mementostoria@gmail.com", {
       method: "POST",
       headers: { 
         'Content-Type': 'application/json',

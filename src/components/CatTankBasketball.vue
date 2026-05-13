@@ -704,7 +704,7 @@ const worlds = [
     { id: 'bg_grass', name: 'Grass Field', type: 'bg', cost: 50 },
     { id: 'bg_space', name: 'Space', type: 'bg', cost: 100 },
     { id: 'bg_classroom', name: 'Classroom', type: 'bg', cost: 300, comingSoon: true },
-    { id: 'bg_meme', name: 'Meme Chaos', type: 'bg', cost: 1000 },
+    { id: 'bg_meme', name: 'Meme Chaos', type: 'bg', cost: 1000, comingSoon: true },
 ];
 
 const audiences = [

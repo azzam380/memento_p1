@@ -8,6 +8,7 @@ import catSunglasses from '@/assets/cat-tank-sunglasses.png';
 import catBusiness from '@/assets/cat-tank-business.png';
 import catCrying from '@/assets/cat-tank-crying.png';
 import bgGrassImgSrc from '@/assets/bg-grass.png';
+import bgSpaceImgSrc from '@/assets/bg-space.png';
 
 // Audience
 import cheeringCatImgSrc from '@/assets/cheering-cat.png';
@@ -92,6 +93,9 @@ tankParts.r9.src = partR9;
 
 const bgGrassImg = new Image(); 
 bgGrassImg.src = bgGrassImgSrc;
+
+const bgSpaceImg = new Image();
+bgSpaceImg.src = bgSpaceImgSrc;
 
 const audienceImages = {
     cheering: new Image(),
@@ -400,6 +404,8 @@ const render = () => {
   // 1. Background
   if (equipped.value.has('bg_grass') && bgGrassImg.complete) {
       ctx.drawImage(bgGrassImg, 0, 0, gameWidth, gameHeight);
+  } else if (equipped.value.has('bg_space') && bgSpaceImg.complete) {
+      ctx.drawImage(bgSpaceImg, 0, 0, gameWidth, gameHeight);
   } else {
       ctx.fillStyle = getBgColor();
       ctx.fillRect(0, 0, gameWidth, gameHeight);
@@ -696,7 +702,7 @@ const skins = [
 const worlds = [
     { id: 'bg_white', name: 'White (Default)', type: 'bg', cost: 0 },
     { id: 'bg_grass', name: 'Grass Field', type: 'bg', cost: 50 },
-    { id: 'bg_space', name: 'Space', type: 'bg', cost: 100, comingSoon: true },
+    { id: 'bg_space', name: 'Space', type: 'bg', cost: 100 },
     { id: 'bg_classroom', name: 'Classroom', type: 'bg', cost: 300, comingSoon: true },
     { id: 'bg_meme', name: 'Meme Chaos', type: 'bg', cost: 1000 },
 ];

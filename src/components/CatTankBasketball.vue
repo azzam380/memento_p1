@@ -1004,21 +1004,45 @@ canvas { width: 100%; height: 100%; touch-action: none; display: block; }
 .rotate-content p { font-size: 1.2rem; opacity: 0.8; margin: 10px 0; }
 .rotate-content .sub { font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: #d4af37; opacity: 0.6; }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .game-hud { padding: 10px; }
     .score-card { padding: 4px 15px; }
     .score-card .score-val { font-size: 1.2rem; }
     .game-btn { padding: 8px 20px; font-size: 0.8rem; }
     
-    /* Shop Mobile Landscape Optimizations */
-    .shop-header { padding: 15px 20px; }
-    .shop-header h2 { font-size: 1.2rem; letter-spacing: 1px; }
-    .user-pts { font-size: 1.1rem; }
+    /* Shop Mobile & Tablet Landscape Optimizations */
+    .shop-header {
+        padding: 8px 16px;
+        background: rgba(13, 2, 22, 0.96);
+    }
+    .header-left {
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+    }
+    .shop-header h2 {
+        font-size: 0.95rem;
+        letter-spacing: 2px;
+        white-space: nowrap;
+    }
+    .user-pts {
+        font-size: 0.9rem;
+        margin: 0;
+        white-space: nowrap;
+        background: rgba(212, 175, 55, 0.15);
+        padding: 4px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    .shop-header .close-shop {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
     
-    .shop-scroll { padding: 15px 20px; }
-    .cosmetic-title { font-size: 0.95rem; margin-bottom: 15px; padding-left: 8px; border-left-width: 3px; }
-    .shop-section { margin-bottom: 30px; }
-    .shop-section header { font-size: 0.75rem; margin-bottom: 12px; letter-spacing: 2px; }
+    .shop-scroll { padding: 12px 16px; }
+    .cosmetic-title { font-size: 0.95rem; margin-bottom: 12px; padding-left: 8px; border-left-width: 3px; }
+    .shop-section { margin-bottom: 24px; }
+    .shop-section header { font-size: 0.75rem; margin-bottom: 10px; letter-spacing: 2px; }
     
     .item-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
     
@@ -1027,5 +1051,45 @@ canvas { width: 100%; height: 100%; touch-action: none; display: block; }
     .shop-item .desc { font-size: 0.65rem !important; }
     .shop-item .status { font-size: 0.75rem; }
     .lv { font-size: 0.65rem; margin-top: 3px; }
+
+    /* CTA Modal Mobile & Tablet Landscape Optimizations */
+    .modal-content {
+        padding: 20px 25px;
+        max-width: 85%;
+        border-radius: 20px;
+        border-width: 2px;
+        box-shadow: 0 0 40px rgba(212, 175, 55, 0.2);
+    }
+    .close-x {
+        top: 8px;
+        right: 15px;
+        font-size: 1.5rem;
+    }
+    .modal-content .icon {
+        font-size: 2.2rem;
+        margin-bottom: 8px;
+    }
+    .modal-content h3 {
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+    }
+    .modal-content p {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-bottom: 15px;
+    }
+    .modal-actions {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+    }
+    .btn-primary {
+        padding: 10px 25px;
+        font-size: 0.9rem;
+    }
+    .btn-link {
+        font-size: 0.85rem;
+    }
 }
 </style>

@@ -56,22 +56,31 @@ const themeClass = computed(() => `${route.name?.toLowerCase() || 'default'}-the
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .social-icons {
-    top: 8px; /* Slightly higher */
-    right: 8px; /* More to the edge */
-    gap: 12px; /* Less gap */
-    padding: 6px 12px;
+    top: 6px;
+    right: 6px;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: rgba(13, 2, 22, 0.85);
   }
   .social-icon {
-    width: 18px;
-    height: 18px;
+    width: 13px !important;
+    height: 13px !important;
   }
 }
 
 @media (max-width: 480px) {
   .social-icons {
-    padding: 4px 10px;
+    top: 4px;
+    right: 4px;
+    gap: 6px;
+    padding: 3px 6px;
+  }
+  .social-icon {
+    width: 11px !important;
+    height: 11px !important;
   }
 }
 

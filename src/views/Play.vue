@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, onUnmounted } from 'vue';
 import gsap from 'gsap';
 import logoImg from '@/assets/img-logo.png';
 import evanImg from '@/assets/img-evan.png';
@@ -31,6 +31,52 @@ const showNotification = () => {
   notifTimeout = setTimeout(() => {
     showDevNotif.value = false;
   }, 3000);
+};
+
+const enterFullscreenAndLandscape = async () => {
+  try {
+    const isMobileOrTablet = /Mobi|Android|iPhone|iPad|Macintosh/i.test(navigator.userAgent) || window.innerWidth < 1024;
+    if (!isMobileOrTablet) return;
+
+    const docEl = document.documentElement;
+    if (docEl.requestFullscreen) {
+      await docEl.requestFullscreen();
+    } else if (docEl.webkitRequestFullscreen) {
+      await docEl.webkitRequestFullscreen();
+    } else if (docEl.msRequestFullscreen) {
+      await docEl.msRequestFullscreen();
+    }
+    
+    if (window.screen.orientation && window.screen.orientation.lock) {
+      await window.screen.orientation.lock('landscape');
+    }
+  } catch (err) {
+    console.warn("Fullscreen or orientation lock failed:", err);
+  }
+};
+
+const exitFullscreenAndPortrait = async () => {
+  try {
+    if (document.fullscreenElement) {
+      if (document.exitFullscreen) {
+        await document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        await document.webkitExitFullscreen();
+      }
+    }
+    
+    if (window.screen.orientation) {
+      if (window.screen.orientation.lock) {
+        await window.screen.orientation.lock('portrait').catch(() => {
+          window.screen.orientation.unlock();
+        });
+      } else if (window.screen.orientation.unlock) {
+        window.screen.orientation.unlock();
+      }
+    }
+  } catch (err) {
+    console.warn("Exit fullscreen or orientation unlock failed:", err);
+  }
 };
 
 const startTimer = () => {
@@ -206,6 +252,7 @@ const handleCardClick = (event, cardData, index) => {
   if (index === 0) {
     activeGame.value = { id: 'cat-tank', title: 'Cat Tank Basketball' };
     startTimer();
+    enterFullscreenAndLandscape();
     return;
   }
 
@@ -250,6 +297,10 @@ const shuffleArray = (array) => {
 
 onMounted(() => {
   // No need to shuffle ttsData here anymore
+});
+
+onUnmounted(() => {
+  exitFullscreenAndPortrait();
 });
 </script>
 
@@ -297,7 +348,7 @@ onMounted(() => {
 
     <!-- CAT TANK BASKETBALL GAME -->
     <div class="cat-tank-game-container" v-else-if="activeGame.id === 'cat-tank'">
-      <CatTankBasketball @back="activeGame = null; stopTimer()" />
+      <CatTankBasketball @back="activeGame = null; stopTimer(); exitFullscreenAndPortrait()" />
     </div>
 
     <!-- TTS GAME UI (REAL GRID) -->

@@ -133,8 +133,18 @@ const playMusic = (id) => {
 const canvasRef = ref(null);
 let ctx = null;
 let animationFrame = null;
-let gameWidth = 0;
-let gameHeight = 0;
+const gameWidth = ref(0);
+const gameHeight = ref(0);
+
+const dynamicScale = computed(() => {
+  if (gameWidth.value === 0) return 1.0;
+  if (gameWidth.value < 768) {
+    return 0.55;
+  } else if (gameWidth.value < 1024) {
+    return 0.75;
+  }
+  return 1.0;
+});
 
 // Physics Objects
 let tank = { x: 100, y: 0, width: 120, height: 100, angle: -Math.PI/4, power: 12 };
@@ -160,11 +170,12 @@ const initGame = () => {
 const resize = () => {
   if (!canvasRef.value) return;
   const parent = canvasRef.value.parentElement;
-  gameWidth = parent.clientWidth;
-  gameHeight = parent.clientHeight;
-  canvasRef.value.width = gameWidth;
-  canvasRef.value.height = gameHeight;
-  tank.y = gameHeight - 140;
+  gameWidth.value = parent.clientWidth;
+  gameHeight.value = parent.clientHeight;
+  canvasRef.value.width = gameWidth.value;
+  canvasRef.value.height = gameHeight.value;
+  tank.x = 100 * dynamicScale.value;
+  tank.y = gameHeight.value - 140 * dynamicScale.value;
   createAudience();
 };
 
@@ -175,9 +186,9 @@ const createAudience = () => {
     // If chaotic is equipped, just spawn ONE giant chaotic crowd asset
     if (equipped.value.has('aud_chaotic')) {
         audienceCats.push({
-            x: gameWidth * 0.5,
-            y: gameHeight + 10,
-            size: gameHeight * 0.6, // scale to 60% of game height
+            x: gameWidth.value * 0.5,
+            y: gameHeight.value + 10 * dynamicScale.value,
+            size: gameHeight.value * 0.6, // scale to 60% of game height
             jump: 0,
             offset: 0,
             type: 'chaotic',
@@ -190,9 +201,9 @@ const createAudience = () => {
     if (equipped.value.has('aud_dancing')) count = 3;
 
     const positions = [
-        { x: gameWidth * 0.25, yOffset: 10 },   // Kiri
-        { x: gameWidth * 0.75, yOffset: 10 },   // Kanan
-        { x: gameWidth * 0.5, yOffset: 60 }     // Tengah agak atas
+        { x: gameWidth.value * 0.25, yOffset: 10 * dynamicScale.value },   // Kiri
+        { x: gameWidth.value * 0.75, yOffset: 10 * dynamicScale.value },   // Kanan
+        { x: gameWidth.value * 0.5, yOffset: 60 * dynamicScale.value }     // Tengah agak atas
     ];
 
     for (let i = 0; i < count; i++) {
@@ -200,12 +211,12 @@ const createAudience = () => {
         if (equipped.value.has('aud_dancing')) catType = 'dancing';
 
         let posX = positions[i].x;
-        let posY = gameHeight - positions[i].yOffset;
+        let posY = gameHeight.value - positions[i].yOffset;
 
         audienceCats.push({
             x: posX,
             y: posY,
-            size: 280 + Math.random() * 50,
+            size: (280 + Math.random() * 50) * dynamicScale.value,
             jump: 0,
             offset: Math.random() * Math.PI * 2,
             type: catType,
@@ -215,19 +226,22 @@ const createAudience = () => {
 };
 
 const resetRim = () => {
-  // Ensure the ring spawns in front of the tank (tank is at x: 100)
+  rim.width = 100 * dynamicScale.value;
+  rim.height = 120 * dynamicScale.value;
+
+  // Ensure the ring spawns in front of the tank (tank is at x: 100 * dynamicScale.value)
   // Safely place it in the right half of the screen
-  const minX = Math.max(300, gameWidth * 0.4);
-  const maxX = gameWidth * 0.85;
+  const minX = Math.max(300 * dynamicScale.value, gameWidth.value * 0.4);
+  const maxX = gameWidth.value * 0.85;
   rim.x = minX + Math.random() * (maxX - minX);
-  rim.y = (0.2 + Math.random() * 0.4) * gameHeight;
+  rim.y = (0.2 + Math.random() * 0.4) * gameHeight.value;
   
   if (purchased.value.has('portalShot')) {
       portal.active = true;
-      portal.x1 = rim.x - 200 + Math.random() * 100;
-      portal.y1 = rim.y + 100 + Math.random() * 100;
-      portal.x2 = rim.x + 50;
-      portal.y2 = rim.y - 50;
+      portal.x1 = rim.x - 200 * dynamicScale.value + Math.random() * 100 * dynamicScale.value;
+      portal.y1 = rim.y + 100 * dynamicScale.value + Math.random() * 100 * dynamicScale.value;
+      portal.x2 = rim.x + 50 * dynamicScale.value;
+      portal.y2 = rim.y - 50 * dynamicScale.value;
   } else {
       portal.active = false;
   }
@@ -240,11 +254,11 @@ const fireBall = (customAngle = null, customPower = null) => {
   const power = customPower !== null ? customPower : tank.power;
   
   const ballCount = buffValues.value.multiBall;
-  const ballRadius = buffValues.value.biggerBall;
+  const ballRadius = buffValues.value.biggerBall * dynamicScale.value;
   
-  const pivotX = tank.x + 75;
-  const pivotY = tank.y + 45.4;
-  const barrelLength = 104;
+  const pivotX = tank.x + 75 * dynamicScale.value;
+  const pivotY = tank.y + 45.4 * dynamicScale.value;
+  const barrelLength = 104 * dynamicScale.value;
 
   for (let i = 0; i < ballCount; i++) {
     const spread = (i - (ballCount - 1) / 2) * 0.15;
@@ -264,8 +278,8 @@ const handlePointerDown = (e) => {
   const pos = getPointerPos(e);
   
   if (purchased.value.has('railgunMode')) {
-      const pivotX = tank.x + 75;
-      const pivotY = tank.y + 45.4;
+      const pivotX = tank.x + 75 * dynamicScale.value;
+      const pivotY = tank.y + 45.4 * dynamicScale.value;
       
       let angle = Math.atan2(pos.y - pivotY, pos.x - pivotX);
       if (angle > Math.PI / 2) angle = Math.PI / 2;
@@ -312,7 +326,7 @@ const update = () => {
     b.x += b.vx; b.y += b.vy; b.vy += GRAVITY;
 
     const rimCenterX = rim.x + rim.width / 2;
-    const rimCenterY = rim.y + 20;
+    const rimCenterY = rim.y + 20 * dynamicScale.value;
     const dx = rimCenterX - b.x;
     const dy = rimCenterY - b.y;
     const dist = Math.sqrt(dx*dx + dy*dy);
@@ -321,7 +335,7 @@ const update = () => {
     const isCatching = purchased.value.has('catchingSystem');
 
     if (isMagnet || isCatching) {
-        const range = isCatching ? 300 : 150;
+        const range = (isCatching ? 300 : 150) * dynamicScale.value;
         const pullStrength = isCatching ? 0.15 : 0.04;
         
         // Only pull if falling and within range
@@ -340,7 +354,7 @@ const update = () => {
     }
 
     // Goal Detection
-    if (dist < 60 && b.vy > 0) {
+    if (dist < 60 * dynamicScale.value && b.vy > 0) {
       score.value += buffValues.value.doubleScoreVal;
       createBurst(b.x, b.y, b.color);
       balls.splice(i, 1);
@@ -353,7 +367,7 @@ const update = () => {
         const pdx = portal.x1 - b.x;
         const pdy = portal.y1 - b.y;
         const pdist = Math.sqrt(pdx*pdx + pdy*pdy);
-        if (pdist < 40) {
+        if (pdist < 40 * dynamicScale.value) {
             b.x = portal.x2;
             b.y = portal.y2;
             b.vx = 0; b.vy = 5; // Drop it straight in
@@ -362,7 +376,7 @@ const update = () => {
         }
     }
 
-    if (b.y > gameHeight + 100 || b.x > gameWidth + 100 || b.x < -100) balls.splice(i, 1);
+    if (b.y > gameHeight.value + 100 || b.x > gameWidth.value + 100 || b.x < -100) balls.splice(i, 1);
   }
 
   // Particles
@@ -374,11 +388,11 @@ const update = () => {
 
   // Auto Shoot
   if (purchased.value.has('autoShooter') && Math.random() < 0.04) {
-    const pivotX = tank.x + 75;
-    const pivotY = tank.y + 45.4;
+    const pivotX = tank.x + 75 * dynamicScale.value;
+    const pivotY = tank.y + 45.4 * dynamicScale.value;
     const dx = (rim.x + rim.width/2) - pivotX;
-    const dy = (rim.y + 20) - pivotY;
-    fireBall(Math.atan2(dy - 120, dx), 18);
+    const dy = (rim.y + 20 * dynamicScale.value) - pivotY;
+    fireBall(Math.atan2(dy - 120 * dynamicScale.value, dx), 18);
   }
 
   // Absurdity
@@ -403,12 +417,12 @@ const render = () => {
   
   // 1. Background
   if (equipped.value.has('bg_grass') && bgGrassImg.complete) {
-      ctx.drawImage(bgGrassImg, 0, 0, gameWidth, gameHeight);
+      ctx.drawImage(bgGrassImg, 0, 0, gameWidth.value, gameHeight.value);
   } else if (equipped.value.has('bg_space') && bgSpaceImg.complete) {
-      ctx.drawImage(bgSpaceImg, 0, 0, gameWidth, gameHeight);
+      ctx.drawImage(bgSpaceImg, 0, 0, gameWidth.value, gameHeight.value);
   } else {
       ctx.fillStyle = getBgColor();
-      ctx.fillRect(0, 0, gameWidth, gameHeight);
+      ctx.fillRect(0, 0, gameWidth.value, gameHeight.value);
   }
 
   if (absurdityLevel.value >= 2) drawChaos();
@@ -417,13 +431,13 @@ const render = () => {
   audienceCats.forEach(cat => {
       const time = Date.now() * 0.01;
       if (cat.type === 'dancing') {
-          cat.jump = Math.abs(Math.sin(time + cat.offset)) * 20;
+          cat.jump = Math.abs(Math.sin(time + cat.offset)) * 20 * dynamicScale.value;
           cat.x += Math.sin(time * 0.5 + cat.offset) * 2;
       } else if (cat.type === 'chaotic') {
           // Intense vibrating and small bobbing for the large crowd asset
-          cat.jump = Math.abs(Math.sin(time * 5 + cat.offset)) * 10; 
+          cat.jump = Math.abs(Math.sin(time * 5 + cat.offset)) * 10 * dynamicScale.value; 
           // Small horizontal shake without drifting
-          const shake = Math.sin(time * 15) * 5;
+          const shake = Math.sin(time * 15) * 5 * dynamicScale.value;
           
           const img = audienceImages[cat.type];
           if (img && img.complete) {
@@ -432,7 +446,6 @@ const render = () => {
               const drawWidth = cat.size * aspectRatio;
               
               ctx.save();
-              // Spawn from bottom center, x already initialized at gameWidth * 0.5
               ctx.translate(cat.x + shake, cat.y - cat.jump);
               ctx.scale(cat.scaleX, 1);
               ctx.drawImage(img, -drawWidth/2, -drawHeight, drawWidth, drawHeight);
@@ -440,7 +453,7 @@ const render = () => {
           }
           return; // Skip the generic drawing below to prevent double draw
       } else {
-          cat.jump = Math.sin(time + cat.offset) * 8;
+          cat.jump = Math.sin(time + cat.offset) * 8 * dynamicScale.value;
       }
       
       const img = audienceImages[cat.type];
@@ -459,24 +472,24 @@ const render = () => {
 
   // Tank
   ctx.save();
-  ctx.translate(tank.x + 60, tank.y + 50);
+  ctx.translate(tank.x + 60 * dynamicScale.value, tank.y + 50 * dynamicScale.value);
   
-  const scale = 0.45;
-  const trackY = 32;
-  const bodyOverlapY = 26; // Sink the body even deeper
+  const scale = 0.45 * dynamicScale.value;
+  const trackY = 32 * dynamicScale.value;
+  const bodyOverlapY = 26 * dynamicScale.value; // Sink the body even deeper
   const unionY = trackY - tankParts.union.height * scale + bodyOverlapY;
   
   // 1) Draw Rotating Barrel (moncong tank) FIRST so its base is inside/behind the tank body
   ctx.save();
-  const domeCenterX = 20; // Geser pivot maju sedikit
-  const domeCenterY = unionY + (tankParts.union.height * scale)/2 - 16; // local pivot, shifted UP by 16px
+  const domeCenterX = 20 * dynamicScale.value; // Geser pivot maju sedikit
+  const domeCenterY = unionY + (tankParts.union.height * scale)/2 - 16 * dynamicScale.value; // local pivot, shifted UP by 16px
   ctx.translate(domeCenterX, domeCenterY); 
   ctx.rotate(tank.angle);
   
   // r4 (barrel)
   if (tankParts.r4.complete) ctx.drawImage(tankParts.r4, 0, -tankParts.r4.height/2 * scale, tankParts.r4.width * scale, tankParts.r4.height * scale);
   // r5 (barrel tip) - shift slightly upward visually
-  if (tankParts.r5.complete) ctx.drawImage(tankParts.r5, tankParts.r4.width * scale - 2, -tankParts.r5.height/2 * scale - 4, tankParts.r5.width * scale, tankParts.r5.height * scale);
+  if (tankParts.r5.complete) ctx.drawImage(tankParts.r5, tankParts.r4.width * scale - 2 * dynamicScale.value, -tankParts.r5.height/2 * scale - 4 * dynamicScale.value, tankParts.r5.width * scale, tankParts.r5.height * scale);
   ctx.restore();
 
   // 2) Draw Body (Dome) SECOND so it covers the base of the barrel
@@ -493,9 +506,9 @@ const render = () => {
   
   const catImg = tankImages[skinId] || tankImages.default;
   if (catImg.complete) {
-      const catSize = 140; // Diperbesar dari 80
+      const catSize = 140 * dynamicScale.value; // Diperbesar dari 80
       const catX = -(catSize/2);
-      const catY = unionY - catSize + 45; // Sitting slightly inside the dome
+      const catY = unionY - catSize + 45 * dynamicScale.value; // Sitting slightly inside the dome
       ctx.drawImage(catImg, catX, catY, catSize, catSize);
   }
 
@@ -508,11 +521,11 @@ const render = () => {
       // Contrast color: Dark purple for light bgs (grass), Gold/Yellow for dark bgs
       ctx.strokeStyle = !isCustomBg ? "rgba(26, 11, 46, 0.6)" : "rgba(212, 175, 55, 0.8)";
       ctx.setLineDash([8, 8]);
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 4 * dynamicScale.value;
       
-      const pivotX = tank.x + 75;
-      const pivotY = tank.y + 45.4;
-      const barrelLength = 104;
+      const pivotX = tank.x + 75 * dynamicScale.value;
+      const pivotY = tank.y + 45.4 * dynamicScale.value;
+      const barrelLength = 104 * dynamicScale.value;
       const startX = pivotX + Math.cos(tank.angle) * barrelLength;
       const startY = pivotY + Math.sin(tank.angle) * barrelLength;
       
@@ -529,7 +542,7 @@ const render = () => {
       
       // Outer glow for extra visibility on chaotic backgrounds
       ctx.strokeStyle = !isCustomBg ? "rgba(212, 175, 55, 0.2)" : "rgba(255, 255, 255, 0.3)";
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2 * dynamicScale.value;
       ctx.stroke();
       
       ctx.setLineDash([]);
@@ -537,17 +550,17 @@ const render = () => {
 
   // Rim & Balls
   if (portal.active) {
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 4 * dynamicScale.value;
       ctx.strokeStyle = "#6366f1";
-      ctx.beginPath(); ctx.ellipse(portal.x1, portal.y1, 30, 15, Math.PI/4, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(portal.x1, portal.y1, 30 * dynamicScale.value, 15 * dynamicScale.value, Math.PI/4, 0, Math.PI * 2); ctx.stroke();
       ctx.strokeStyle = "#a855f7";
-      ctx.beginPath(); ctx.ellipse(portal.x2, portal.y2, 30, 15, -Math.PI/4, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(portal.x2, portal.y2, 30 * dynamicScale.value, 15 * dynamicScale.value, -Math.PI/4, 0, Math.PI * 2); ctx.stroke();
   }
 
   // Custom Rim rendering from Parts
   ctx.save();
-  ctx.translate(rim.x, rim.y + 10);
-  const rScale = 0.45;
+  ctx.translate(rim.x, rim.y + 10 * dynamicScale.value);
+  const rScale = 0.45 * dynamicScale.value;
   const rimCenterX = rim.width / 2;
   
   if (tankParts.r8.complete) ctx.drawImage(tankParts.r8, rimCenterX - tankParts.r8.width/2 * rScale, 0, tankParts.r8.width * rScale, tankParts.r8.height * rScale);
@@ -566,17 +579,15 @@ const render = () => {
   }
   ctx.restore();
 
-  // (Optional) keep rimImg invisible or fallback. Skipping it since we draw custom rim.
-  // ctx.drawImage(rimImg, rim.x, rim.y, rim.width, rim.height);
   balls.forEach(b => {
     ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
     ctx.fillStyle = b.color; ctx.fill();
-    ctx.strokeStyle = "white"; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = "white"; ctx.lineWidth = 2 * dynamicScale.value; ctx.stroke();
   });
 
   particles.forEach(p => {
       ctx.globalAlpha = p.life;
-      ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 6, 6);
+      ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 6 * dynamicScale.value, 6 * dynamicScale.value);
       ctx.globalAlpha = 1;
   });
 
@@ -600,11 +611,11 @@ const drawChaos = () => {
     ctx.fillStyle = "#d4af37";
     ctx.font = "bold 90px Inter";
     ctx.textAlign = "center";
-    ctx.fillText("CAT TANK CHAOS", gameWidth/2 + Math.sin(t)*50, gameHeight/2 + Math.cos(t)*50);
+    ctx.fillText("CAT TANK CHAOS", gameWidth.value/2 + Math.sin(t)*50, gameHeight.value/2 + Math.cos(t)*50);
     if (absurdityLevel.value === 3) {
         ctx.strokeStyle = `hsl(${t*100}, 100%, 50%)`;
         ctx.lineWidth = 15;
-        ctx.strokeRect(Math.random()*gameWidth, Math.random()*gameHeight, 300, 300);
+        ctx.strokeRect(Math.random()*gameWidth.value, Math.random()*gameHeight.value, 300, 300);
     }
     ctx.restore();
 };
@@ -926,7 +937,13 @@ canvas { width: 100%; height: 100%; touch-action: none; display: block; }
 .cosmetic-title { color: #fff; font-size: 1.5rem; margin-bottom: 30px; border-left: 4px solid #d4af37; padding-left: 15px; opacity: 0.9; }
 .user-pts { font-weight: 900; font-size: 1.4rem; color: #fff; opacity: 0.8; }
 
-.shop-scroll { flex: 1; overflow-y: auto; padding: 40px; }
+.shop-scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  padding: 40px;
+}
 .shop-section { margin-bottom: 60px; }
 .shop-section header { font-size: 0.9rem; color: #d4af37; opacity: 0.6; letter-spacing: 4px; margin-bottom: 25px; font-weight: 800; text-transform: uppercase; }
 .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
@@ -993,10 +1010,22 @@ canvas { width: 100%; height: 100%; touch-action: none; display: block; }
     .score-card .score-val { font-size: 1.2rem; }
     .game-btn { padding: 8px 20px; font-size: 0.8rem; }
     
-    .item-grid { grid-template-columns: 1fr 1fr; }
-    .shop-header h2 { font-size: 1.4rem; letter-spacing: 2px; }
-    .shop-header { padding: 20px; }
-    .shop-scroll { padding: 20px; }
-    .cosmetic-title { font-size: 1.1rem; }
+    /* Shop Mobile Landscape Optimizations */
+    .shop-header { padding: 15px 20px; }
+    .shop-header h2 { font-size: 1.2rem; letter-spacing: 1px; }
+    .user-pts { font-size: 1.1rem; }
+    
+    .shop-scroll { padding: 15px 20px; }
+    .cosmetic-title { font-size: 0.95rem; margin-bottom: 15px; padding-left: 8px; border-left-width: 3px; }
+    .shop-section { margin-bottom: 30px; }
+    .shop-section header { font-size: 0.75rem; margin-bottom: 12px; letter-spacing: 2px; }
+    
+    .item-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+    
+    .shop-item { padding: 12px; border-radius: 12px; }
+    .shop-item .name { font-size: 0.85rem; margin-bottom: 4px; }
+    .shop-item .desc { font-size: 0.65rem !important; }
+    .shop-item .status { font-size: 0.75rem; }
+    .lv { font-size: 0.65rem; margin-top: 3px; }
 }
 </style>

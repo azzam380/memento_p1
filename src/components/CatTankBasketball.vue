@@ -8,7 +8,12 @@ import catSunglasses from '@/assets/cat-tank-sunglasses.png';
 import catBusiness from '@/assets/cat-tank-business.png';
 import catCrying from '@/assets/cat-tank-crying.png';
 import bgGrassImgSrc from '@/assets/bg-grass.png';
-import bgSpaceImgSrc from '@/assets/bg-space.png';
+import bgClassroomImgSrc from '@/assets/bg-classroom.png';
+import bgBumiImgSrc from '@/assets/bg-bumi.png';
+import bgCometImgSrc from '@/assets/bg-comet.png';
+import bgUfoImgSrc from '@/assets/bg-ufo.png';
+import bgBulanImgSrc from '@/assets/bg-bulan.png';
+import bgAsteroidImgSrc from '@/assets/bg-asteroid.png';
 
 // Audience
 import cheeringCatImgSrc from '@/assets/cheering-cat.png';
@@ -94,8 +99,23 @@ tankParts.r9.src = partR9;
 const bgGrassImg = new Image(); 
 bgGrassImg.src = bgGrassImgSrc;
 
-const bgSpaceImg = new Image();
-bgSpaceImg.src = bgSpaceImgSrc;
+const bgClassroomImg = new Image();
+bgClassroomImg.src = bgClassroomImgSrc;
+
+const bgBumiImg = new Image();
+bgBumiImg.src = bgBumiImgSrc;
+
+const bgCometImg = new Image();
+bgCometImg.src = bgCometImgSrc;
+
+const bgUfoImg = new Image();
+bgUfoImg.src = bgUfoImgSrc;
+
+const bgBulanImg = new Image();
+bgBulanImg.src = bgBulanImgSrc;
+
+const bgAsteroidImg = new Image();
+bgAsteroidImg.src = bgAsteroidImgSrc;
 
 const audienceImages = {
     cheering: new Image(),
@@ -159,6 +179,179 @@ let isDragging = false;
 let dragStartX = 0;
 let dragStartY = 0;
 
+// Initialize state for space bg objects
+const spaceBgState = ref({
+    initialized: false,
+    asteroids: [],
+    ufo: { x: 0, y: 0, targetX: 0, targetY: 0, angle: 0, scale: 1, timer: 0 },
+    comet: { x: 0, y: 0, vx: 0, vy: 0, active: false, timer: 0, particles: [] },
+    stars: []
+});
+
+const initSpaceBgObjects = () => {
+    const width = gameWidth.value || 1200;
+    const height = gameHeight.value || 800;
+
+    const stars = [];
+    const starCount = 50;
+    for (let i = 0; i < starCount; i++) {
+        stars.push({
+            x: Math.random() * width,
+            y: Math.random() * (height * 0.7),
+            size: Math.random() * 1.5 + 0.5,
+            alpha: Math.random(),
+            speed: 0.01 + Math.random() * 0.02
+        });
+    }
+    spaceBgState.value.stars = stars;
+    
+    spaceBgState.value.asteroids = [
+        {
+            x: width * 0.15,
+            y: height * 0.2,
+            size: 60,
+            angle: Math.random() * Math.PI * 2,
+            rotSpeed: 0.005,
+            driftX: 0.2,
+            driftY: 0.05,
+            floatOffset: 0
+        },
+        {
+            x: width * 0.8,
+            y: height * 0.15,
+            size: 45,
+            angle: Math.random() * Math.PI * 2,
+            rotSpeed: -0.008,
+            driftX: -0.15,
+            driftY: 0.08,
+            floatOffset: Math.PI / 2
+        },
+        {
+            x: width * 0.5,
+            y: height * 0.08,
+            size: 30,
+            angle: Math.random() * Math.PI * 2,
+            rotSpeed: 0.01,
+            driftX: 0.1,
+            driftY: -0.05,
+            floatOffset: Math.PI
+        }
+    ];
+
+    spaceBgState.value.ufo = {
+        x: width * 0.85,
+        y: height * 0.35,
+        targetX: width * 0.85,
+        targetY: height * 0.35,
+        angle: 0,
+        scale: 1,
+        timer: 0
+    };
+
+    spaceBgState.value.comet = {
+        x: -200,
+        y: -200,
+        vx: 0,
+        vy: 0,
+        active: false,
+        timer: Math.random() * 300 + 200,
+        particles: []
+    };
+
+    spaceBgState.value.initialized = true;
+};
+
+const updateSpaceBg = () => {
+    if (!spaceBgState.value.initialized) {
+        initSpaceBgObjects();
+        return;
+    }
+
+    const width = gameWidth.value || 1200;
+    const height = gameHeight.value || 800;
+    const time = Date.now();
+
+    // 1. Update Asteroids
+    spaceBgState.value.asteroids.forEach(ast => {
+        ast.angle += ast.rotSpeed;
+        ast.x += ast.driftX * dynamicScale.value;
+        ast.y += ast.driftY * dynamicScale.value;
+
+        const floatY = Math.sin(time * 0.001 + ast.floatOffset) * 0.2;
+        ast.y += floatY;
+
+        if (ast.x < -100) ast.x = width + 100;
+        if (ast.x > width + 100) ast.x = -100;
+        if (ast.y < -100) ast.y = height + 100;
+        if (ast.y > height + 100) ast.y = -100;
+    });
+
+    // 2. Update UFO
+    const ufo = spaceBgState.value.ufo;
+    ufo.timer++;
+    
+    if (ufo.timer % 150 === 0 || Math.random() < 0.005) {
+        ufo.targetX = width * (0.6 + Math.random() * 0.3);
+        ufo.targetY = height * (0.1 + Math.random() * 0.3);
+    }
+
+    ufo.x += (ufo.targetX - ufo.x) * 0.02;
+    ufo.y += (ufo.targetY - ufo.y) * 0.02;
+
+    const dx = ufo.targetX - ufo.x;
+    ufo.angle = (dx * 0.001) + Math.sin(time * 0.002) * 0.05;
+
+    // 3. Update Comet
+    const comet = spaceBgState.value.comet;
+    if (comet.active) {
+        comet.x += comet.vx * dynamicScale.value;
+        comet.y += comet.vy * dynamicScale.value;
+
+        if (Math.random() < 0.6) {
+            comet.particles.push({
+                x: comet.x - comet.vx * 1.5,
+                y: comet.y - comet.vy * 1.5,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                life: 1.0,
+                color: `rgba(${180 + Math.random() * 75}, ${180 + Math.random() * 75}, 255, 0.7)`
+            });
+        }
+
+        if (comet.x < -200 || comet.y > height + 200) {
+            comet.active = false;
+            comet.timer = Math.random() * 400 + 300;
+        }
+    } else {
+        comet.timer--;
+        if (comet.timer <= 0) {
+            comet.active = true;
+            comet.x = width * (0.8 + Math.random() * 0.3);
+            comet.y = -100;
+            const angle = Math.PI * 0.75 + (Math.random() - 0.5) * 0.15;
+            const speed = 15 + Math.random() * 10;
+            comet.vx = Math.cos(angle) * speed;
+            comet.vy = Math.sin(angle) * speed;
+        }
+    }
+
+    for (let i = comet.particles.length - 1; i >= 0; i--) {
+        const p = comet.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.04;
+        if (p.life <= 0) comet.particles.splice(i, 1);
+    }
+
+    // 4. Update Twinkling Stars
+    spaceBgState.value.stars.forEach(star => {
+        star.alpha += star.speed;
+        if (star.alpha > 1 || star.alpha < 0.2) {
+            star.speed = -star.speed;
+        }
+    });
+};
+
 const initGame = () => {
   if (!canvasRef.value) return;
   ctx = canvasRef.value.getContext('2d');
@@ -177,6 +370,7 @@ const resize = () => {
   tank.x = 100 * dynamicScale.value;
   tank.y = gameHeight.value - 140 * dynamicScale.value;
   createAudience();
+  initSpaceBgObjects();
 };
 
 const createAudience = () => {
@@ -418,8 +612,84 @@ const render = () => {
   // 1. Background
   if (equipped.value.has('bg_grass') && bgGrassImg.complete) {
       ctx.drawImage(bgGrassImg, 0, 0, gameWidth.value, gameHeight.value);
-  } else if (equipped.value.has('bg_space') && bgSpaceImg.complete) {
-      ctx.drawImage(bgSpaceImg, 0, 0, gameWidth.value, gameHeight.value);
+  } else if (equipped.value.has('bg_space')) {
+      // 1. Draw Space background (bgBumiImg is the full screen backdrop)
+      if (bgBumiImg.complete) {
+          ctx.drawImage(bgBumiImg, 0, 0, gameWidth.value, gameHeight.value);
+      } else {
+          ctx.fillStyle = '#05070c';
+          ctx.fillRect(0, 0, gameWidth.value, gameHeight.value);
+      }
+
+      // Update space background animations
+      updateSpaceBg();
+
+      // Draw Twinkling Stars on top of the sky area
+      spaceBgState.value.stars.forEach(star => {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0.2, Math.min(1, star.alpha));
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size * dynamicScale.value, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+      });
+
+      // 3. Draw Comet (bgCometImg) & its particles trail
+      const comet = spaceBgState.value.comet;
+      comet.particles.forEach(p => {
+          ctx.save();
+          ctx.globalAlpha = p.life;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, (3 + Math.random() * 3) * dynamicScale.value, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+      });
+
+      if (comet.active && bgCometImg.complete) {
+          ctx.save();
+          ctx.translate(comet.x, comet.y);
+          const angle = Math.atan2(comet.vy, comet.vx);
+          ctx.rotate(angle);
+          const cometW = 120 * dynamicScale.value;
+          const cometH = 40 * dynamicScale.value;
+          ctx.drawImage(bgCometImg, -cometW / 2, -cometH / 2, cometW, cometH);
+          ctx.restore();
+      }
+
+      // 4. Draw UFO (bgUfoImg)
+      const ufo = spaceBgState.value.ufo;
+      if (bgUfoImg.complete) {
+          ctx.save();
+          const bob = Math.sin(Date.now() * 0.003) * 6 * dynamicScale.value;
+          ctx.translate(ufo.x, ufo.y + bob);
+          ctx.rotate(ufo.angle);
+          const ufoW = 85 * dynamicScale.value;
+          const ufoH = 65 * dynamicScale.value;
+          ctx.drawImage(bgUfoImg, -ufoW / 2, -ufoH / 2, ufoW, ufoH);
+          ctx.restore();
+      }
+
+      // 5. Draw Asteroids (bgAsteroidImg)
+      if (bgAsteroidImg.complete) {
+          spaceBgState.value.asteroids.forEach(ast => {
+              ctx.save();
+              ctx.translate(ast.x, ast.y);
+              ctx.rotate(ast.angle);
+              const size = ast.size * dynamicScale.value;
+              ctx.drawImage(bgAsteroidImg, -size / 2, -size / 2, size, size);
+              ctx.restore();
+          });
+      }
+
+      // 6. Draw Moon Floor (bgBulanImg)
+      if (bgBulanImg.complete) {
+          const moonHeight = Math.max(160, gameHeight.value * 0.28);
+          ctx.drawImage(bgBulanImg, 0, gameHeight.value - moonHeight, gameWidth.value, moonHeight);
+      }
+  } else if (equipped.value.has('bg_classroom') && bgClassroomImg.complete) {
+      ctx.drawImage(bgClassroomImg, 0, 0, gameWidth.value, gameHeight.value);
   } else {
       ctx.fillStyle = getBgColor();
       ctx.fillRect(0, 0, gameWidth.value, gameHeight.value);
@@ -516,7 +786,7 @@ const render = () => {
 
   // Aim Line (LENGTH BASED ON UPGRADE)
   if (isDragging) {
-      const isCustomBg = equipped.value.has('bg_meme') || equipped.value.has('bg_space');
+      const isCustomBg = equipped.value.has('bg_meme') || equipped.value.has('bg_space') || equipped.value.has('bg_classroom');
       ctx.beginPath();
       // Contrast color: Dark purple for light bgs (grass), Gold/Yellow for dark bgs
       ctx.strokeStyle = !isCustomBg ? "rgba(26, 11, 46, 0.6)" : "rgba(212, 175, 55, 0.8)";
@@ -714,7 +984,7 @@ const worlds = [
     { id: 'bg_white', name: 'White (Default)', type: 'bg', cost: 0 },
     { id: 'bg_grass', name: 'Grass Field', type: 'bg', cost: 50 },
     { id: 'bg_space', name: 'Space', type: 'bg', cost: 100 },
-    { id: 'bg_classroom', name: 'Classroom', type: 'bg', cost: 300, comingSoon: true },
+    { id: 'bg_classroom', name: 'Classroom', type: 'bg', cost: 300 },
     { id: 'bg_meme', name: 'Meme Chaos', type: 'bg', cost: 1000, comingSoon: true },
 ];
 

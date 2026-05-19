@@ -14,6 +14,7 @@ import bgCometImgSrc from '@/assets/bg-comet.png';
 import bgUfoImgSrc from '@/assets/bg-ufo.png';
 import bgBulanImgSrc from '@/assets/bg-bulan.png';
 import bgAsteroidImgSrc from '@/assets/bg-asteroid.png';
+import bgChaosImgSrc from '@/assets/bg-chaos.png';
 
 // Audience
 import cheeringCatImgSrc from '@/assets/cheering-cat.png';
@@ -116,6 +117,9 @@ bgBulanImg.src = bgBulanImgSrc;
 
 const bgAsteroidImg = new Image();
 bgAsteroidImg.src = bgAsteroidImgSrc;
+
+const bgChaosImg = new Image();
+bgChaosImg.src = bgChaosImgSrc;
 
 const audienceImages = {
     cheering: new Image(),
@@ -690,6 +694,14 @@ const render = () => {
       }
   } else if (equipped.value.has('bg_classroom') && bgClassroomImg.complete) {
       ctx.drawImage(bgClassroomImg, 0, 0, gameWidth.value, gameHeight.value);
+  } else if (equipped.value.has('bg_meme') && bgChaosImg.complete) {
+      ctx.save();
+      const shakeAmount = 25 * dynamicScale.value;
+      const rx = (Math.random() - 0.5) * shakeAmount;
+      const ry = (Math.random() - 0.5) * shakeAmount;
+      ctx.translate(rx - shakeAmount, ry - shakeAmount);
+      ctx.drawImage(bgChaosImg, 0, 0, gameWidth.value + shakeAmount * 2, gameHeight.value + shakeAmount * 2);
+      ctx.restore();
   } else {
       ctx.fillStyle = getBgColor();
       ctx.fillRect(0, 0, gameWidth.value, gameHeight.value);
@@ -985,7 +997,7 @@ const worlds = [
     { id: 'bg_grass', name: 'Grass Field', type: 'bg', cost: 50 },
     { id: 'bg_space', name: 'Space', type: 'bg', cost: 100 },
     { id: 'bg_classroom', name: 'Classroom', type: 'bg', cost: 300 },
-    { id: 'bg_meme', name: 'Meme Chaos', type: 'bg', cost: 1000, comingSoon: true },
+    { id: 'bg_meme', name: 'Meme Chaos', type: 'bg', cost: 1000 },
 ];
 
 const audiences = [

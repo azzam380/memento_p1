@@ -7,11 +7,13 @@ import linaImg from '@/assets/img-lina.png';
 import melissaImg from '@/assets/img-melissa.png';
 import sarahImg from '@/assets/img-sarah.png';
 import CatTankBasketball from '@/components/CatTankBasketball.vue';
+import RockPaperScissors from '@/components/RockPaperScissors.vue';
 
 
 const displayCards = ref([
   { id: 'c1', title: '', isComingSoon: false, label: 'PLAY NOW', image: evanImg },
-  { id: 'c2', title: '', isComingSoon: true, label: 'COMING SOON', image: linaImg },
+  { id: 'rps', title: 'SUIT', isComingSoon: false, label: 'PLAY NOW', image: linaImg },
+
   { id: 'tts', title: 'TTS', isComingSoon: false, label: 'PLAY NOW' },
   { id: 'c3', title: '', isComingSoon: true, label: 'COMING SOON', image: melissaImg },
   { id: 'c4', title: '', isComingSoon: true, label: 'COMING SOON', image: sarahImg }
@@ -256,6 +258,12 @@ const handleCardClick = (event, cardData, index) => {
     return;
   }
 
+  if (index === 1) {
+    activeGame.value = { id: 'rps', title: 'Batu Gunting Kertas' };
+    enterFullscreenAndLandscape();
+    return;
+  }
+
   // Picking a random level from ttsData
   const game = ttsData[Math.floor(Math.random() * ttsData.length)];
 
@@ -349,6 +357,11 @@ onUnmounted(() => {
     <!-- CAT TANK BASKETBALL GAME -->
     <div class="cat-tank-game-container" v-else-if="activeGame.id === 'cat-tank'">
       <CatTankBasketball @back="activeGame = null; stopTimer(); exitFullscreenAndPortrait()" />
+    </div>
+
+    <!-- ROCK PAPER SCISSORS GAME -->
+    <div class="rps-game-container-wrapper" v-else-if="activeGame.id === 'rps'">
+      <RockPaperScissors @back="activeGame = null; exitFullscreenAndPortrait()" />
     </div>
 
     <!-- TTS GAME UI (REAL GRID) -->
@@ -588,6 +601,16 @@ onUnmounted(() => {
 }
 
 .cat-tank-game-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.rps-game-container-wrapper {
   width: 100%;
   height: 100%;
   display: flex;

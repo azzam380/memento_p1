@@ -12,7 +12,7 @@ import RockPaperScissors from '@/components/RockPaperScissors.vue';
 
 const displayCards = ref([
   { id: 'c1', title: '', isComingSoon: false, label: 'PLAY NOW', image: evanImg },
-  { id: 'rps', title: 'SUIT', isComingSoon: false, label: 'PLAY NOW', image: linaImg },
+  { id: 'rps', title: '', isComingSoon: false, label: 'PLAY NOW', image: linaImg },
 
   { id: 'tts', title: 'TTS', isComingSoon: false, label: 'PLAY NOW' },
   { id: 'c3', title: '', isComingSoon: true, label: 'COMING SOON', image: melissaImg },
@@ -345,7 +345,7 @@ onUnmounted(() => {
           @click="(e) => handleCardClick(e, card, index)"
         >
           <div class="play-card-inner">
-            <span class="game-title">{{ card.title }}</span>
+            <span class="game-title" :class="card.id === 'rps' ? 'suit-title' : ''">{{ card.title }}</span>
             <span v-if="card.isComingSoon" class="dev-label">{{ card.label }}</span>
             <img v-if="card.image" :src="card.image" class="card-thumbnail" alt="Game Thumbnail">
             <span v-if="!card.isComingSoon" class="play-label">PLAY NOW</span>
@@ -598,6 +598,24 @@ onUnmounted(() => {
   letter-spacing: 0;
   text-align: center;
   width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .game-title.suit-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .game-title.suit-title {
+    font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .game-title.suit-title {
+    font-size: clamp(1.2rem, 3vw, 1.4rem);
+  }
 }
 
 .cat-tank-game-container {

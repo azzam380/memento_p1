@@ -10,8 +10,12 @@ Selamat datang di repositori **Memento Game Studio Project 1**. Website ini meru
 ## 🚀 Fitur Utama
 
 -   **🏠 Home:** Landing page dengan desain premium dan transisi yang halus.
--   **💼 Work & Service:** Menampilkan proyek-proyek dan layanan studio dengan detail yang komprehensif.
--   **🕹️ Play (Mini-Game):** Menampilkan game **Cat Tank Basketball**, sebuah game interaktif yang dibangun menggunakan Vue dan animasi GSAP.
+-   **ℹ️ Info:** Halaman profil dan informasi tentang Memento Game Studio.
+-   **💼 Work & Service:** Halaman terpisah untuk menampilkan portofolio proyek (Work) dengan detail yang komprehensif, dan layanan (Service) yang ditawarkan oleh studio.
+-   **🕹️ Play (Mini-Game):** Menyediakan beberapa game interaktif yang seru:
+    -   **Cat Tank Basketball:** Game basket unik dengan animasi menarik.
+    -   **Batu Gunting Kertas:** Game klasik Rock Paper Scissors.
+    -   **TTS (Teka Teki Silang):** Game teka-teki silang interaktif dengan berbagai tingkat kesulitan.
 -   **📱 Responsive Design:** Dioptimalkan untuk berbagai ukuran layar (Mobile, Tablet, Desktop).
 -   **✨ Smooth Animations:** Menggunakan GSAP untuk pengalaman pengguna yang lebih hidup dan premium.
 
@@ -31,12 +35,12 @@ Project1/
 ├── dist/               # Build produksi
 ├── server/             # Backend server (Express)
 ├── src/                # Source code frontend
-│   ├── components/     # Komponen Vue (CatTankBasketball, SocialIcons, dll)
-│   ├── views/          # Halaman utama (Home, Play, Work, dll)
+│   ├── components/     # Komponen Vue (CatTankBasketball, RockPaperScissors, dll)
+│   ├── views/          # Halaman utama (Home, Info, Play, Work, Service, dll)
 │   ├── router/         # Konfigurasi Vue Router
-│   └── assets/         # Gambar dan media
+│   ├── assets/         # Gambar dan media
+│   └── main.js         # Entry point Frontend Vue
 ├── index.html          # Entry point HTML
-├── main.js             # Entry point Frontend
 └── vite.config.js      # Konfigurasi Vite
 ```
 

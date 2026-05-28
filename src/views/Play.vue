@@ -57,6 +57,28 @@ const enterFullscreenAndLandscape = async () => {
   }
 };
 
+const enterFullscreenAndPortrait = async () => {
+  try {
+    const isMobileOrTablet = /Mobi|Android|iPhone|iPad|Macintosh/i.test(navigator.userAgent) || window.innerWidth < 1024;
+    if (!isMobileOrTablet) return;
+
+    const docEl = document.documentElement;
+    if (docEl.requestFullscreen) {
+      await docEl.requestFullscreen();
+    } else if (docEl.webkitRequestFullscreen) {
+      await docEl.webkitRequestFullscreen();
+    } else if (docEl.msRequestFullscreen) {
+      await docEl.msRequestFullscreen();
+    }
+    
+    if (window.screen.orientation && window.screen.orientation.lock) {
+      await window.screen.orientation.lock('portrait');
+    }
+  } catch (err) {
+    console.warn("Fullscreen or orientation lock failed:", err);
+  }
+};
+
 const exitFullscreenAndPortrait = async () => {
   try {
     if (document.fullscreenElement) {
@@ -260,7 +282,7 @@ const handleCardClick = (event, cardData, index) => {
 
   if (index === 1) {
     activeGame.value = { id: 'rps', title: 'Batu Gunting Kertas' };
-    enterFullscreenAndLandscape();
+    enterFullscreenAndPortrait();
     return;
   }
 

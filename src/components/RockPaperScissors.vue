@@ -377,86 +377,109 @@ const playGame = (choice) => {
 }
 
 @media (max-width: 1024px) {
+  .rps-container {
+    overflow: hidden;
+  }
+  .header {
+    padding: 15px 20px;
+  }
+  .title {
+    font-size: 2rem;
+  }
+  .game-area {
+    padding: 10px 20px 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   .battle-arena {
     gap: 40px;
   }
   .hand {
-    width: 160px;
-    height: 200px;
-    padding: 15px 20px 25px;
+    width: 140px;
+    height: 180px;
+    padding: 15px;
   }
   .hand-icon {
-    font-size: 5rem;
+    font-size: 4rem;
+  }
+  .placeholder {
+    font-size: 4rem;
   }
   .vs-text {
-    font-size: 3rem;
+    font-size: 2.5rem;
+  }
+  .message-board {
+    font-size: 2.5rem;
+    min-height: 60px;
+  }
+  .controls {
+    flex-wrap: wrap;
+    gap: 15px;
   }
 }
 
 @media (max-width: 768px) {
   .header {
-    padding: 15px 20px;
     flex-wrap: wrap;
     justify-content: center;
     gap: 15px;
   }
   .title {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     order: -1;
     width: 100%;
     text-align: center;
   }
   .score-board {
-    padding: 8px 20px;
-    font-size: 1rem;
-    gap: 20px;
+    padding: 6px 15px;
+    font-size: 0.9rem;
+    gap: 15px;
   }
   .score-number {
-    font-size: 1.2rem;
-  }
-  .game-area {
-    padding: 10px 20px 20px;
+    font-size: 1.1rem;
   }
   .battle-arena {
-    gap: 20px;
+    gap: 15px;
   }
   .hand {
-    width: 120px;
-    height: 150px;
-    padding: 10px 15px 15px;
-    border-radius: 16px;
+    width: 90px;
+    height: 120px;
+    padding: 8px;
+    border-radius: 12px;
   }
   .hand-icon {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
   }
   .placeholder {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
   .hand-label {
-    font-size: 0.8rem;
-    padding: 4px 10px;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    letter-spacing: 1px;
   }
   .vs-text {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
   }
   .message-board {
-    font-size: 2.2rem;
-    min-height: 50px;
+    font-size: 1.8rem;
+    min-height: 40px;
   }
   .controls {
     flex-wrap: wrap;
-    gap: 15px;
-    padding: 15px;
+    gap: 10px;
+    padding: 10px;
   }
   .choice-btn {
-    padding: 10px 25px;
-    border-radius: 16px;
+    padding: 8px 15px;
+    border-radius: 12px;
+    gap: 8px;
   }
   .choice-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   .choice-name {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 }
 </style>

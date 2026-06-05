@@ -1,38 +1,61 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import evanImg from '@/assets/img-evan.png';
 import linaImg from '@/assets/img-lina.png';
 import melissaImg from '@/assets/img-melissa.png';
 import sarahImg from '@/assets/img-sarah.png';
 import catTankImg from '@/assets/cat-tank.png';
+import featureGraphicImg from '@/assets/feature-graphic.png';
+import deadFutureImg from '@/assets/dead-future.png';
+import rajaAmpatImg from '@/assets/raja-ampat.png';
+import knightGhoulsImg from '@/assets/knight-ghouls.png';
+import lostDayImg from '@/assets/lost-day.png';
 import bgPattern from '@/assets/bg-asteroid.png';
 
 const emit = defineEmits(['back']);
 
-const images = [evanImg, linaImg, melissaImg, sarahImg, catTankImg];
+const images = [
+  { src: evanImg, cols: 3, rows: 3 },
+  { src: linaImg, cols: 3, rows: 3 },
+  { src: melissaImg, cols: 3, rows: 3 },
+  { src: sarahImg, cols: 3, rows: 3 },
+  { src: catTankImg, cols: 3, rows: 3 },
+  { src: featureGraphicImg, cols: 5, rows: 3 },
+  { src: deadFutureImg, cols: 5, rows: 3 },
+  { src: rajaAmpatImg, cols: 5, rows: 3 },
+  { src: knightGhoulsImg, cols: 3, rows: 5 },
+  { src: lostDayImg, cols: 5, rows: 3 }
+];
 const currentImage = ref('');
+const gridCols = ref(3);
+const gridRows = ref(3);
 const isComplete = ref(false);
 
-const gridSize = 3;
-const totalPieces = gridSize * gridSize;
 const pieces = ref([]);
 const draggedIndex = ref(null);
 
 const initGame = () => {
   // Pick random image
-  currentImage.value = images[Math.floor(Math.random() * images.length)];
+  const selectedImage = images[Math.floor(Math.random() * images.length)];
+  currentImage.value = selectedImage.src;
+  gridCols.value = selectedImage.cols;
+  gridRows.value = selectedImage.rows;
+  
+  const totalPieces = gridCols.value * gridRows.value;
   
   // Create pieces
   let newPieces = [];
   for (let i = 0; i < totalPieces; i++) {
-    const row = Math.floor(i / gridSize);
-    const col = i % gridSize;
+    const row = Math.floor(i / gridCols.value);
+    const col = i % gridCols.value;
+    
+    const posX = gridCols.value > 1 ? col * (100 / (gridCols.value - 1)) : 0;
+    const posY = gridRows.value > 1 ? row * (100 / (gridRows.value - 1)) : 0;
+
     newPieces.push({
       id: i,
-      // For backgroundPosition in percentages:
-      // When size is 300%, positions are 0%, 50%, 100%
-      bgPosX: col * 50,
-      bgPosY: row * 50,
+      bgPosX: posX,
+      bgPosY: posY,
       rotation: [0, 90, 180, 270][Math.floor(Math.random() * 4)]
     });
   }
@@ -49,6 +72,9 @@ const initGame = () => {
 
 const handlePieceClick = (index) => {
   if (isComplete.value) return;
+  // Prevent rotating if already correct
+  if (pieces.value[index].id === index && pieces.value[index].rotation === 0) return;
+  
   pieces.value[index].rotation = (pieces.value[index].rotation + 90) % 360;
   checkWin();
 };
@@ -99,7 +125,17 @@ const handleDragOver = (e) => {
 const handleDrop = (e, index) => {
   if (isComplete.value) return;
   e.preventDefault();
+  
+  // Prevent dropping onto a correct piece
+  if (pieces.value[index].id === index && pieces.value[index].rotation === 0) return;
+  
   if (draggedIndex.value !== null && draggedIndex.value !== index) {
+    // Prevent dragging a correct piece
+    if (pieces.value[draggedIndex.value].id === draggedIndex.value && pieces.value[draggedIndex.value].rotation === 0) {
+      draggedIndex.value = null;
+      return;
+    }
+
     // Swap the pieces
     const temp = pieces.value[index];
     pieces.value[index] = pieces.value[draggedIndex.value];
@@ -141,13 +177,23 @@ onMounted(() => {
         </div>
       </div>
 
-      <div class="puzzle-board" :class="{ 'won': isComplete }">
+      <div 
+        class="puzzle-board" 
+        :class="{ 'won': isComplete }"
+        :style="{
+          gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
+          gridTemplateRows: `repeat(${gridRows}, 1fr)`,
+          aspectRatio: `${gridCols} / ${gridRows}`,
+          maxWidth: gridCols > gridRows ? '800px' : '500px'
+        }"
+      >
         <div 
           v-for="(piece, index) in pieces" 
           :key="piece.id"
           class="puzzle-piece"
+          :class="{ 'correct-piece': piece.id === index && piece.rotation === 0 }"
           :data-index="index"
-          :draggable="!isComplete"
+          :draggable="!isComplete && !(piece.id === index && piece.rotation === 0)"
           @dragstart="(e) => handleDragStart(e, index)"
           @dragover="handleDragOver"
           @drop="(e) => handleDrop(e, index)"
@@ -161,7 +207,7 @@ onMounted(() => {
             :style="{
               backgroundImage: `url(${currentImage}), url(${bgPattern})`,
               backgroundPosition: `${piece.bgPosX}% ${piece.bgPosY}%, ${piece.bgPosX}% ${piece.bgPosY}%`,
-              backgroundSize: '300% 300%, 300% 300%',
+              backgroundSize: `${gridCols * 100}% ${gridRows * 100}%, ${gridCols * 100}% ${gridRows * 100}%`,
               transform: `rotate(${piece.rotation}deg)`
             }"
           ></div>
@@ -224,20 +270,19 @@ onMounted(() => {
 
 .game-area {
   flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
+  padding: 20px 0;
 }
 
 .puzzle-board {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  width: 90vw;
-  max-width: 500px;
-  aspect-ratio: 1;
+  width: 100%;
   gap: 2px;
   background-color: #333;
   border: 4px solid var(--accent-gold);
@@ -245,6 +290,7 @@ onMounted(() => {
   padding: 2px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   transition: all 0.5s ease;
+  margin: auto;
 }
 
 .puzzle-board.won {
@@ -263,7 +309,21 @@ onMounted(() => {
   transition: transform 0.1s ease;
 }
 
-.puzzle-piece:active {
+.puzzle-piece.correct-piece {
+  cursor: default;
+  /* Add a subtle green tint or border indicator */
+}
+.puzzle-piece.correct-piece::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border: 2px solid rgba(76, 175, 80, 0.6);
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: inset 0 0 10px rgba(76, 175, 80, 0.3);
+}
+
+.puzzle-piece:active:not(.correct-piece) {
   transform: scale(0.95);
   z-index: 2;
 }

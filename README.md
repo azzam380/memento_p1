@@ -15,7 +15,7 @@ Selamat datang di repositori **Memento Game Studio Project 1**. Website ini meru
 -   **🕹️ Play (Mini-Game):** Menyediakan beberapa game interaktif yang seru:
     -   **Cat Tank Basketball:** Game basket unik dengan animasi menarik.
     -   **Batu Gunting Kertas:** Game klasik Rock Paper Scissors.
-    -   **TTS (Teka Teki Silang):** Game teka-teki silang interaktif dengan berbagai tingkat kesulitan.
+    -   **Jigsaw Puzzle:** Game menyusun puzzle gambar interaktif dengan pengalaman bermain yang halus dan responsif.
 -   **📱 Responsive Design:** Dioptimalkan untuk berbagai ukuran layar (Mobile, Tablet, Desktop).
 -   **✨ Smooth Animations:** Menggunakan GSAP untuk pengalaman pengguna yang lebih hidup dan premium.
 

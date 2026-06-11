@@ -468,7 +468,9 @@ onMounted(() => {
 }
 
 .sal-board {
-  width: min(600px, 100%);
+  height: 100%;
+  max-height: 600px;
+  max-width: 100%;
   aspect-ratio: 1;
   /* background: #1a0b2e; */
   background-image: url('@/assets/bg-grass.png'); /* Ganti dengan bg-classroom.png untuk mencoba background lainnya */

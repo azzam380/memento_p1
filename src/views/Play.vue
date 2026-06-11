@@ -9,7 +9,7 @@ import sarahImg from '@/assets/img-sarah.png';
 import CatTankBasketball from '@/components/CatTankBasketball.vue';
 import RockPaperScissors from '@/components/RockPaperScissors.vue';
 import JigsawPuzzle from '@/components/JigsawPuzzle.vue';
-
+import SnakesAndLadders from '@/components/SnakesAndLadders.vue';
 
 const displayCards = ref([
   { id: 'c1', title: '', isComingSoon: false, label: 'PLAY NOW', image: evanImg },
@@ -17,7 +17,7 @@ const displayCards = ref([
 
   { id: 'tts', title: 'TTS', isComingSoon: false, label: 'PLAY NOW' },
   { id: 'jigsaw', title: '', isComingSoon: false, label: 'PLAY NOW', image: melissaImg },
-  { id: 'c4', title: '', isComingSoon: true, label: 'COMING SOON', image: sarahImg }
+  { id: 'sal', title: '', isComingSoon: false, label: 'PLAY NOW', image: sarahImg }
 ]);
 const activeGame = ref(null);
 const showScore = ref(false);
@@ -292,6 +292,12 @@ const handleCardClick = (event, cardData, index) => {
     return;
   }
 
+  if (cardData.id === 'sal') {
+    activeGame.value = { id: 'sal', title: 'Ular Tangga' };
+    enterFullscreenAndPortrait();
+    return;
+  }
+
   // Picking a random level from ttsData
   const game = ttsData[Math.floor(Math.random() * ttsData.length)];
 
@@ -395,6 +401,11 @@ onUnmounted(() => {
     <!-- JIGSAW PUZZLE GAME -->
     <div class="jigsaw-game-container-wrapper" v-else-if="activeGame.id === 'jigsaw'">
       <JigsawPuzzle @back="activeGame = null; exitFullscreenAndPortrait()" />
+    </div>
+
+    <!-- SNAKES AND LADDERS GAME -->
+    <div class="sal-game-container-wrapper" v-else-if="activeGame.id === 'sal'">
+      <SnakesAndLadders @back="activeGame = null; exitFullscreenAndPortrait()" />
     </div>
 
     <!-- TTS GAME UI (REAL GRID) -->
@@ -662,7 +673,8 @@ onUnmounted(() => {
 }
 
 .rps-game-container-wrapper,
-.jigsaw-game-container-wrapper {
+.jigsaw-game-container-wrapper,
+.sal-game-container-wrapper {
   width: 100%;
   height: 100%;
   display: flex;

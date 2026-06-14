@@ -11,11 +11,12 @@ Selamat datang di repositori **Memento Game Studio Project 1**. Website ini meru
 
 -   **🏠 Home:** Landing page dengan desain premium dan transisi yang halus.
 -   **ℹ️ Info:** Halaman profil dan informasi tentang Memento Game Studio.
--   **💼 Work & Service:** Halaman terpisah untuk menampilkan portofolio proyek (Work) dengan detail yang komprehensif, dan layanan (Service) yang ditawarkan oleh studio.
+-   **💼 Work & Service:** Halaman terpisah untuk menampilkan portofolio proyek (Work) dengan tampilan detail proyek yang komprehensif (Work Detail), dan layanan (Service) yang ditawarkan oleh studio.
 -   **🕹️ Play (Mini-Game):** Menyediakan beberapa game interaktif yang seru:
     -   **Cat Tank Basketball:** Game basket unik dengan animasi menarik.
     -   **Batu Gunting Kertas:** Game klasik Rock Paper Scissors.
     -   **Jigsaw Puzzle:** Game menyusun puzzle gambar interaktif dengan pengalaman bermain yang halus dan responsif.
+    -   **Ular Tangga (Snakes and Ladders):** Permainan papan klasik ular tangga yang dimainkan secara interaktif.
 -   **📱 Responsive Design:** Dioptimalkan untuk berbagai ukuran layar (Mobile, Tablet, Desktop).
 -   **✨ Smooth Animations:** Menggunakan GSAP untuk pengalaman pengguna yang lebih hidup dan premium.
 
